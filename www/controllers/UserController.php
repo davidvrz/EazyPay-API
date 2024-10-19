@@ -1,8 +1,8 @@
 <?php
 
-require_once '../models/User.php';
+require_once('./models/User.php');
 
-class UsersController {
+class UserController {
     private $userModel;
 
     public function __construct($pdo) {
@@ -15,31 +15,31 @@ class UsersController {
             $username = trim($_POST['username']);
             $email = trim($_POST['email']);
             $password = trim($_POST['password']);
-
+            echo('hola');
             // Validaciones básicas
             if (empty($username) || empty($email) || empty($password)) {
                 $error = "Todos los campos son obligatorios.";
-                include 'views/users/register.html';
+                include './views/users/register.html';
                 return;
             }
 
             // Verificar si el email es válido
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error = "El email no es válido.";
-                include 'views/users/register.html';
+                include './views/users/register.html';
                 return;
             }
 
             // Crear el usuario en la base de datos
             if ($this->userModel->createUser($username, $email, $password)) {
-                header('Location: /index.php'); // Redirigir a la página de inicio
+                header('Location: ../views/projects/index.html'); // Redirigir a la página de inicio
                 exit;
             } else {
                 $error = "Error al registrar el usuario. El email podría estar en uso.";
-                include 'views/users/register.html';
+                include './views/users/register.html';
             }
         } else {
-            include '../views/users/register.html';
+            include './views/users/register.html';
         }
     }
 
@@ -47,21 +47,22 @@ class UsersController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = trim($_POST['email']);
             $password = trim($_POST['password']);
-
             $user = $this->userModel->authenticate($email, $password);
-
+            echo('hola');
             if ($user) {
+                echo('Entra');
                 session_start();
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['nombre'];
-                header('Location: /projects/index.html'); // Redirigir a la página de inicio
+                echo('autenticado');
+                header('Location: ../views/projects/index.html'); // Redirigir a la página de inicio
                 exit;
             } else {
                 $error = "Credenciales incorrectas.";
-                include 'views/users/login.html';
+                include './views/users/login.html';
             }
         } else {
-            include '../views/users/login.html';
+            include './views/users/login.html';
         }
     }
 
