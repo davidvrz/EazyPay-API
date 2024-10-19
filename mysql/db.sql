@@ -56,6 +56,39 @@ CREATE TABLE movimientos (
     FOREIGN KEY (id_deudor) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
+-- Datos de prueba
+
+INSERT INTO usuarios (id_usuario, nombre, email, contraseña, fecha_registro)
+VALUES
+    (1, 'Juan Pérez', 'juan.perez@example.com', 'password123', NOW()),
+    (2, 'María García', 'maria.garcia@example.com', 'password123', NOW()),
+    (3, 'Pedro Martínez', 'pedro.martinez@example.com', 'password123', NOW()),
+    (4, 'Laura López', 'laura.lopez@example.com', 'password123', NOW());
+
+INSERT INTO grupos (id_grupo, nombre_grupo, id_usuario, fecha_creacion)
+VALUES
+    (1, 'Círculo de amigos', 1, NOW()),
+    (2, 'Familia', 2, NOW()),
+    (3, 'Compañeros de trabajo', 1, NOW());
+
+
+INSERT INTO pagos (id_pago, id_grupo, descripcion, monto, fecha_pago, id_usuario)
+VALUES
+    (1, 1, 'Cena en grupo', 50.00, NOW(), 1),
+    (2, 1, 'Cerveza', 20.00, NOW(), 2),
+    (3, 2, 'Regalo de cumpleaños', 100.00, NOW(), 3),
+    (4, 3, 'Almuerzo de trabajo', 30.00, NOW(), 1);
+
+
+INSERT INTO movimientos (id_movimiento, id_pago, id_usuario_deudor, id_usuario_creditor, monto, estado)
+VALUES
+    (1, 1, 2, 1, 25.00, 'pendiente'),
+    (2, 1, 3, 1, 25.00, 'pendiente'),
+    (3, 2, 1, 2, 20.00, 'pagado'),
+    (4, 3, 4, 3, 100.00, 'pendiente'),
+    (5, 4, 1, 1, 30.00, 'pagado');
+
+
 -- Crear un nuevo usuario
 CREATE USER 'eazypay'@'localhost' IDENTIFIED BY 'eazypaypebb';
 
