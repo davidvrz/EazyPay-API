@@ -9,83 +9,69 @@ class UsersController {
         $this->userModel = new User($pdo);
     }
 
-    // Método para mostrar el formulario de registro
-    public function showRegisterForm() {
-        include '../views/users/register.php';
-    }
-
-    // Método para manejar el registro de un nuevo usuario
+    // Manejar el registro de un nuevo usuario
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            // Aquí puedes agregar validaciones para el registro
-            $this->userModel->createUser($username, $password);
-            header('Location: /index.php'); // Redirigir a la página de inicio
-            exit;
-        }
-        // Si no es un POST, mostrar el formulario de registro
-        $this->showRegisterForm();
-    }
+            $username = trim($_POST['username']);
+            $email = trim($_POST['email']);
+            $password = trim($_POST['password']);
 
-    // Método para mostrar el formulario de inicio de sesión
-    public function showLoginForm() {
-        include '../views/users/login.php';
-    }
+            // Validaciones básicas
+            if (empty($username) || empty($email) || empty($password)) {
+                $error = "Todos los campos son obligatorios.";
+                include 'views/users/register.html';
+                return;
+            }
 
-    // Método para manejar el inicio de sesión
-    public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            // Obtener el usuario por nombre de usuario
-            $user = $this->userModel->authenticate($username, $password);
-            if ($user) {
-                // Guardar la sesión del usuario
-                session_start();
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+            // Verificar si el email es válido
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = "El email no es válido.";
+                include 'views/users/register.html';
+                return;
+            }
+
+            // Crear el usuario en la base de datos
+            if ($this->userModel->createUser($username, $email, $password)) {
                 header('Location: /index.php'); // Redirigir a la página de inicio
                 exit;
             } else {
-                // Manejar error de inicio de sesión
-                $error = "Credenciales incorrectas.";
-                include '../views/users/login.php'; // Mostrar la vista de inicio de sesión nuevamente
+                $error = "Error al registrar el usuario. El email podría estar en uso.";
+                include 'views/users/register.html';
             }
         } else {
-            // Si no es un POST, mostrar el formulario de inicio de sesión
-            $this->showLoginForm();
+            include '../views/users/register.html';
         }
     }
 
-    // Método para mostrar el formulario de edición del usuario
-    public function showEditForm($id) {
-        $user = $this->userModel->getUserById($id);
-        include '../views/users/edit.php'; // Cargar la vista de edición
-    }
-
-    // Método para manejar la edición del usuario
-    public function edit($id) {
+    public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            $this->userModel->updateUser($id, $username, $password);
-            header('Location: /users/profile.php'); // Redirigir al perfil del usuario
-            exit;
+            $email = trim($_POST['email']);
+            $password = trim($_POST['password']);
+
+            $user = $this->userModel->authenticate($email, $password);
+
+            if ($user) {
+                session_start();
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['nombre'];
+                header('Location: /projects/index.html'); // Redirigir a la página de inicio
+                exit;
+            } else {
+                $error = "Credenciales incorrectas.";
+                include 'views/users/login.html';
+            }
         } else {
-            // Si no es un POST, mostrar el formulario de edición
-            $this->showEditForm($id);
+            include '../views/users/login.html';
         }
     }
 
-    // Método para manejar la eliminación del usuario
-    public function delete($id) {
-        $this->userModel->deleteUser($id);
+    // Cerrar sesión
+    public function logout() {
         session_start();
-        // Limpiar la sesión y redirigir a la página de inicio
+        session_unset();
         session_destroy();
-        header('Location: /index.php');
-        exit;
+        header("Location: index.php?controller=user&action=login");
+        exit();
     }
 }
 ?>
