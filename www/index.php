@@ -1,72 +1,58 @@
 <?php
-session_start();
+// index.php - Punto de entrada de la aplicación
 
-// Incluimos los controladores necesarios
-require_once 'controllers/UserController.php';
-require_once 'controllers/PaymentController.php';
+// 1. Cargar Configuración e Incluir Archivos Necesarios
+require_once 'config/config.php'; // Archivo con la configuración de la base de datos y otros parámetros
 
-// Configuración de base de datos
-require_once 'config/config.php'; // Asegúrate de que este archivo devuelve la conexión PDO
-
-$usersController = new UserController($pdo);
-$paymentsController = new PaymentController($pdo);
-
-// Ruta base
-$requestUri = $_SERVER['REQUEST_URI'];
-
-// Enrutamiento básico
-switch ($requestUri) {
-    case '/':
-        if (isset($_SESSION['user_id'])) {
-            header('Location: /home'); // Si el usuario está autenticado, redirigir a la página de inicio
-        } else {
-            $usersController->showLoginForm(); // Mostrar el formulario de login por defecto
+// Autocargar clases de controladores, modelos y librerías
+spl_autoload_register(function ($className) {
+    // Revisar si la clase pertenece a 'controllers', 'models' o 'libs'
+    $paths = [
+        'controllers/' . $className . '.php',
+        'models/' . $className . '.php',
+        'libs/' . $className . '.php', // Si tienes librerías adicionales, se pueden cargar desde aquí
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            break;
         }
-        break;
+    }
+});
 
-    case '/home':
-        if (isset($_SESSION['user_id'])) {
-            // Aquí mostraríamos la vista con los grupos creados por el usuario
-            include 'views/home.php';
+// 2. Función para Gestionar las Rutas
+function routeRequest() {
+    // Obtener la acción de la URL o establecer un valor por defecto
+    $controllerName = isset($_GET['controller']) ? ucfirst($_GET['controller']) . 'Controller' : 'UserController';
+    $action = isset($_GET['action']) ? $_GET['action'] : 'login'; // Por defecto, se dirige a la página de login
+
+    // 3. Verificar si el controlador solicitado existe
+    if (file_exists('controllers/' . $controllerName . '.php')) {
+        // Crear una instancia del controlador
+        $controller = new $controllerName();
+
+        // Verificar si el método (acción) solicitado existe en el controlador
+        if (method_exists($controller, $action)) {
+            // Ejecutar la acción
+            $controller->$action();
         } else {
-            header('Location: /');
+            // Acción no encontrada, mostrar error 404
+            show404();
         }
-        break;
-
-    case '/group/payments':
-        if (isset($_SESSION['user_id'])) {
-            // Lógica para mostrar los pagos de un grupo específico
-            $paymentsController->showGroupPayments();
-        } else {
-            header('Location: /');
-        }
-        break;
-
-    case '/settings':
-        if (isset($_SESSION['user_id'])) {
-            // Aquí mostraríamos la página de configuración
-            include 'views/settings.php';
-        } else {
-            header('Location: /');
-        }
-        break;
-
-    case '/register':
-        $usersController->register(); // Manejar el registro de usuarios
-        break;
-
-    case '/login':
-        $usersController->login(); // Manejar el inicio de sesión
-        break;
-
-    case '/logout':
-        session_destroy();
-        header('Location: /');
-        break;
-
-    default:
-        // En caso de ruta no válida
-        http_response_code(404);
-        echo "Página no encontrada.";
-        break;
+    } else {
+        // Controlador no encontrado, mostrar error 404
+        show404();
+    }
 }
+
+// 4. Función para Mostrar Página de Error 404
+function show404() {
+    header("HTTP/1.0 404 Not Found");
+    echo "<h1>Error 404 - Página no encontrada</h1>";
+    echo "<p>Lo sentimos, la página que estás buscando no existe.</p>";
+    exit();
+}
+
+// 5. Ejecutar la Solicitud
+routeRequest();
