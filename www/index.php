@@ -2,14 +2,14 @@
 session_start();
 
 // Incluimos los controladores necesarios
-require_once 'controllers/UsersController.php';
-require_once 'controllers/PaymentsController.php';
+require_once 'controllers/UserController.php';
+require_once 'controllers/PaymentController.php';
 
 // Configuración de base de datos
 require_once 'config/config.php'; // Asegúrate de que este archivo devuelve la conexión PDO
 
-$usersController = new UsersController($pdo);
-$paymentsController = new PaymentsController($pdo);
+$usersController = new UserController($pdo);
+$paymentsController = new PaymentController($pdo);
 
 // Ruta base
 $requestUri = $_SERVER['REQUEST_URI'];

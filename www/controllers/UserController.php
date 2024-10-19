@@ -39,11 +39,12 @@ class UsersController {
             $username = $_POST['username'];
             $password = $_POST['password'];
             // Obtener el usuario por nombre de usuario
-            $user = $this->userModel->getUserById($username);
-            if ($user && password_verify($password, $user['password'])) {
+            $user = $this->userModel->authenticate($username, $password);
+            if ($user) {
                 // Guardar la sesión del usuario
                 session_start();
                 $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
                 header('Location: /index.php'); // Redirigir a la página de inicio
                 exit;
             } else {
