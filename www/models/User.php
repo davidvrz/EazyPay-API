@@ -15,7 +15,7 @@ class User {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':contrasena', $hashedPassword);
+            $stmt->bindParam(':contrasena', $contrasena);
             return $stmt->execute();
         } catch (PDOException $e) {
             error_log("Error en la base de datos: " . $e->getMessage()); // Guardar el error en el log    
@@ -31,8 +31,8 @@ class User {
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $user = $stmt->fetch();
-
-            if ($user && password_verify($contrasena, $user['contrasena'])) {
+            echo($user['contrasena']);
+            if ($user && ($contrasena == $user['contrasena'])) {
                 return $user; // Devolver los datos del usuario si la autenticación es correcta
             }
             return false;

@@ -48,14 +48,13 @@ class UserController {
             $email = trim($_POST['email']);
             $password = trim($_POST['password']);
             $user = $this->userModel->authenticate($email, $password);
-            echo('hola');
             if ($user) {
                 echo('Entra');
                 session_start();
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['nombre'];
                 echo('autenticado');
-                header('Location: ../views/projects/index.html'); // Redirigir a la página de inicio
+                header('Location: ./views/projects/index.html'); // Redirigir a la página de inicio
                 exit;
             } else {
                 $error = "Credenciales incorrectas.";
