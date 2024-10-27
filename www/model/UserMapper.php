@@ -1,7 +1,7 @@
 <?php
 // file: models/UserMapper.php
 
-require_once("/../config/PDOConnection.php");
+require_once(__DIR__."/../config/PDOConnection.php");
 
 class UserMapper {
 

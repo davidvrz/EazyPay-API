@@ -1,7 +1,7 @@
 <?php
 //file: view/users/register.php
 
-require_once(__DIR__."/../../core/ViewManager.php");
+require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 $errors = $view->getVariable("errors");
 $user = $view->getVariable("user");

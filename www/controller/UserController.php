@@ -1,12 +1,12 @@
 <?php
 
-require_once("/../config/ViewManager.php");
-require_once("/../config/I18n.php");
+require_once(__DIR__."/../config/ViewManager.php");
+require_once(__DIR__."/../config/I18n.php");
 
-require_once("/../models/User.php");
-require_once("/../models/UserMapper.php");
+require_once(__DIR__."/../model/User.php");
+require_once(__DIR__."/../model/UserMapper.php");
 
-require_once("/../controllers/BaseController.php");
+require_once(__DIR__."/../controller/BaseController.php");
 
 /**
 * Class UsersController

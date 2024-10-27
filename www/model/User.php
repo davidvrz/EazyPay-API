@@ -1,7 +1,7 @@
 <?php
 // file: model/User.php
 
-require_once("/../config/ValidationException.php");
+require_once(__DIR__."/../config/ValidationException.php");
 
 class User {
 
