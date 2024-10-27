@@ -1,1 +1,22 @@
-/mysql/
+# Ignorar la carpeta mysql
+mysql/
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar configuraciones de entornos comunes
+.env
+*.log
+
+# Ignorar archivos de compilación y cache
+node_modules/
+dist/
+tmp/
+cache/
+
+# Ignorar archivos de editor
+.vscode/
+.idea/
+*.swp
+

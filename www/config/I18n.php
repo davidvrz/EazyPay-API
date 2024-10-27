@@ -1,5 +1,5 @@
 <?php
-//file: /core/I18n.php
+//file: /config/I18n.php
 
 /**
 * Class I18n

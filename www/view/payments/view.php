@@ -1,6 +1,6 @@
 <?php
 //file: view/posts/view.php
-require_once(__DIR__."/../../core/ViewManager.php");
+require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
 $post = $view->getVariable("post");

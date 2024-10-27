@@ -17,5 +17,9 @@ $view->setVariable("title", "Register");
 	value="">
 	<?= isset($errors["passwd"])?i18n($errors["passwd"]):"" ?><br>
 
+	<?= i18n("Email")?>: <input type="text" name="email"
+	value="<?= $user->getEmail() ?>">
+	<?= isset($errors["email"])?i18n($errors["email"]):"" ?><br>
+
 	<input type="submit" value="<?= i18n("Register")?>">
 </form>

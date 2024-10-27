@@ -1,7 +1,7 @@
 <?php
 //file: controller/LanguageController.php
 
-require_once("/../config/I18n.php");
+require_once(__DIR__."/../config/I18n.php");
 
 /**
 * Class LanguageController

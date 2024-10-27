@@ -1,5 +1,5 @@
 <?php
-// file: /core/ViewManager.php
+// file: /config/ViewManager.php
 
 /**
 * Class ViewManager
@@ -239,7 +239,7 @@ class ViewManager {
 	* @return void
 	*/
 	public function render($controller, $viewname) {
-		include("/../view/$controller/$viewname.php");
+		include(__DIR__."/../view/$controller/$viewname.php");
 		$this->renderLayout();
 	}
 
@@ -288,7 +288,7 @@ class ViewManager {
 		// draw the layout. Inside the layout we use this
 		// view manager to retrieve previously generated contents,
 		// specially the DEFAULT_FRAGMENT (the main content)
-		include("/../view/layouts/".$this->layout.".php");
+		include(__DIR__."/../view/layouts/".$this->layout.".php");
 
 		ob_flush();
 	}

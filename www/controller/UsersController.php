@@ -69,7 +69,7 @@ class UsersController extends BaseController {
 				$_SESSION["currentuser"]=$_POST["username"];
 
 				// send user to the restricted area (HTTP 302 code)
-				$this->view->redirect("posts", "index");
+				$this->view->redirect("groups", "index");
 
 			}else{
 				$errors = array();
@@ -110,7 +110,6 @@ class UsersController extends BaseController {
 	* @return void
 	*/
 	public function register() {
-
 		$user = new User();
 
 		if (isset($_POST["username"])){ // reaching via HTTP Post...

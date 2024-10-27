@@ -1,5 +1,5 @@
 <?php
-//file: core/ValidationException.php
+//file: config/ValidationException.php
 
 /**
 * Class ValidationException

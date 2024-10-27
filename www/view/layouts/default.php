@@ -9,7 +9,7 @@ $currentuser = $view->getVariable("currentusername");
 <head>
 	<title><?= $view->getVariable("title", "no title") ?></title>
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<link rel="stylesheet" href="assets/styles/global.css" type="text/css">
 	<!-- enable ji18n() javascript function to translate inside your scripts -->
 	<script src="index.php?controller=language&amp;action=i18njs">
 	</script>
@@ -46,7 +46,7 @@ $currentuser = $view->getVariable("currentusername");
 
 	<footer>
 		<?php
-		include("/language_select_element.php");
+		include(__DIR__."/language_select_element.php");
 		?>
 	</footer>
 
