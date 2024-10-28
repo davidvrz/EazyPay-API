@@ -20,5 +20,3 @@ cache/
 .idea/
 *.swp
 
-# Ignorar run.sh
-run.sh

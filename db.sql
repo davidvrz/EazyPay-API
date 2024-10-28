@@ -2,92 +2,91 @@ CREATE DATABASE eazypay;
 
 USE eazypay;
 
--- Tabla de Usuarios
-CREATE TABLE usuarios (
-    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+-- Users Table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    contrasena VARCHAR(255) NOT NULL,
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    -- gastos_totales DECIMAL(10, 2) DEFAULT 0.00 -- (opcional)
+    passwd VARCHAR(255) NOT NULL,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- total_expenses DECIMAL(10, 2) DEFAULT 0.00 -- (optional)
 );
 
--- Tabla de Grupos
-CREATE TABLE grupos (
-    id_grupo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion VARCHAR(255) NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    administrador INT,
-    moneda VARCHAR(10) DEFAULT 'EUR',
-    FOREIGN KEY (administrador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+-- Communities Table
+CREATE TABLE communities (
+    community_id INT AUTO_INCREMENT PRIMARY KEY,
+    community_name VARCHAR(100) NOT NULL,
+    community_description VARCHAR(255) NOT NULL,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    admin INT,
+    coin VARCHAR(10) DEFAULT 'EUR',
+    FOREIGN KEY (admin) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- Tabla de miembros de Grupos
-CREATE TABLE miembros_grupos (
-    id_usuario INT,
-    id_grupo INT,
-    -- fecha_union TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- (opcional)
-    -- estado ENUM('activo', 'inactivo') DEFAULT 'activo', -- (opcional)
-    saldo_acumulado DECIMAL(10, 2) DEFAULT 0.00,
-    PRIMARY KEY (id_usuario, id_grupo),
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE
+-- Community Members Table
+CREATE TABLE community_members (
+    user_id INT,
+    community_id INT,
+    -- join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- (optional)
+    -- status ENUM('active', 'inactive') DEFAULT 'active', -- (optional)
+    accumulated_balance DECIMAL(10, 2) DEFAULT 0.00,
+    PRIMARY KEY (user_id, community_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (community_id) REFERENCES communities(community_id) ON DELETE CASCADE
 );
 
--- Tabla de Gastos
-CREATE TABLE gastos (
-    id_gasto INT AUTO_INCREMENT PRIMARY KEY,
-    id_grupo INT,
-    descripcion TEXT NOT NULL,
-    monto_total DECIMAL(10, 2) NOT NULL,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    pagador INT,
-    FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE,
-    FOREIGN KEY (pagador) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
+-- Expenses Table
+CREATE TABLE expenses (
+    expense_id INT AUTO_INCREMENT PRIMARY KEY,
+    community_id INT,
+    expense_description TEXT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payer INT,
+    FOREIGN KEY (community_id) REFERENCES communities(community_id) ON DELETE CASCADE,
+    FOREIGN KEY (payer) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
--- Tabla ParticipantesGastos (participación en cada gasto)
-CREATE TABLE participantes_gastos (
-    id_gasto INT,
-    id_usuario INT,
-    monto DECIMAL(10, 2) NOT NULL,
-    porcentaje_ratio FLOAT DEFAULT 1.0,
-    PRIMARY KEY (id_gasto, id_usuario),
-    FOREIGN KEY (id_gasto) REFERENCES gastos(id_gasto) ON DELETE CASCADE,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+-- Expense Participants Table
+CREATE TABLE expense_participants (
+    expense_id INT,
+    user_id INT,
+    amount DECIMAL(10, 2) NOT NULL,
+    ratio_percentage FLOAT DEFAULT 1.0,
+    PRIMARY KEY (expense_id, user_id),
+    FOREIGN KEY (expense_id) REFERENCES expenses(expense_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- Tabla de Deudas (relación de deudas entre usuarios)
-CREATE TABLE deudas (
-    id_deuda INT AUTO_INCREMENT PRIMARY KEY,
-    deudor INT,
-    acreedor INT,
-    id_grupo INT,
-    monto DECIMAL(10, 2) NOT NULL,
-    estado ENUM('pendiente', 'pagada') DEFAULT 'pendiente',
-    FOREIGN KEY (deudor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (acreedor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) ON DELETE CASCADE
+-- Debts Table (debt relationships between users)
+CREATE TABLE debts (
+    debt_id INT AUTO_INCREMENT PRIMARY KEY,
+    debtor INT,
+    creditor INT,
+    community_id INT,
+    amount DECIMAL(10, 2) NOT NULL,
+    status ENUM('pending', 'paid') DEFAULT 'pending',
+    FOREIGN KEY (debtor) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (creditor) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (community_id) REFERENCES communities(community_id) ON DELETE CASCADE
 );
 
+-- Sample Data
 
--- Datos de prueba
-
-INSERT INTO usuarios (nombre, email, contrasena)
+INSERT INTO users (username, email, passwd)
 VALUES
-    ('Juan Pérez', 'juan.perez@example.com', 'password123'),
-    ('María García', 'maria.garcia@example.com', 'password123'),
-    ('Pedro Martínez', 'pedro.martinez@example.com', 'password123'),
-    ('Laura López', 'laura.lopez@example.com', 'password123');
+    ('Juan Perez', 'juan.perez@example.com', 'password123'),
+    ('Maria Garcia', 'maria.garcia@example.com', 'password123'),
+    ('Pedro Martinez', 'pedro.martinez@example.com', 'password123'),
+    ('Laura Lopez', 'laura.lopez@example.com', 'password123');
 
-INSERT INTO grupos (nombre, descripcion, administrador)
+INSERT INTO communities (community_name, community_description, admin)
 VALUES
-    ('Círculo de amigos', 'Grupo de amigos para compartir gastos de ocio', 1),
-    ('Familia', 'Grupo familiar para eventos y gastos compartidos', 2),
-    ('Compañeros de trabajo', 'Gastos compartidos en actividades laborales', 3);
+    ('Friends Community', 'Community for sharing leisure expenses', 1),
+    ('Family', 'Family community for events and shared expenses', 2),
+    ('Work Colleagues', 'Shared expenses for work activities', 3);
 
-INSERT INTO miembros_grupos (id_usuario, id_grupo)
+INSERT INTO community_members (user_id, community_id)
 VALUES
     (1, 1),
     (2, 1),
@@ -97,14 +96,14 @@ VALUES
     (3, 3),
     (4, 3);
 
-INSERT INTO gastos (id_grupo, descripcion, monto_total, pagador)
+INSERT INTO expenses (community_id, expense_description, total_amount, payer)
 VALUES
-    (1, 'Cena en grupo', 50.00, 1),
-    (1, 'Cerveza', 20.00, 2),
-    (2, 'Regalo de cumpleaños', 100.00, 3),
-    (3, 'Almuerzo de trabajo', 30.00, 1);
+    (1, 'Group Dinner', 50.00, 1),
+    (1, 'Beer', 20.00, 2),
+    (2, 'Birthday Gift', 100.00, 3),
+    (3, 'Work Lunch', 30.00, 1);
 
-INSERT INTO participantes_gastos (id_gasto, id_usuario, monto, porcentaje_ratio)
+INSERT INTO expense_participants (expense_id, user_id, amount, ratio_percentage)
 VALUES
     (1, 1, 25.00, 0.5),
     (1, 2, 25.00, 0.5),
@@ -112,18 +111,17 @@ VALUES
     (3, 3, 100.00, 1.0),
     (4, 1, 30.00, 1.0);
 
-INSERT INTO deudas (deudor, acreedor, id_grupo, monto, estado)
+INSERT INTO debts (debtor, creditor, community_id, amount, status)
 VALUES
-    (2, 1, 1, 25.00, 'pendiente'),
-    (3, 1, 1, 25.00, 'pendiente'),
-    (2, 3, 2, 100.00, 'pendiente');
+    (2, 1, 1, 25.00, 'pending'),
+    (3, 1, 1, 25.00, 'pending'),
+    (2, 3, 2, 100.00, 'pending');
 
-
--- Crear un nuevo usuario
+-- Create a new user
 CREATE USER 'eazypay'@'localhost' IDENTIFIED BY 'eazypaypebb';
 
--- Otorgar privilegios al usuario sobre la base de datos eazypay
+-- Grant privileges to the user on the eazypay database
 GRANT ALL PRIVILEGES ON eazypay.* TO 'eazypay'@'localhost' WITH GRANT OPTION;
 
--- Aplicar los cambios
+-- Apply the changes
 FLUSH PRIVILEGES;
