@@ -2,19 +2,19 @@
 //file: /view/messages/messages_es.php
 $i18n_messages =
 array(
-	"Group" => "Artículo",
+	"Group" => "Grupo",
 	"by %s" => "por %s",
-	"Groups" => "Artículos",
+	"Groups" => "Grupos",
 	"Title" => "Título",
 	"Contents" => "Contenido",
 	"Author" => "Autor",
 	"Actions" => "Acciones",
-	"Create group" => "Crear artículo",
+	"Create group" => "Crear grupo",
 	"Hello %s" => "Hola %s",
-	"Modify group" => "Modificar artículo",
-	"Group \"%s\" successfully added." => "Artículo \"%s\" añadido.",
-	"Group \"%s\" successfully updated." => "Artículo \"%s\" modificado.",
-	"Group \"%s\" successfully deleted." => "Artículo \"%s\" eliminado.",
+	"Modify group" => "Modificar grupo",
+	"Group \"%s\" successfully added." => "Grupo \"%s\" añadido.",
+	"Group \"%s\" successfully updated." => "Grupo \"%s\" modificado.",
+	"Group \"%s\" successfully deleted." => "Grupo \"%s\" eliminado.",
 	"Login" => "Entrar",
 	"Username" => "Nombre de usuario",
 	"Password" => "Contraseña",
@@ -23,12 +23,12 @@ array(
 	"Register" => "Registro",
 	"Edit" => "Editar",
 	"Delete" => "Eliminar",
-	"Create group" => "Crear artículo",
-	"Comments" => "Comentarios",
-	"Write a comment" => "Escribe un comentario",
-	"%s commented..."=>"%s ha comentado...",
-	"Comment" => "Comentario",
-	"do comment" => "comentar",
+	"Create group" => "Crear grupo",
+	"Payments" => "Comentarios",
+	"Write a payment" => "Escribe un comentario",
+	"%s paymented..."=>"%s ha comentado...",
+	"Payment" => "Comentario",
+	"do payment" => "comentar",
 	"Spanish" => "Español",
 	"English" => "Inglés",
 	"Welcome to the Group App!" => "¡Bienvenido a la App Group!",
@@ -36,6 +36,6 @@ array(
 	"content is mandatory" => "El contenido es obligatorio",
 	"title is mandatory" => "El título es obligatorio",
 	"author is mandatory" => "El autor es obligatorio",
-	"group is not valid" => "El artículo no es válido"
+	"group is not valid" => "El grupo no es válido"
 )
 ?>

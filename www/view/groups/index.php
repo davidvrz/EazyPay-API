@@ -13,7 +13,7 @@ $view->setVariable("title", "Groups");
 
 <table border="1">
 	<tr>
-		<th><?= i18n("Title")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Actions")?></th>
+		<th><?= i18n("Title")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Description")?></th>
 	</tr>
 
 	<?php foreach ($groups as $group): ?>
@@ -22,7 +22,7 @@ $view->setVariable("title", "Groups");
 				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getTitle()) ?></a>
 			</td>
 			<td>
-				<?= $group->getAdmin()->getUsername() ?>
+				<?= $group->getTitle() ?>
 			</td>
 			<td>
 				<?php

@@ -34,14 +34,14 @@ class GroupMapper {
 	* @return mixed Array of Group instances (without payments)
 	*/
 	public function findAll() {
-		$stmt = $this->db->query("SELECT * FROM grupos, usuarios WHERE usuarios.nombre = grupos.administrador");
+		$stmt = $this->db->query("SELECT * FROM grupos, usuarios WHERE usuarios.id_usuario = grupos.administrador");
 		$groups_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$groups = array();
 
 		foreach ($groups_db as $group) {
-			$admin = new User($group["nombre"]);
-			array_push($groups, new Group($group["id"], $group["nombre"], $group["descripcion"], $admin));
+			$admin = new User($group["administrador"]);
+			array_push($groups, new Group($group["id_grupo"], $group["nombre"], $group["descripcion"], $admin));
 		}
 
 		return $groups;

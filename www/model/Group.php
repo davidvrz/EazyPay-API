@@ -57,7 +57,7 @@ class Group {
 		$this->title = $title;
 		$this->content = $content;
 		$this->admin = $admin;
-		$this->payments = $payments;
+		//$this->payments = $payments;
 
 	}
 

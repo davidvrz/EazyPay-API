@@ -64,7 +64,7 @@ class UsersController extends BaseController {
 	public function login() {
 		if (isset($_POST["username"])){ // reaching via HTTP Group...
 			//process login form
-			if ($this->userMapper->isValidUser($_POST["username"], 							 $_POST["passwd"])) {
+			if ($this->userMapper->isValidUser($_POST["username"], $_POST["passwd"])) {
 
 				$_SESSION["currentuser"]=$_POST["username"];
 
