@@ -14,7 +14,7 @@ $view = ViewManager::getInstance();
 </head>
 <body>
 	<header>
-		<h1><?= i18n("Welcome to the Blog App!") ?></h1>
+		<h1><?= i18n("Welcome to the Group App!") ?></h1>
 	</header>
 	<main>
 		<!-- flash message -->

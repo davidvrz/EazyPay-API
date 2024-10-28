@@ -44,8 +44,8 @@ function run() {
 		}
 
 		// Here is where the "magic" occurs.
-		// URLs like: index.php?controller=posts&action=add
-		// will provoke a call to: new PostsController()->add()
+		// URLs like: index.php?controller=groups&action=add
+		// will provoke a call to: new GroupsController()->add()
 
 		// Instantiate the corresponding controller
 		$controller = loadController($_GET["controller"]);

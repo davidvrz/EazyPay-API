@@ -1,6 +1,6 @@
 <?php
 // file: model/GroupMapper.php
-require_once(__DIR__."/../core/PDOConnection.php");
+require_once(__DIR__."/../config/PDOConnection.php");
 
 require_once(__DIR__."/../model/User.php");
 require_once(__DIR__."/../model/Group.php");

@@ -1,24 +1,24 @@
 <?php
-//file: view/posts/view.php
+//file: view/groups/view.php
 require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
-$post = $view->getVariable("post");
+$group = $view->getVariable("group");
 $currentuser = $view->getVariable("currentusername");
 $newcomment = $view->getVariable("comment");
 $errors = $view->getVariable("errors");
 
-$view->setVariable("title", "View Post");
+$view->setVariable("title", "View Group");
 
-?><h1><?= i18n("Post").": ".htmlentities($post->getTitle()) ?></h1>
-<em><?= sprintf(i18n("by %s"),$post->getAuthor()->getUsername()) ?></em>
+?><h1><?= i18n("Group").": ".htmlentities($group->getTitle()) ?></h1>
+<em><?= sprintf(i18n("by %s"),$group->getAuthor()->getUsername()) ?></em>
 <p>
-	<?= htmlentities($post->getContent()) ?>
+	<?= htmlentities($group->getContent()) ?>
 </p>
 
 <h2><?= i18n("Comments") ?></h2>
 
-<?php foreach($post->getComments() as $comment): ?>
+<?php foreach($group->getComments() as $comment): ?>
 	<hr>
 	<p><?= sprintf(i18n("%s commented..."),$comment->getAuthor()->getUsername()) ?> </p>
 	<p><?= $comment->getContent(); ?></p>
@@ -33,7 +33,7 @@ $view->setVariable("title", "View Post");
 		<textarea type="text" name="content"><?=
 		htmlentities($newcomment->getContent());
 		?></textarea>
-		<input type="hidden" name="id" value="<?= $post->getId() ?>" ><br>
+		<input type="hidden" name="id" value="<?= $group->getId() ?>" ><br>
 		<input type="submit" name="submit" value="<?=i18n("do comment") ?>">
 	</form>
 

@@ -6,7 +6,7 @@ require_once(__DIR__."/../model/Group.php");
 require_once(__DIR__."/../model/GroupMapper.php");
 require_once(__DIR__."/../model/User.php");
 
-require_once(__DIR__."/../core/ViewManager.php");
+require_once(__DIR__."/../config/ViewManager.php");
 require_once(__DIR__."/../controller/BaseController.php");
 
 /**
@@ -70,7 +70,7 @@ class GroupsController extends BaseController {
 	* <li>groups/view: If group is successfully loaded (via include).	Includes these view variables:</li>
 	* <ul>
 	*	<li>group: The current Group retrieved</li>
-	*	<li>comment: The current Comment instance, empty or
+	*	<li>payment: The current Payment instance, empty or
 	*	being added (but not validated)</li>
 	* </ul>
 	* </ul>
@@ -87,7 +87,7 @@ class GroupsController extends BaseController {
 		$groupid = $_GET["id"];
 
 		// find the Group object in the database
-		$group = $this->groupMapper->findByIdWithComments($groupid);
+		$group = $this->groupMapper->findByIdWithPayments($groupid);
 
 		if ($group == NULL) {
 			throw new Exception("no such group with id: ".$groupid);
@@ -96,10 +96,10 @@ class GroupsController extends BaseController {
 		// put the Group object to the view
 		$this->view->setVariable("group", $group);
 
-		// check if comment is already on the view (for example as flash variable)
-		// if not, put an empty Comment for the view
-		$comment = $this->view->getVariable("comment");
-		$this->view->setVariable("comment", ($comment==NULL)?new Comment():$comment);
+		// check if payment is already on the view (for example as flash variable)
+		// if not, put an empty Payment for the view
+		$payment = $this->view->getVariable("payment");
+		$this->view->setVariable("payment", ($payment==NULL)?new Payment():$payment);
 
 		// render the view (/view/groups/view.php)
 		$this->view->render("groups", "view");

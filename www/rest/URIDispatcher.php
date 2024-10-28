@@ -40,7 +40,7 @@ class URIDispatcher {
 	* to capture path elements and pass them as parameters to the callback.
 	*
 	* For example, the request to:
-	* /user/alice/posts/1 matched against: /user/$2/posts/$1 will invoke a call
+	* /user/alice/groups/1 matched against: /user/$2/groups/$1 will invoke a call
 	* to callback_function(1, "alice").
 	*
 	* In addition, request bodies of Content-Type: application/json will be parsed
@@ -132,7 +132,7 @@ class URIDispatcher {
 	* you have created a map for this method specifically.
 	*
 	* For example, the request to:
-	* /user/alice/posts/1 matched against the "/user/$2/posts/$1" pattern, will
+	* /user/alice/groups/1 matched against the "/user/$2/groups/$1" pattern, will
 	* return the array: array( [1] => "1", [2] => "alice")
 	*
 	* @param string $http_method The required HTTP method

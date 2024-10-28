@@ -1,35 +1,35 @@
 <?php
-//file: view/posts/index.php
+//file: view/groups/index.php
 
 require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
-$posts = $view->getVariable("posts");
+$groups = $view->getVariable("groups");
 $currentuser = $view->getVariable("currentusername");
 
-$view->setVariable("title", "Posts");
+$view->setVariable("title", "Groups");
 
-?><h1><?=i18n("Posts")?></h1>
+?><h1><?=i18n("Groups")?></h1>
 
 <table border="1">
 	<tr>
-		<th><?= i18n("Title")?></th><th><?= i18n("Author")?></th><th><?= i18n("Actions")?></th>
+		<th><?= i18n("Title")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Actions")?></th>
 	</tr>
 
-	<?php foreach ($posts as $post): ?>
+	<?php foreach ($groups as $group): ?>
 		<tr>
 			<td>
-				<a href="index.php?controller=posts&amp;action=view&amp;id=<?= $post->getId() ?>"><?= htmlentities($post->getTitle()) ?></a>
+				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getTitle()) ?></a>
 			</td>
 			<td>
-				<?= $post->getAuthor()->getUsername() ?>
+				<?= $group->getAdmin()->getUsername() ?>
 			</td>
 			<td>
 				<?php
-				//show actions ONLY for the author of the post (if logged)
+				//show actions ONLY for the admin of the group (if logged)
 
 
-				if (isset($currentuser) && $currentuser == $post->getAuthor()->getUsername()): ?>
+				if (isset($currentuser) && $currentuser == $group->getAdmin()->getUsername()): ?>
 
 				<?php
 				// 'Delete Button': show it as a link, but do POST in order to preserve
@@ -37,17 +37,17 @@ $view->setVariable("title", "Posts");
 				?>
 				<form
 				method="POST"
-				action="index.php?controller=posts&amp;action=delete"
-				id="delete_post_<?= $post->getId(); ?>"
+				action="index.php?controller=groups&amp;action=delete"
+				id="delete_group_<?= $group->getId(); ?>"
 				style="display: inline"
 				>
 
-				<input type="hidden" name="id" value="<?= $post->getId() ?>">
+				<input type="hidden" name="id" value="<?= $group->getId() ?>">
 
 				<a href="#" 
 				onclick="
 				if (confirm('<?= i18n("are you sure?")?>')) {
-					document.getElementById('delete_post_<?= $post->getId() ?>').submit()
+					document.getElementById('delete_group_<?= $group->getId() ?>').submit()
 				}"
 				><?= i18n("Delete") ?></a>
 
@@ -58,7 +58,7 @@ $view->setVariable("title", "Posts");
 			<?php
 			// 'Edit Button'
 			?>
-			<a href="index.php?controller=posts&amp;action=edit&amp;id=<?= $post->getId() ?>"><?= i18n("Edit") ?></a>
+			<a href="index.php?controller=groups&amp;action=edit&amp;id=<?= $group->getId() ?>"><?= i18n("Edit") ?></a>
 
 		<?php endif; ?>
 
@@ -68,5 +68,5 @@ $view->setVariable("title", "Posts");
 
 </table>
 <?php if (isset($currentuser)): ?>
-	<a href="index.php?controller=posts&amp;action=add"><?= i18n("Create post") ?></a>
+	<a href="index.php?controller=groups&amp;action=add"><?= i18n("Create group") ?></a>
 <?php endif; ?>

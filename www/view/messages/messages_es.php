@@ -2,19 +2,19 @@
 //file: /view/messages/messages_es.php
 $i18n_messages =
 array(
-	"Post" => "Artículo",
+	"Group" => "Artículo",
 	"by %s" => "por %s",
-	"Posts" => "Artículos",
+	"Groups" => "Artículos",
 	"Title" => "Título",
 	"Contents" => "Contenido",
 	"Author" => "Autor",
 	"Actions" => "Acciones",
-	"Create post" => "Crear artículo",
+	"Create group" => "Crear artículo",
 	"Hello %s" => "Hola %s",
-	"Modify post" => "Modificar artículo",
-	"Post \"%s\" successfully added." => "Artículo \"%s\" añadido.",
-	"Post \"%s\" successfully updated." => "Artículo \"%s\" modificado.",
-	"Post \"%s\" successfully deleted." => "Artículo \"%s\" eliminado.",
+	"Modify group" => "Modificar artículo",
+	"Group \"%s\" successfully added." => "Artículo \"%s\" añadido.",
+	"Group \"%s\" successfully updated." => "Artículo \"%s\" modificado.",
+	"Group \"%s\" successfully deleted." => "Artículo \"%s\" eliminado.",
 	"Login" => "Entrar",
 	"Username" => "Nombre de usuario",
 	"Password" => "Contraseña",
@@ -23,7 +23,7 @@ array(
 	"Register" => "Registro",
 	"Edit" => "Editar",
 	"Delete" => "Eliminar",
-	"Create post" => "Crear artículo",
+	"Create group" => "Crear artículo",
 	"Comments" => "Comentarios",
 	"Write a comment" => "Escribe un comentario",
 	"%s commented..."=>"%s ha comentado...",
@@ -31,11 +31,11 @@ array(
 	"do comment" => "comentar",
 	"Spanish" => "Español",
 	"English" => "Inglés",
-	"Welcome to the Blog App!" => "¡Bienvenido a la App Blog!",
+	"Welcome to the Group App!" => "¡Bienvenido a la App Group!",
 	"are you sure?" => "¿Estás seguro?",
 	"content is mandatory" => "El contenido es obligatorio",
 	"title is mandatory" => "El título es obligatorio",
 	"author is mandatory" => "El autor es obligatorio",
-	"post is not valid" => "El artículo no es válido"
+	"group is not valid" => "El artículo no es válido"
 )
 ?>

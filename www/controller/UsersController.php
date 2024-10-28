@@ -51,8 +51,8 @@ class UsersController extends BaseController {
 	*
 	* The views are:
 	* <ul>
-	* <li>posts/login: If this action is reached via HTTP GET (via include)</li>
-	* <li>posts/index: If login succeds (via redirect)</li>
+	* <li>groups/login: If this action is reached via HTTP GET (via include)</li>
+	* <li>groups/index: If login succeds (via redirect)</li>
 	* <li>users/login: If validation fails (via include). Includes these view variables:</li>
 	* <ul>
 	*	<li>errors: Array including validation errors</li>
@@ -62,7 +62,7 @@ class UsersController extends BaseController {
 	* @return void
 	*/
 	public function login() {
-		if (isset($_POST["username"])){ // reaching via HTTP Post...
+		if (isset($_POST["username"])){ // reaching via HTTP Group...
 			//process login form
 			if ($this->userMapper->isValidUser($_POST["username"], 							 $_POST["passwd"])) {
 
@@ -112,7 +112,7 @@ class UsersController extends BaseController {
 	public function register() {
 		$user = new User();
 
-		if (isset($_POST["username"])){ // reaching via HTTP Post...
+		if (isset($_POST["username"])){ // reaching via HTTP Group...
 
 			// populate the User object with data form the form
 			$user->setUsername($_POST["username"]);
@@ -129,7 +129,7 @@ class UsersController extends BaseController {
 					$this->userMapper->save($user);
 
 					// POST-REDIRECT-GET
-					// Everything OK, we will redirect the user to the list of posts
+					// Everything OK, we will redirect the user to the list of groups
 					// We want to see a message after redirection, so we establish
 					// a "flash" message (which is simply a Session variable) to be
 					// get in the view after redirection.

@@ -23,3 +23,8 @@ $view->setVariable("title", "Register");
 
 	<input type="submit" value="<?= i18n("Register")?>">
 </form>
+
+<p><?= i18n("Already registered?")?> <a href="index.php?controller=users&amp;action=login"><?= i18n("Log in here!")?></a></p>
+<?php $view->moveToFragment("css");?>
+<link rel="stylesheet" type="text/css" src="css/style2.css">
+<?php $view->moveToDefaultFragment(); ?>
