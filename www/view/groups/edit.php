@@ -7,21 +7,21 @@ $view = ViewManager::getInstance();
 $group = $view->getVariable("group");
 $errors = $view->getVariable("errors");
 
-$view->setVariable("title", "Edit Group");
+$view->setVariable("name", "Edit Group");
 
 ?><h1><?= i18n("Modify group") ?></h1>
 <form action="index.php?controller=groups&amp;action=edit" method="POST">
-	<?= i18n("Title") ?>: <input type="text" name="title"
-	value="<?= isset($_POST["title"])?$_POST["title"]:$group->getTitle() ?>">
-	<?= isset($errors["title"])?i18n($errors["title"]):"" ?><br>
+	<?= i18n("Name") ?>: <input type="text" name="name"
+	value="<?= isset($_POST["name"])?$_POST["name"]:$group->getName() ?>">
+	<?= isset($errors["name"])?i18n($errors["name"]):"" ?><br>
 
-	<?= i18n("Contents") ?>: <br>
-	<textarea name="content" rows="4" cols="50"><?=
-	isset($_POST["content"])?
-	htmlentities($_POST["content"]):
-	htmlentities($group->getContent())
+	<?= i18n("Description") ?>: <br>
+	<textarea name="description" rows="4" cols="50"><?=
+	isset($_POST["description"])?
+	htmlentities($_POST["description"]):
+	htmlentities($group->getDescription())
 	?></textarea>
-	<?= isset($errors["content"])?i18n($errors["content"]):"" ?><br>
+	<?= isset($errors["description"])?i18n($errors["description"]):"" ?><br>
 
 	<input type="hidden" name="id" value="<?= $group->getId() ?>">
 	<input type="submit" name="submit" value="<?= i18n("Modify group") ?>">

@@ -114,12 +114,12 @@
     font-size: 20px;
 }
 
-.payments-list {
+.expenses-list {
     width: 100%;
     max-width: 400px;
 }
 
-.payment-card {
+.expense-card {
     display: flex;
     align-items: center;
     background-color: #f8f0ff;
@@ -129,7 +129,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.payment-avatar {
+.expense-avatar {
     width: 40px;
     height: 40px;
     background-color: #7a51a1;
@@ -143,22 +143,22 @@
     margin-right: 10px;
 }
 
-.payment-info {
+.expense-info {
     flex-grow: 1;
 }
 
-.payment-info h3 {
+.expense-info h3 {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 5px;
 }
 
-.payment-info p {
+.expense-info p {
     font-size: 14px;
     color: #666;
 }
 
-.payment-image img {
+.expense-image img {
     width: 40px;
     height: 40px;
 }

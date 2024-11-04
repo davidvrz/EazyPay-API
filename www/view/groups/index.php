@@ -13,21 +13,23 @@ $view->setVariable("title", "Groups");
 
 <table border="1">
 	<tr>
-		<th><?= i18n("Title")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Description")?></th>
+		<th><?= i18n("Name")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Description")?></th>
 	</tr>
 
 	<?php foreach ($groups as $group): ?>
 		<tr>
 			<td>
-				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getTitle()) ?></a>
+				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getName()) ?></a>
 			</td>
 			<td>
-				<?= $group->getTitle() ?>
+				<?= $group->getAdmin()->getUserName() ?>
+			</td>
+			<td>
+				<?= $group->getDescription() ?>
 			</td>
 			<td>
 				<?php
 				//show actions ONLY for the admin of the group (if logged)
-
 
 				if (isset($currentuser) && $currentuser == $group->getAdmin()->getUsername()): ?>
 

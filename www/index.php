@@ -30,7 +30,6 @@ define("DEFAULT_ACTION", "register");
 *
 * @return void
 *
-* @author lipido <lipido@gmail.com>
 */
 function run() {
 	// invoke action!

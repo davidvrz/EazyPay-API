@@ -1,4 +1,4 @@
-Group<?php
+<?php
 // file: model/Group.php
 
 require_once(__DIR__."/../config/ValidationException.php");
@@ -7,7 +7,7 @@ require_once(__DIR__."/../config/ValidationException.php");
 * Class Group
 *
 * Represents a Group in the group. A Group was written by an
-* specific User (admin) and contains a list of Payments
+* specific User (admin) and contains a list of Expenses
 *
 * @admin lipido <lipido@gmail.com>
 */
@@ -23,13 +23,13 @@ class Group {
 	* The title of this group
 	* @var string
 	*/
-	private $title;
+	private $name;
 
 	/**
 	* The content of this group
 	* @var string
 	*/
-	private $content;
+	private $description;
 
 	/**
 	* The admin of this group
@@ -38,10 +38,10 @@ class Group {
 	private $admin;
 
 	/**
-	* The list of payments of this group
+	* The list of expenses of this group
 	* @var mixed
 	*/
-	private $payments;
+	private $expenses;
 
 	/**
 	* The constructor
@@ -50,14 +50,14 @@ class Group {
 	* @param string $title The id of the group
 	* @param string $content The content of the group
 	* @param User $admin The admin of the group
-	* @param mixed $payments The list of payments
+	* @param mixed $expenses The list of expenses
 	*/
-	public function __construct($id=NULL, $title=NULL, $content=NULL, User $admin=NULL, array $payments=NULL) {
+	public function __construct($id=NULL, $name=NULL, $description=NULL, User $admin=NULL, array $expenses=NULL) {
 		$this->id = $id;
-		$this->title = $title;
-		$this->content = $content;
+		$this->name = $name;
+		$this->description = $description;
 		$this->admin = $admin;
-		//$this->payments = $payments;
+		//$this->expenses = $expenses;
 
 	}
 
@@ -75,8 +75,8 @@ class Group {
 	*
 	* @return string The title of this group
 	*/
-	public function getTitle() {
-		return $this->title;
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
@@ -85,8 +85,8 @@ class Group {
 	* @param string $title the title of this group
 	* @return void
 	*/
-	public function setTitle($title) {
-		$this->title = $title;
+	public function setName($name) {
+		$this->name = $name;
 	}
 
 	/**
@@ -94,8 +94,8 @@ class Group {
 	*
 	* @return string The content of this group
 	*/
-	public function getContent() {
-		return $this->content;
+	public function getDescription() {
+		return $this->description;
 	}
 
 	/**
@@ -104,8 +104,8 @@ class Group {
 	* @param string $content the content of this group
 	* @return void
 	*/
-	public function setContent($content) {
-		$this->content = $content;
+	public function setDescription($description) {
+		$this->description = $description;
 	}
 
 	/**
@@ -128,22 +128,22 @@ class Group {
 	}
 
 	/**
-	* Gets the list of payments of this group
+	* Gets the list of expenses of this group
 	*
-	* @return mixed The list of payments of this group
+	* @return mixed The list of expenses of this group
 	*/
-	public function getPayments() {
-		return $this->payments;
+	public function getExpenses() {
+		return $this->expenses;
 	}
 
 	/**
-	* Sets the payments of the group
+	* Sets the expenses of the group
 	*
-	* @param mixed $payments the payments list of this group
+	* @param mixed $expenses the expenses list of this group
 	* @return void
 	*/
-	public function setPayments(array $payments) {
-		$this->payments = $payments;
+	public function setExpenses(array $expenses) {
+		$this->expenses = $expenses;
 	}
 
 	/**
@@ -157,11 +157,11 @@ class Group {
 	*/
 	public function checkIsValidForCreate() {
 		$errors = array();
-		if (strlen(trim($this->title)) == 0 ) {
-			$errors["title"] = "title is mandatory";
+		if (strlen(trim($this->name)) == 0 ) {
+			$errors["name"] = "group name is mandatory";
 		}
-		if (strlen(trim($this->content)) == 0 ) {
-			$errors["content"] = "content is mandatory";
+		if (strlen(trim($this->description)) == 0 ) {
+			$errors["description"] = "group description is mandatory";
 		}
 		if ($this->admin == NULL ) {
 			$errors["admin"] = "admin is mandatory";

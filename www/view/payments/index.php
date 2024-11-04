@@ -13,23 +13,23 @@ $view->setVariable("title", "Groups");
 
 <table border="1">
 	<tr>
-		<th><?= i18n("Title")?></th><th><?= i18n("Author")?></th><th><?= i18n("Actions")?></th>
+		<th><?= i18n("Name")?></th><th><?= i18n("Admin")?></th><th><?= i18n("Actions")?></th>
 	</tr>
 
 	<?php foreach ($groups as $group): ?>
 		<tr>
 			<td>
-				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getTitle()) ?></a>
+				<a href="index.php?controller=groups&amp;action=view&amp;id=<?= $group->getId() ?>"><?= htmlentities($group->getName()) ?></a>
 			</td>
 			<td>
-				<?= $group->getAuthor()->getUsername() ?>
+				<?= $group->getAdmin()->getUsername() ?>
 			</td>
 			<td>
 				<?php
 				//show actions ONLY for the author of the group (if logged)
 
 
-				if (isset($currentuser) && $currentuser == $group->getAuthor()->getUsername()): ?>
+				if (isset($currentuser) && $currentuser == $group->getAdmin()->getUsername()): ?>
 
 				<?php
 				// 'Delete Button': show it as a link, but do POST in order to preserve

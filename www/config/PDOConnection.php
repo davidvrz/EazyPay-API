@@ -10,7 +10,7 @@ class PDOConnection {
 	public static function getInstance() {
 		if (self::$db_singleton == null) {
 			self::$db_singleton = new PDO(
-			"mysql:host=".self::$host.";dbname=".self::$dbname.";charset=utf8mb4", // connection string
+			"mysql:host=".self::$host.";dbname=".self::$dbname.";charset=utf8",
 			self::$dbuser,
 			self::$dbpass,
 			array( // options

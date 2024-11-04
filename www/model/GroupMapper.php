@@ -4,7 +4,7 @@ require_once(__DIR__."/../config/PDOConnection.php");
 
 require_once(__DIR__."/../model/User.php");
 require_once(__DIR__."/../model/Group.php");
-require_once(__DIR__."/../model/Payment.php");
+require_once(__DIR__."/../model/Expense.php");
 
 /**
 * Class GroupMapper
@@ -28,20 +28,20 @@ class GroupMapper {
 	/**
 	* Retrieves all groups
 	*
-	* Note: Payments are not added to the Group instances
+	* Note: Expenses are not added to the Group instances
 	*
 	* @throws PDOException if a database error occurs
-	* @return mixed Array of Group instances (without payments)
+	* @return mixed Array of Group instances (without expenses)
 	*/
 	public function findAll() {
-		$stmt = $this->db->query("SELECT * FROM grupos, usuarios WHERE usuarios.id_usuario = grupos.administrador");
+		$stmt = $this->db->query("SELECT * FROM communities, users WHERE users.username = communities.admin");
 		$groups_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$groups = array();
 
 		foreach ($groups_db as $group) {
-			$admin = new User($group["administrador"]);
-			array_push($groups, new Group($group["id_grupo"], $group["nombre"], $group["descripcion"], $admin));
+			$admin = new User($group["admin"]);
+			array_push($groups, new Group($group["community_id"], $group["community_name"], $group["community_description"], $admin));
 		}
 
 		return $groups;
@@ -50,23 +50,23 @@ class GroupMapper {
 	/**
 	* Loads a Group from the database given its id
 	*
-	* Note: Payments are not added to the Group
+	* Note: Expenses are not added to the Group
 	*
 	* @throws PDOException if a database error occurs
-	* @return Group The Group instances (without payments). NULL
+	* @return Group The Group instances (without expenses). NULL
 	* if the Group is not found
 	*/
 	public function findById($groupid){
-		$stmt = $this->db->prepare("SELECT * FROM grupos WHERE id=?");
+		$stmt = $this->db->prepare("SELECT * FROM communities WHERE id=?");
 		$stmt->execute(array($groupid));
 		$group = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if($group != null) {
 			return new Group(
 			$group["id"],
-			$group["nombre"],
-			$group["descripcion"],
-			new User($group["administrador"]));
+			$group["name"],
+			$group["description"],
+			new User($group["admin"]));
 		} else {
 			return NULL;
 		}
@@ -75,47 +75,50 @@ class GroupMapper {
 	/**
 	* Loads a Group from the database given its id
 	*
-	* It includes all the payments
+	* It includes all the expenses
 	*
 	* @throws PDOException if a database error occurs
-	* @return Group The Group instances (without payments). NULL
+	* @return Group The Group instances (without expenses). NULL
 	* if the Group is not found
 	*/
-	public function findByIdWithPayments($groupid){
+	public function findByIdWithExpenses($groupid){
 		$stmt = $this->db->prepare("SELECT
-			G.id as 'grupos.id',
-			G.title as 'grupos.nombre',
-			G.content as 'grupos.descripcion',
-			G.admin as 'grupos.administrador',
-			P.id as 'gastos.id',
-			P.content as 'gastos.content',
-			P.group as 'gastos.group',
-			P.pagador as 'gastos.pagador'
+			C.community_id AS community_id,
+            C.community_name AS community_name,
+            C.community_description AS community_description,
+            C.admin AS admin,
+            E.expense_id AS expense_id,
+			E.community AS community,
+            E.expense_description AS expense_description,
+            E.total_amount AS total_amount,
+            E.date AS expense_date,
+            E.payer AS payer
 
-			FROM grupos G LEFT OUTER JOIN payments P
-			ON G.id = P.group
+			FROM communities C LEFT OUTER JOIN expenses E
+			ON C.community_id = E.community
 			WHERE
-			G.id=? ");
+			C.community_id=? ");
 
 			$stmt->execute(array($groupid));
-			$group_wt_payments= $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$group_wt_expenses= $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-			if (sizeof($group_wt_payments) > 0) {
-				$group = new Group($group_wt_payments[0]["grupos.id"],
-				$group_wt_payments[0]["grupos.nombre"],
-				$group_wt_payments[0]["grupos.descripcion"],
-				new User($group_wt_payments[0]["grupos.administrador"]));
-				$payments_array = array();
-				if ($group_wt_payments[0]["gastost.id"]!=null) {
-					foreach ($group_wt_payments as $payment){
-						$payment = new Payment( $payment["gastos.id"],
-						$payment["gastos.content"],
-						new User($payment["gastos.author"]),
-						$group);
-						array_push($payments_array, $payment);
+			if (sizeof($group_wt_expenses) > 0) {
+				$group = new Group($group_wt_expenses[0]["community_id"],
+				$group_wt_expenses[0]["community_name"],
+				$group_wt_expenses[0]["community_description"],
+				new User($group_wt_expenses[0]["admin"]));
+				$expenses_array = array();
+				if ($group_wt_expenses[0]["expense_id"]!=null) {
+					foreach ($group_wt_expenses as $expense){
+						$expense = new Expense( $expense["expense_id"],
+						$group,
+						$expense["expense_description"],
+						$expense["total_amount"],
+						new User($expense["payer"]));
+						array_push($expenses_array, $expense);
 					}
 				}
-				$group->setPayments($payments_array);
+				$group->setExpenses($expenses_array);
 
 				return $group;
 			}else {
@@ -131,8 +134,8 @@ class GroupMapper {
 		* @return int The mew group id
 		*/
 		public function save(Group $group) {
-			$stmt = $this->db->prepare("INSERT INTO grupos(nombre, descripcion, admin) values (?,?,?)");
-			$stmt->execute(array($group->getTitle(), $group->getContent(), $group->getAuthor()->getUsername()));
+			$stmt = $this->db->prepare("INSERT INTO communities(community_name, community_description, admin) values (?,?,?)");
+			$stmt->execute(array($group->getName(), $group->getDescription(), $group->getAdmin()->getUsername()));
 			return $this->db->lastInsertId();
 		}
 
@@ -144,8 +147,8 @@ class GroupMapper {
 		* @return void
 		*/
 		public function update(Group $group) {
-			$stmt = $this->db->prepare("UPDATE grupos set nombre=?, descripcion=? where administrador=?");
-			$stmt->execute(array($group->getTitle(), $group->getContent(), $group->getId()));
+			$stmt = $this->db->prepare("UPDATE communities set community_name=?, community_description=? where administrador=?");
+			$stmt->execute(array($group->getName(), $group->getDescription(), $group->getId()));
 		}
 
 		/**
@@ -156,7 +159,7 @@ class GroupMapper {
 		* @return void
 		*/
 		public function delete(Group $group) {
-			$stmt = $this->db->prepare("DELETE from grupos WHERE id=?");
+			$stmt = $this->db->prepare("DELETE from communities WHERE id=?");
 			$stmt->execute(array($group->getId()));
 		}
 

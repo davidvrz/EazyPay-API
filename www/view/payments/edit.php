@@ -11,15 +11,15 @@ $view->setVariable("title", "Edit Group");
 
 ?><h1><?= i18n("Modify group") ?></h1>
 <form action="index.php?controller=groups&amp;action=edit" method="POST">
-	<?= i18n("Title") ?>: <input type="text" name="title"
-	value="<?= isset($_POST["title"])?$_POST["title"]:$group->getTitle() ?>">
+	<?= i18n("Name") ?>: <input type="text" name="title"
+	value="<?= isset($_POST["title"])?$_POST["title"]:$group->getName() ?>">
 	<?= isset($errors["title"])?i18n($errors["title"]):"" ?><br>
 
 	<?= i18n("Contents") ?>: <br>
 	<textarea name="content" rows="4" cols="50"><?=
 	isset($_POST["content"])?
 	htmlentities($_POST["content"]):
-	htmlentities($group->getContent())
+	htmlentities($group->getDescription())
 	?></textarea>
 	<?= isset($errors["content"])?i18n($errors["content"]):"" ?><br>
 

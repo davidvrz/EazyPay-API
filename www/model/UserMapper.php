@@ -23,7 +23,7 @@ class UserMapper {
 	* @return void
 	*/
 	public function save($user) {
-		$stmt = $this->db->prepare("INSERT INTO usuarios (nombre,contrasena,email) values (?,?,?)");
+		$stmt = $this->db->prepare("INSERT INTO users (username,passwd,email) values (?,?,?)");
 		$stmt->execute(array($user->getUsername(), $user->getPasswd(), $user->getEmail()));
 	}
 
@@ -34,7 +34,7 @@ class UserMapper {
 	* @return boolean true if the username exists, false otherwise
 	*/
 	public function usernameExists($username) {
-		$stmt = $this->db->prepare("SELECT count(nombre) FROM usuarios where nombre=?");
+		$stmt = $this->db->prepare("SELECT count(username) FROM users where username=?");
 		$stmt->execute(array($username));
 
 		if ($stmt->fetchColumn() > 0) {
@@ -50,7 +50,7 @@ class UserMapper {
 	* @return boolean true the username/passwrod exists, false otherwise.
 	*/
 	public function isValidUser($username, $passwd) {
-		$stmt = $this->db->prepare("SELECT count(nombre) FROM usuarios where nombre=? and contrasena=?");
+		$stmt = $this->db->prepare("SELECT count(username) FROM users where username=? and passwd=?");
 		$stmt->execute(array($username, $passwd));
 
 		if ($stmt->fetchColumn() > 0) {

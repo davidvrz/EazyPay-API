@@ -1,7 +1,7 @@
 <?php
 //file: controller/GroupController.php
 
-require_once(__DIR__."/../model/Payment.php");
+require_once(__DIR__."/../model/Expense.php");
 require_once(__DIR__."/../model/Group.php");
 require_once(__DIR__."/../model/GroupMapper.php");
 require_once(__DIR__."/../model/User.php");
@@ -14,7 +14,6 @@ require_once(__DIR__."/../controller/BaseController.php");
 *
 * Controller to make a CRUDL of Groups entities
 *
-* @author lipido <lipido@gmail.com>
 */
 class GroupsController extends BaseController {
 
@@ -70,7 +69,7 @@ class GroupsController extends BaseController {
 	* <li>groups/view: If group is successfully loaded (via include).	Includes these view variables:</li>
 	* <ul>
 	*	<li>group: The current Group retrieved</li>
-	*	<li>payment: The current Payment instance, empty or
+	*	<li>expense: The current Expense instance, empty or
 	*	being added (but not validated)</li>
 	* </ul>
 	* </ul>
@@ -87,7 +86,7 @@ class GroupsController extends BaseController {
 		$groupid = $_GET["id"];
 
 		// find the Group object in the database
-		$group = $this->groupMapper->findByIdWithPayments($groupid);
+		$group = $this->groupMapper->findByIdWithExpenses($groupid);
 
 		if ($group == NULL) {
 			throw new Exception("no such group with id: ".$groupid);
@@ -96,10 +95,10 @@ class GroupsController extends BaseController {
 		// put the Group object to the view
 		$this->view->setVariable("group", $group);
 
-		// check if payment is already on the view (for example as flash variable)
-		// if not, put an empty Payment for the view
-		$payment = $this->view->getVariable("payment");
-		$this->view->setVariable("payment", ($payment==NULL)?new Payment():$payment);
+		// check if expense is already on the view (for example as flash variable)
+		// if not, put an empty Expense for the view
+		$expense = $this->view->getVariable("expense");
+		$this->view->setVariable("expense", ($expense==NULL)?new Expense():$expense);
 
 		// render the view (/view/groups/view.php)
 		$this->view->render("groups", "view");
@@ -115,8 +114,8 @@ class GroupsController extends BaseController {
 	*
 	* The expected HTTP parameters are:
 	* <ul>
-	* <li>title: Title of the group (via HTTP POST)</li>
-	* <li>content: Content of the group (via HTTP POST)</li>
+	* <li>name: Name of the group (via HTTP POST)</li>
+	* <li>description: Description of the group (via HTTP POST)</li>
 	* </ul>
 	*
 	* The views are:
@@ -143,11 +142,11 @@ class GroupsController extends BaseController {
 		if (isset($_POST["submit"])) { // reaching via HTTP Group...
 
 			// populate the Group object with data form the form
-			$group->setTitle($_POST["title"]);
-			$group->setContent($_POST["content"]);
+			$group->setName($_POST["name"]);
+			$group->setDescription($_POST["description"]);
 
 			// The user of the Group is the currentUser (user in session)
-			$group->setAuthor($this->currentUser);
+			$group->setAdmin($this->currentUser);
 
 			try {
 				// validate Group object
@@ -161,7 +160,7 @@ class GroupsController extends BaseController {
 				// We want to see a message after redirection, so we establish
 				// a "flash" message (which is simply a Session variable) to be
 				// get in the view after redirection.
-				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully added."),$group ->getTitle()));
+				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully added."),$group ->getName()));
 
 				// perform the redirection. More or less:
 				// header("Location: index.php?controller=groups&action=index")
@@ -195,8 +194,8 @@ class GroupsController extends BaseController {
 	* The expected HTTP parameters are:
 	* <ul>
 	* <li>id: Id of the group (via HTTP POST and GET)</li>
-	* <li>title: Title of the group (via HTTP POST)</li>
-	* <li>content: Content of the group (via HTTP POST)</li>
+	* <li>name: Name of the group (via HTTP POST)</li>
+	* <li>description: Description of the group (via HTTP POST)</li>
 	* </ul>
 	*
 	* The views are:
@@ -212,7 +211,7 @@ class GroupsController extends BaseController {
 	* @throws Exception if no id was provided
 	* @throws Exception if no user is in session
 	* @throws Exception if there is not any group with the provided id
-	* @throws Exception if the current logged user is not the author of the group
+	* @throws Exception if the current logged user is not the admin of the group
 	* @return void
 	*/
 	public function edit() {
@@ -234,16 +233,16 @@ class GroupsController extends BaseController {
 			throw new Exception("no such group with id: ".$groupid);
 		}
 
-		// Check if the Group author is the currentUser (in Session)
-		if ($group->getAuthor() != $this->currentUser) {
-			throw new Exception("logged user is not the author of the group id ".$groupid);
+		// Check if the Group admin is the currentUser (in Session)
+		if ($group->getAdmin() != $this->currentUser) {
+			throw new Exception("logged user is not the admin of the group id ".$groupid);
 		}
 
 		if (isset($_POST["submit"])) { // reaching via HTTP Group...
 
 			// populate the Group object with data form the form
-			$group->setTitle($_POST["title"]);
-			$group->setContent($_POST["content"]);
+			$group->setName($_POST["name"]);
+			$group->setDescription($_POST["description"]);
 
 			try {
 				// validate Group object
@@ -257,7 +256,7 @@ class GroupsController extends BaseController {
 				// We want to see a message after redirection, so we establish
 				// a "flash" message (which is simply a Session variable) to be
 				// get in the view after redirection.
-				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully updated."),$group ->getTitle()));
+				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully updated."),$group ->getName()));
 
 				// perform the redirection. More or less:
 				// header("Location: index.php?controller=groups&action=index")
@@ -296,7 +295,7 @@ class GroupsController extends BaseController {
 	* @throws Exception if no id was provided
 	* @throws Exception if no user is in session
 	* @throws Exception if there is not any group with the provided id
-	* @throws Exception if the author of the group to be deleted is not the current user
+	* @throws Exception if the admin of the group to be deleted is not the current user
 	* @return void
 	*/
 	public function delete() {
@@ -316,9 +315,9 @@ class GroupsController extends BaseController {
 			throw new Exception("no such group with id: ".$groupid);
 		}
 
-		// Check if the Group author is the currentUser (in Session)
-		if ($group->getAuthor() != $this->currentUser) {
-			throw new Exception("Group author is not the logged user");
+		// Check if the Group admin is the currentUser (in Session)
+		if ($group->getAdmin() != $this->currentUser) {
+			throw new Exception("Group admin is not the logged user");
 		}
 
 		// Delete the Group object from the database
@@ -329,7 +328,7 @@ class GroupsController extends BaseController {
 		// We want to see a message after redirection, so we establish
 		// a "flash" message (which is simply a Session variable) to be
 		// get in the view after redirection.
-		$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully deleted."),$group ->getTitle()));
+		$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully deleted."),$group ->getName()));
 
 		// perform the redirection. More or less:
 		// header("Location: index.php?controller=groups&action=index")

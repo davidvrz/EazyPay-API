@@ -10,14 +10,14 @@ $view->setVariable("title", "Edit Group");
 
 ?><h1><?= i18n("Create group")?></h1>
 <form action="index.php?controller=groups&amp;action=add" method="POST">
-	<?= i18n("Title") ?>: <input type="text" name="title"
-	value="<?= $group->getTitle() ?>">
-	<?= isset($errors["title"])?i18n($errors["title"]):"" ?><br>
+	<?= i18n("Name") ?>: <input type="text" name="name"
+	value="<?= $group->getName() ?>">
+	<?= isset($errors["name"])?i18n($errors["name"]):"" ?><br>
 
-	<?= i18n("Contents") ?>: <br>
-	<textarea name="content" rows="4" cols="50"><?=
-	htmlentities($group->getContent()) ?></textarea>
-	<?= isset($errors["content"])?i18n($errors["content"]):"" ?><br>
+	<?= i18n("Description") ?>: <br>
+	<textarea name="description" rows="4" cols="50"><?=
+	htmlentities($group->getDescription()) ?></textarea>
+	<?= isset($errors["description"])?i18n($errors["description"]):"" ?><br>
 
 	<input type="submit" name="submit" value="submit">
 </form>
