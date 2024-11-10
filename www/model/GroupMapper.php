@@ -34,7 +34,7 @@ class GroupMapper {
 	* @return mixed Array of Group instances (without expenses)
 	*/
 	public function findAll() {
-		$stmt = $this->db->query("SELECT * FROM communities, users WHERE users.username = communities.admin");
+		$stmt = $this->db->query("SELECT community_id, community_name, community_description, admin FROM communities");
 		$groups_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		$groups = array();
@@ -57,110 +57,181 @@ class GroupMapper {
 	* if the Group is not found
 	*/
 	public function findById($groupid){
-		$stmt = $this->db->prepare("SELECT * FROM communities WHERE id=?");
+		$stmt = $this->db->prepare("SELECT * FROM communities WHERE community_id=?");
 		$stmt->execute(array($groupid));
 		$group = $stmt->fetch(PDO::FETCH_ASSOC);
 
 		if($group != null) {
 			return new Group(
-			$group["id"],
-			$group["name"],
-			$group["description"],
+			$group["community_id"],
+			$group["community_name"],
+			$group["community_description"],
 			new User($group["admin"]));
 		} else {
 			return NULL;
 		}
 	}
 
-	/**
-	* Loads a Group from the database given its id
-	*
-	* It includes all the expenses
-	*
-	* @throws PDOException if a database error occurs
-	* @return Group The Group instances (without expenses). NULL
-	* if the Group is not found
-	*/
-	public function findByIdWithExpenses($groupid){
-		$stmt = $this->db->prepare("SELECT
-			C.community_id AS community_id,
-            C.community_name AS community_name,
-            C.community_description AS community_description,
-            C.admin AS admin,
-            E.expense_id AS expense_id,
-			E.community AS community,
-            E.expense_description AS expense_description,
-            E.total_amount AS total_amount,
-            E.date AS expense_date,
-            E.payer AS payer
-
-			FROM communities C LEFT OUTER JOIN expenses E
-			ON C.community_id = E.community
-			WHERE
-			C.community_id=? ");
-
-			$stmt->execute(array($groupid));
-			$group_wt_expenses= $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-			if (sizeof($group_wt_expenses) > 0) {
-				$group = new Group($group_wt_expenses[0]["community_id"],
-				$group_wt_expenses[0]["community_name"],
-				$group_wt_expenses[0]["community_description"],
-				new User($group_wt_expenses[0]["admin"]));
-				$expenses_array = array();
-				if ($group_wt_expenses[0]["expense_id"]!=null) {
-					foreach ($group_wt_expenses as $expense){
-						$expense = new Expense( $expense["expense_id"],
-						$group,
-						$expense["expense_description"],
-						$expense["total_amount"],
-						new User($expense["payer"]));
-						array_push($expenses_array, $expense);
-					}
-				}
-				$group->setExpenses($expenses_array);
-
-				return $group;
-			}else {
-				return NULL;
-			}
+	
+	public function getGroupDetailsById($groupid) {
+		// Obtener los detalles básicos del grupo
+		$stmt = $this->db->prepare("SELECT * FROM communities WHERE community_id = ?");
+		$stmt->execute(array($groupid));
+		$group_db = $stmt->fetch(PDO::FETCH_ASSOC);
+	
+		if ($group_db != null) {
+			// Crear el objeto Group con la información básica
+			$group = new Group(
+				$group_db["community_id"],
+				$group_db["community_name"],
+				$group_db["community_description"],
+				new User($group_db["admin"]) // Administrador del grupo
+			);
+	
+			// Obtener los gastos del grupo utilizando el método getExpensesByGroupId
+			$expenses = $this->getExpensesByGroupId($groupid);
+			$group->setExpenses($expenses);
+	
+			// Obtener los miembros del grupo utilizando el método getMembersByGroupId
+			$members = $this->getMembersByGroupId($groupid);
+			$group->setMembers($members);
+	
+			// Devolver el grupo con todos los detalles
+			return $group;
+		} else {
+			return NULL; // Si no existe el grupo
 		}
-
-		/**
-		* Saves a Group into the database
-		*
-		* @param Group $group The group to be saved
-		* @throws PDOException if a database error occurs
-		* @return int The mew group id
-		*/
-		public function save(Group $group) {
-			$stmt = $this->db->prepare("INSERT INTO communities(community_name, community_description, admin) values (?,?,?)");
-			$stmt->execute(array($group->getName(), $group->getDescription(), $group->getAdmin()->getUsername()));
-			return $this->db->lastInsertId();
-		}
-
-		/**
-		* Updates a Group in the database
-		*
-		* @param Group $group The group to be updated
-		* @throws PDOException if a database error occurs
-		* @return void
-		*/
-		public function update(Group $group) {
-			$stmt = $this->db->prepare("UPDATE communities set community_name=?, community_description=? where administrador=?");
-			$stmt->execute(array($group->getName(), $group->getDescription(), $group->getId()));
-		}
-
-		/**
-		* Deletes a Group into the database
-		*
-		* @param Group $group The group to be deleted
-		* @throws PDOException if a database error occurs
-		* @return void
-		*/
-		public function delete(Group $group) {
-			$stmt = $this->db->prepare("DELETE from communities WHERE id=?");
-			$stmt->execute(array($group->getId()));
-		}
-
 	}
+
+	private function getExpensesByGroupId($groupid) {
+		// Obtener todos los gastos asociados a este grupo
+		$stmt = $this->db->prepare("SELECT * FROM expenses WHERE community = ?");
+		$stmt->execute(array($groupid));
+		$expenses_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	
+		$expenses = array();
+		foreach ($expenses_db as $expense) {
+			// Crear y agregar los gastos a la lista (suponiendo que la clase Expense existe)
+			$expenses[] = new Expense(
+				$expense["expense_id"],
+				new Group($expense["community"]), // Asignamos el grupo correspondiente
+				$expense["expense_description"],
+				$expense["total_amount"],
+				new User($expense["payer"]) // Payer es un usuario
+        );		
+	}
+	
+		return $expenses;
+	}
+
+	private function getMembersByGroupId($groupid) {
+		// Obtener todos los miembros del grupo, excepto el administrador
+		$stmt = $this->db->prepare("SELECT member FROM community_members WHERE community = ?");
+		$stmt->execute(array($groupid));
+		$members_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	
+		$members = array();
+		foreach ($members_db as $member) {
+			// Suponiendo que 'user_id' hace referencia a los usuarios
+			$members[] = new User($member["member"]);
+		}
+	
+		return $members;
+	}
+
+	/**
+	* Saves a Group into the database
+	*
+	* @param Group $group The group to be saved
+	* @throws PDOException if a database error occurs
+	* @return int The mew group id
+	*/
+	public function save(Group $group) {
+		
+		// Insertar el grupo en la base de datos
+		$stmt = $this->db->prepare("INSERT INTO communities(community_name, community_description, admin) VALUES (?,?,?)");
+		$stmt->execute(array($group->getName(), $group->getDescription(), $group->getAdmin()->getUserName()));
+	
+		// Obtener el ID del nuevo grupo insertado
+		$groupId = $this->db->lastInsertId();
+	
+		// Guardar los miembros del grupo
+		foreach ($group->getMembers() as $member) {
+			$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+			$stmt->execute(array($groupId, $member->getUserName()));
+		}
+	
+		// Guardar los gastos del grupo
+		foreach ($group->getExpenses() as $expense) {
+			$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, date, payer) VALUES (?, ?, ?, ?, ?)");
+			$stmt->execute(array(
+				$groupId,
+				$expense->getDescription(),
+				$expense->getTotalAmount(),
+				$expense->getDate(),
+				$expense->getPayer()->getUserName()
+			));
+		}
+		
+		return $groupId;
+	}
+
+	/**
+	* Updates a Group in the database
+	*
+	* @param Group $group The group to be updated
+	* @throws PDOException if a database error occurs
+	* @return void
+	*/
+	public function update(Group $group) {
+		// Actualizar la información básica del grupo
+		$stmt = $this->db->prepare("UPDATE communities SET community_name=?, community_description=? WHERE community_id=?");
+		$stmt->execute(array($group->getName(), $group->getDescription(), $group->getId()));
+	
+		// Eliminar los miembros actuales y añadir los nuevos
+		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=?");
+		$stmt->execute(array($group->getId()));
+	
+		foreach ($group->getMembers() as $member) {
+			$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+			$stmt->execute(array($group->getId(), $member->getUserName()));
+		}
+	
+		// Eliminar los gastos actuales y añadir los nuevos
+		$stmt = $this->db->prepare("DELETE FROM expenses WHERE community=?");
+		$stmt->execute(array($group->getId()));
+	
+		foreach ($group->getExpenses() as $expense) {
+			$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, date, payer) VALUES (?, ?, ?, ?, ?)");
+			$stmt->execute(array(
+				$group->getId(),
+				$expense->getDescription(),
+				$expense->getTotalAmount(),
+				$expense->getDate(),
+				$expense->getPayer()->getUserName()
+			));
+		}
+	}
+
+	/**
+	* Deletes a Group into the database
+	*
+	* @param Group $group The group to be deleted
+	* @throws PDOException if a database error occurs
+	* @return void
+	*/
+	public function delete(Group $group) {
+		// Eliminar los miembros del grupo
+		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=?");
+		$stmt->execute(array($group->getId()));
+	
+		// Eliminar los gastos del grupo
+		$stmt = $this->db->prepare("DELETE FROM expenses WHERE community=?");
+		$stmt->execute(array($group->getId()));
+	
+		// Eliminar el grupo
+		$stmt = $this->db->prepare("DELETE FROM communities WHERE community_id=?");
+		$stmt->execute(array($group->getId()));
+	}
+
+}

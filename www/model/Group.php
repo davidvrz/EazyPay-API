@@ -44,6 +44,12 @@ class Group {
 	private $expenses;
 
 	/**
+	* The list of members of this group
+	* @var mixed
+	*/
+	private $members;
+
+	/**
 	* The constructor
 	*
 	* @param string $id The id of the group
@@ -52,13 +58,13 @@ class Group {
 	* @param User $admin The admin of the group
 	* @param mixed $expenses The list of expenses
 	*/
-	public function __construct($id=NULL, $name=NULL, $description=NULL, User $admin=NULL, array $expenses=NULL) {
+	public function __construct($id=NULL, $name=NULL, $description=NULL, User $admin=NULL, array $expenses = [], array $members = []) {
 		$this->id = $id;
 		$this->name = $name;
 		$this->description = $description;
 		$this->admin = $admin;
-		//$this->expenses = $expenses;
-
+		$this->expenses = $expenses;
+		$this->members = $members;
 	}
 
 	/**
@@ -146,6 +152,19 @@ class Group {
 		$this->expenses = $expenses;
 	}
 
+	public function getMembers() {
+		return $this->members;
+	}
+
+	public function setMembers(array $members) {
+		$this->members = $members;
+	}
+
+	public function addMember(User $member) {
+		$this->members[] = $member;
+	}
+
+
 	/**
 	* Checks if the current instance is valid
 	* for being updated in the database.
@@ -157,6 +176,8 @@ class Group {
 	*/
 	public function checkIsValidForCreate() {
 		$errors = array();
+		
+		// Validaciones existentes
 		if (strlen(trim($this->name)) == 0 ) {
 			$errors["name"] = "group name is mandatory";
 		}
@@ -166,7 +187,20 @@ class Group {
 		if ($this->admin == NULL ) {
 			$errors["admin"] = "admin is mandatory";
 		}
-
+	
+		// Nueva validación para los miembros
+		if (empty($this->members)) {
+			$errors["members"] = "group must have at least one member";
+		}
+	
+		// Validación de objetos miembro
+		foreach ($this->members as $member) {
+			if (!$member instanceof User) {
+				$errors["members"] = "all members must be instances of User";
+				break;
+			}
+		}
+	
 		if (sizeof($errors) > 0){
 			throw new ValidationException($errors, "group is not valid");
 		}
@@ -183,18 +217,19 @@ class Group {
 	*/
 	public function checkIsValidForUpdate() {
 		$errors = array();
-
-		if (!isset($this->id)) {
+	
+		/*if (!isset($this->id)) {
 			$errors["id"] = "id is mandatory";
-		}
-
-		try{
+		}*/
+	
+		try {
 			$this->checkIsValidForCreate();
-		}catch(ValidationException $ex) {
-			foreach ($ex->getErrors() as $key=>$error) {
+		} catch (ValidationException $ex) {
+			foreach ($ex->getErrors() as $key => $error) {
 				$errors[$key] = $error;
 			}
 		}
+	
 		if (sizeof($errors) > 0) {
 			throw new ValidationException($errors, "group is not valid");
 		}

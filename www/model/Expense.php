@@ -8,8 +8,8 @@ require_once(__DIR__ . "/Group.php");
 /**
  * Class Expense
  *
- * Represents an Expense within a community group. Each Expense
- * is associated with a specific community and has a payer.
+ * Represents an Expense within a group group. Each Expense
+ * is associated with a specific group and has a payer.
  */
 class Expense {
     
@@ -20,10 +20,10 @@ class Expense {
     private $id;
 
     /**
-     * The community to which this expense belongs
+     * The group to which this expense belongs
      * @var Group
      */
-    private $community;
+    private $group;
 
     /**
      * The description of this expense
@@ -49,22 +49,26 @@ class Expense {
      */
     private $payer;
 
+    private $participants;    
+
+
     /**
      * The constructor
      *
      * @param int $id The ID of the expense
-     * @param Group $community The community to which this expense belongs
+     * @param Group $group The group to which this expense belongs
      * @param string $description The description of the expense
      * @param float $totalAmount The total amount of the expense
      * @param User $payer The user who paid the expense
      */
-    public function __construct($id = null, Group $community = null, $description = null, $totalAmount = null, User $payer = null) {
+    public function __construct($id = null, Group $group = null, $description = null, $totalAmount = null, User $payer = null, array $participants = []) {
         $this->id = $id;
-        $this->community = $community;
+        $this->group = $group;
         $this->description = $description;
         $this->totalAmount = $totalAmount;
         $this->date = new DateTime(); // Sets to current date/time
         $this->payer = $payer;
+        $this->participants = $participants;
     }
 
     /**
@@ -77,22 +81,22 @@ class Expense {
     }
 
     /**
-     * Gets the community associated with this expense
+     * Gets the group associated with this expense
      *
-     * @return Group The community associated with this expense
+     * @return Group The group associated with this expense
      */
-    public function getCommunity() {
-        return $this->community;
+    public function getGroup() {
+        return $this->group;
     }
 
     /**
-     * Sets the community associated with this expense
+     * Sets the group associated with this expense
      *
-     * @param Group $community The community associated with this expense
+     * @param Group $group The group associated with this expense
      * @return void
      */
-    public function setCommunity(Group $community) {
-        $this->community = $community;
+    public function setGroup(Group $group) {
+        $this->group = $group;
     }
 
     /**
@@ -161,6 +165,21 @@ class Expense {
         $this->payer = $payer;
     }
 
+    public function getParticipants() {
+        return $this->participants;
+    }
+
+    public function setParticipants(array $participants) {
+		$this->participants = $participants;
+	}
+    
+    public function addParticipant(User $user, $amount) {
+        $this->participants[] = [
+            'user' => $user,
+            'amount' => $amount
+        ];
+    }
+
     /**
      * Checks if the current instance is valid for being created in the database.
      *
@@ -176,11 +195,25 @@ class Expense {
         if ($this->totalAmount <= 0) {
             $errors["totalAmount"] = "Total amount must be greater than zero.";
         }
-        if ($this->community == null) {
-            $errors["community"] = "Community is mandatory.";
+        if ($this->group == null) {
+            $errors["group"] = "Group is mandatory.";
         }
-        if ($this->payer == null) {
+        if (empty($this->payer)) {
             $errors["payer"] = "Payer is mandatory.";
+        }
+        if (empty($this->participants)) {
+            $errors["participants"] = "At least one participant is required.";
+        } else {
+            foreach ($this->participants as $participant) {
+                // Acceder al objeto User dentro del array asociativo
+                $user = $participant['user'];  // Este es un objeto User
+                if (empty($user->getUsername())) {
+                    $errors["participant_user"] = "Each participant must have a valid user.";
+                }
+                if ($participant['amount'] <= 0) {
+                    $errors["participant_amount"] = "Each participant must have a valid amount.";
+                }
+            }            
         }
 
         if (sizeof($errors) > 0) {

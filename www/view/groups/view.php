@@ -26,15 +26,8 @@ $view->setVariable("title", "View Group");
 
 <?php if (isset($currentuser) ): ?>
 	<h3><?= i18n("Add a expense") ?></h3>
-
-	<form method="POST" action="index.php?controller=expenses&amp;action=add">
-		<?= i18n("Expense")?>:<br>
-		<?= isset($errors["description"])?i18n($errors["description"]):"" ?><br>
-		<textarea type="text" name="description"><?=
-		htmlentities($newexpense->getDescription());
-		?></textarea>
-		<input type="hidden" name="id" value="<?= $group->getId() ?>" ><br>
-		<input type="submit" name="submit" value="<?=i18n("do expense") ?>">
-	</form>
+	<p>
+        <a href="index.php?controller=expenses&amp;action=add&amp;group_id=<?= $group->getId() ?>"><?= i18n("Add Expense") ?></a>
+    </p>
 
 <?php endif ?>

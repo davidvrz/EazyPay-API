@@ -5,6 +5,7 @@ require_once(__DIR__."/../model/Expense.php");
 require_once(__DIR__."/../model/Group.php");
 require_once(__DIR__."/../model/GroupMapper.php");
 require_once(__DIR__."/../model/User.php");
+require_once(__DIR__."/../model/UserMapper.php");
 
 require_once(__DIR__."/../config/ViewManager.php");
 require_once(__DIR__."/../controller/BaseController.php");
@@ -23,12 +24,14 @@ class GroupsController extends BaseController {
 	*
 	* @var GroupMapper
 	*/
-	private $GroupMapper;
+	private $groupMapper;
+	private $userMapper;
 
 	public function __construct() {
 		parent::__construct();
 
 		$this->groupMapper = new GroupMapper();
+		$this->userMapper = new UserMapper();
 	}
 
 	/**
@@ -86,7 +89,7 @@ class GroupsController extends BaseController {
 		$groupid = $_GET["id"];
 
 		// find the Group object in the database
-		$group = $this->groupMapper->findByIdWithExpenses($groupid);
+		$group = $this->groupMapper->getGroupDetailsById($groupid);
 
 		if ($group == NULL) {
 			throw new Exception("no such group with id: ".$groupid);
@@ -147,6 +150,20 @@ class GroupsController extends BaseController {
 
 			// The user of the Group is the currentUser (user in session)
 			$group->setAdmin($this->currentUser);
+
+			// Añadir los participantes (miembros) al grupo
+			if (isset($_POST["members"])) {
+				foreach ($_POST["members"] as $memberName) {
+					$user = $this->userMapper->getUser($memberName);
+					// Verificar si el usuario existe en la base de datos
+					if ($user) {
+						$group->addMember($user);
+					} else {
+						// Manejar el error si no se encuentra el usuario
+						$errors[] = "User $memberName not found";
+					}
+				}
+			}
 
 			try {
 				// validate Group object
@@ -226,7 +243,7 @@ class GroupsController extends BaseController {
 
 		// Get the Group object from the database
 		$groupid = $_REQUEST["id"];
-		$group = $this->groupMapper->findById($groupid);
+		$group = $this->groupMapper->getGroupDetailsById($groupid);
 
 		// Does the group exist?
 		if ($group == NULL) {
@@ -245,11 +262,13 @@ class GroupsController extends BaseController {
 			$group->setDescription($_POST["description"]);
 
 			try {
+				print_r("0");
 				// validate Group object
 				$group->checkIsValidForUpdate(); // if it fails, ValidationException
-
+				print_r("1");
 				// update the Group object in the database
 				$this->groupMapper->update($group);
+				print_r("2");
 
 				// POST-REDIRECT-GET
 				// Everything OK, we will redirect the user to the list of groups

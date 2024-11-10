@@ -27,6 +27,29 @@ class UserMapper {
 		$stmt->execute(array($user->getUsername(), $user->getPasswd(), $user->getEmail()));
 	}
 
+	public function getUser($username) {
+        // Preparamos la consulta para buscar el usuario por su nombre de usuario
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+
+        // Recuperamos el resultado de la consulta
+        $user_db = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Si no se encuentra el usuario, retornamos null
+        if ($user_db === false) {
+            return null;
+        }
+
+        // Crear y retornar el objeto User con los datos obtenidos
+        $user = new User(
+            $user_db['username'],
+            $user_db['passwd'], 
+			$user_db['email'],
+        );
+        
+        return $user;
+    }
+
 	/**
 	* Checks if a given username is already in the database
 	*
