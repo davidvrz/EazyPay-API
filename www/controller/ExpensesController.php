@@ -94,6 +94,7 @@ class ExpensesController extends BaseController {
 		$expense = new Expense();
 
 		if (isset($_POST["submit"])) { // reaching via HTTP Post...
+
 			// Create and populate the Expense object
 			$expense->setDescription($_POST["description"]);
 			$expense->setGroup($group);
@@ -102,16 +103,20 @@ class ExpensesController extends BaseController {
 			$expense->setPayer($payer);
 			
 			$participants = $_POST["participants"]; // Esta variable debería contener una lista de los participantes
-			$amountPerParticipant = $expense->getTotalAmount() / count($participants);
+			//$amountPerParticipant = $expense->getTotalAmount() / count($participants);
 
-			foreach ($participants as $username) {
+			foreach ($participants as $username => $amount) {
 				$user = $this->userMapper->getUser($username);
-				if ($user) {
-					$expense->addParticipant($user, $amountPerParticipant);
-				} else {
+				if ($user && floatval($amount) > 0) { // Solo agregar si el monto es mayor a 0
+					// Agregar el participante con la cantidad específica
+					$expense->addParticipant($user, floatval($amount));
+				} elseif (!$user) {
 					// Manejar el error si no se encuentra el usuario
 					$errors[] = "User $username not found";
-				}  
+				} elseif (floatval($amount) <= 0) {
+					// Error si el monto es menor o igual a 0
+					$errors['participants'][$username] = "Amount for $username must be greater than 0";
+				}
 			}
 
 			try {
