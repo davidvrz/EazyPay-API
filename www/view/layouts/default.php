@@ -17,7 +17,6 @@ $currentuser = $view->getVariable("currentusername");
 	<?= $view->getFragment("javascript") ?>
 </head>
 <body>
-	<!-- header -->
 	<header>
 		<h1>Group</h1>
 		<nav id="menu" style="background-color:grey">
@@ -34,6 +33,8 @@ $currentuser = $view->getVariable("currentusername");
 				<?php endif ?>
 			</ul>
 		</nav>
+
+		<?php include __DIR__ . '/../partials/navbar.php'; ?>
 	</header>
 
 	<main>
