@@ -3,7 +3,7 @@
 
 $currentuser = $view->getVariable("currentusername");
 ?>
-<link rel="stylesheet" type="text/css" href="../../assets/styles/navbar.css">
+<link rel="stylesheet" type="text/css" href="../../assets/styles/partials/navbar.css">
 
 <nav class="navbar">
     <img class="navbar-logo" src="../../assets/images/logo.png" alt="logo">

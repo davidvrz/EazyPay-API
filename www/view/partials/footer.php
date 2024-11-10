@@ -1,7 +1,7 @@
 <?php
 // file: view/partials/footer.php
 ?>
-<link rel="stylesheet" type="text/css" href="../../assets/styles/footer.css">
+<link rel="stylesheet" type="text/css" href="../../assets/styles/partials/footer.css">
 
 <footer class="footer">
     <div class="footer-content">
