@@ -88,3 +88,7 @@
 .btn-back:hover, .btn-register:hover {
     opacity: 0.9;
 }
+
+.alternative-action {
+    margin-top: 1.5rem;
+}

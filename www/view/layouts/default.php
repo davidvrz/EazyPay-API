@@ -17,23 +17,8 @@ $currentuser = $view->getVariable("currentusername");
 	<?= $view->getFragment("javascript") ?>
 </head>
 <body>
-	<!-- header -->
 	<header>
-		<h1>Group</h1>
-		<nav id="menu" style="background-color:grey">
-			<ul>
-				<li><a href="index.php?controller=groups&amp;action=index">Groups</a></li>
-
-				<?php if (isset($currentuser)): ?>
-					<li><?= sprintf(i18n("Hello %s"), $currentuser) ?>
-						<a 	href="index.php?controller=users&amp;action=logout">(Logout)</a>
-					</li>
-
-				<?php else: ?>
-					<li><a href="index.php?controller=users&amp;action=login"><?= i18n("Login") ?></a></li>
-				<?php endif ?>
-			</ul>
-		</nav>
+		<?php include __DIR__ . '/../partials/navbar.php'; ?>
 	</header>
 
 	<main>
@@ -41,13 +26,17 @@ $currentuser = $view->getVariable("currentusername");
 			<?= $view->popFlash() ?>
 		</div>
 
-		<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
+		<!--  -->
+		<?php if (isset($currentuser)): ?> 
+			<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
+		<?php else: ?>
+			<li><a href="index.php?controller=users&amp;action=login"><?= i18n("Login") ?></a></li>
+		<?php endif ?>
+		
 	</main>
 
 	<footer>
-		<?php
-		include(__DIR__."/language_select_element.php");
-		?>
+		<?php include __DIR__ . '/../partials/footer.php'; ?>
 	</footer>
 
 </body>

@@ -2,19 +2,24 @@
 // file: view/layouts/welcome.php
 
 $view = ViewManager::getInstance();
-
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html>
 <head>
-	<title><?= $view->getVariable("title", "no title") ?></title>
+	<title><?= htmlspecialchars($view->getVariable("title", "no title")) ?></title>
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="assets/styles/register.css" type="text/css">
+
+	<link rel="stylesheet" href="../../assets/styles/global.css" type="text/css">
+	
 	<?= $view->getFragment("css") ?>
 	<?= $view->getFragment("javascript") ?>
+
+	<link rel="icon" href="../../assets/images/isotype.png" type="image/png">
 </head>
 <body>
 	<header>
-		<h1><?= i18n("Welcome to the Group App!") ?></h1>
+		<!-- <h1><?= i18n("Welcome to the Group App!") ?></h1> -->
+		<?php include __DIR__ . '/../partials/navbar.php'; ?>
 	</header>
 	<main>
 		<!-- flash message -->
@@ -23,10 +28,7 @@ $view = ViewManager::getInstance();
 		</div>
 		<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
 	</main>
-	<footer>
-		<?php
-		include(__DIR__."/language_select_element.php");
-		?>
-	</footer>
+
+	<?php include __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>
