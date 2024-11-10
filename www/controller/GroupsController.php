@@ -98,11 +98,6 @@ class GroupsController extends BaseController {
 		// put the Group object to the view
 		$this->view->setVariable("group", $group);
 
-		// check if expense is already on the view (for example as flash variable)
-		// if not, put an empty Expense for the view
-		$expense = $this->view->getVariable("expense");
-		$this->view->setVariable("expense", ($expense==NULL)?new Expense():$expense);
-
 		// render the view (/view/groups/view.php)
 		$this->view->render("groups", "view");
 

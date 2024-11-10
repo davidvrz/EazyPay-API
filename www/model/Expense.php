@@ -205,8 +205,7 @@ class Expense {
             $errors["participants"] = "At least one participant is required.";
         } else {
             foreach ($this->participants as $participant) {
-                // Acceder al objeto User dentro del array asociativo
-                $user = $participant['user'];  // Este es un objeto User
+                $user = $participant['user'];  
                 if (empty($user->getUsername())) {
                     $errors["participant_user"] = "Each participant must have a valid user.";
                 }
@@ -220,4 +219,24 @@ class Expense {
             throw new ValidationException($errors, "Expense is not valid");
         }
     }
+
+    public function checkIsValidForUpdate() {
+		$errors = array();
+	
+		/*if (!isset($this->id)) {
+			$errors["id"] = "id is mandatory";
+		}*/
+	
+		try {
+			$this->checkIsValidForCreate();
+		} catch (ValidationException $ex) {
+			foreach ($ex->getErrors() as $key => $error) {
+				$errors[$key] = $error;
+			}
+		}
+	
+		if (sizeof($errors) > 0) {
+			throw new ValidationException($errors, "expense is not valid");
+		}
+	}
 }

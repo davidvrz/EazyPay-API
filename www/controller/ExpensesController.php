@@ -85,6 +85,7 @@ class ExpensesController extends BaseController {
 		}
 
 		$group = $this->groupMapper->getGroupDetailsById($groupid);
+		
 		if ($group === null) {
 			throw new Exception("No such group with id: " . $groupid);
 		}
@@ -103,7 +104,6 @@ class ExpensesController extends BaseController {
 			$expense->setPayer($payer);
 			
 			$participants = $_POST["participants"]; // Esta variable debería contener una lista de los participantes
-			//$amountPerParticipant = $expense->getTotalAmount() / count($participants);
 
 			foreach ($participants as $username => $amount) {
 				$user = $this->userMapper->getUser($username);
@@ -161,4 +161,124 @@ class ExpensesController extends BaseController {
 		$this->view->render("expenses", "add");
 
 	}
+
+	public function view() {
+		if (!isset($this->currentUser)) {
+			throw new Exception("Not in session. Viewing expenses requires login");
+		}
+
+		if (!isset($_GET["id"])) {
+			throw new Exception("Expense ID is missing");
+		}
+
+		$expenseId = $_GET["id"];
+		$expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+
+		if ($expense === null) {
+			throw new Exception("No such expense with ID: " . $expenseId);
+		}
+
+		// Set the expense to be accessible in the view
+		$this->view->setVariable("expense", $expense);
+
+		// Render the expense view page
+		$this->view->render("expenses", "view");
+	}
+
+
+	public function edit() {
+		// Verificar que se haya enviado el id del gasto
+		if (!isset($_GET["id"])) {
+			throw new Exception("Expense ID is mandatory");
+		}
+	
+		$expenseId = $_GET["id"];
+		
+		// Recuperar el gasto de la base de datos
+		$expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+	
+		if ($expense == NULL) {
+			throw new Exception("Expense not found");
+		}
+	
+		// Verificar si el usuario tiene permisos para editar este gasto (puede ser el pagador)
+		if ($expense->getPayer()->getUsername() !== $this->currentUser->getUsername()) {
+			throw new Exception("You do not have permission to edit this expense");
+		}
+	
+		// Recuperar el ID del grupo relacionado con el gasto
+		$groupId = $expense->getGroup()->getId();  // Asumiendo que tienes un método getGroupId en la clase Expense
+	
+		// Recuperar el grupo de la base de datos si es necesario (por ejemplo, si lo necesitas completo)
+		$group = $this->groupMapper->getGroupDetailsById($groupId);
+	
+		if ($group == NULL) {
+			throw new Exception("Group not found");
+		}
+	
+		// Si se recibe una solicitud POST con datos del formulario, proceder a actualizar
+		if ($_SERVER["REQUEST_METHOD"] === "POST") {
+			$description = trim($_POST["description"]);
+			$totalAmount = trim($_POST["totalAmount"]);
+			$participants = $_POST["participants"]; // Un array de usuarios y montos
+	
+			$participants = $_POST["participants"]; // Esta variable debería contener una lista de los participantes
+
+			foreach ($participants as $username => $amount) {
+				$user = $this->userMapper->getUser($username);
+				if ($user && floatval($amount) > 0) { // Solo agregar si el monto es mayor a 0
+					// Agregar el participante con la cantidad específica
+					$expense->addParticipant($user, floatval($amount));
+				} elseif (!$user) {
+					// Manejar el error si no se encuentra el usuario
+					$errors[] = "User $username not found";
+				} elseif (floatval($amount) <= 0) {
+					// Error si el monto es menor o igual a 0
+					$errors['participants'][$username] = "Amount for $username must be greater than 0";
+				}
+			}
+			// AQUI HAY QUE USAR EL checkIsValidForUpdate()
+			$errors = [];
+			if (empty($description)) {
+				$errors[] = "Description cannot be empty";
+			}
+			if (empty($totalAmount) || !is_numeric($totalAmount) || $totalAmount <= 0) {
+				$errors[] = "Total amount must be a positive number";
+			}
+	
+			if (empty($errors)) {
+				// Filtrar los participantes para incluir solo aquellos que tienen un valor mayor a 0
+				$validParticipants = [];
+				foreach ($participants as $username => $amount) {
+					// Solo agregar participantes con importe mayor a 0
+					if ($amount > 0) {
+						$validParticipants[$username] = $amount;
+					}
+				}
+				
+				// Actualizar el gasto con los nuevos valores
+				$expense->setDescription($description);
+				$expense->setTotalAmount($totalAmount);
+				$expense->setParticipants($validParticipants); // Solo participantes válidos
+	
+				// Guardar el gasto actualizado en la base de datos
+				$this->expenseMapper->updateExpense($expense);
+	
+				// Redirigir a la vista del gasto editado
+				header("Location: index.php?controller=expenses&action=view&id=" . $expense->getId());
+				exit();
+			} else {
+				// Si hay errores, asignarlos a la vista
+				$this->view->setVariable("errors", $errors);
+			}
+		}
+	
+		// Pasar el gasto y el grupo a la vista
+		$this->view->setVariable("expense", $expense);
+		$this->view->setVariable("group", $group);  // Pasa el grupo a la vista
+	
+		// Mostrar el formulario de edición
+		$this->view->render("expenses", "edit");
+	}	
+	
 }
