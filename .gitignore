@@ -15,6 +15,9 @@ dist/
 tmp/
 cache/
 
+# Ignorar archivos de ejecución
+run.bat
+
 # Ignorar archivos de editor
 .vscode/
 .idea/
