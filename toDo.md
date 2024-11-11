@@ -7,7 +7,7 @@
         - [ ] (F6) Añadir un usuario al proyecto. Se deberá indicar un email del usuario que se quiere añadir.
         - [x] (F7) Crear nuevo pago indicando: (i) usuario que paga (por defecto, el usuario autenticado), (ii) nombre de pago, (iii) cantidad y (iv) otros usuarios del proyecto para los que se hace el pago (por defecto todos, incluido el pagador).
         - [ ] (F8) Editar un pago existente, pudiendo cambiar cualquier campo.
-        - [ ] (F9) Eliminar un pago.
+        - [x] (F9) Eliminar un pago.
         - [ ] (F10) Listado de deudas pendientes entre usuarios. Esta parte muestra qué pagos se deberían realizar entre usuarios para saldar todas las deudas.
 
 
@@ -16,6 +16,7 @@
 - [ ] Refactorizar código
 - [ ] Internacionalizar todo lo necesario
 - [ ] Mostrar solos los grupos a los que pertenece el currentUser
+- [ ] Añadir apartado de dividir porcentajes o no en edit expenses
 
 
 # Usar extensión Markdown Checkbox (crear checkbox con - [ ], y marcarlas con - [x])
