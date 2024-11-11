@@ -74,47 +74,47 @@ CREATE TABLE debts (
 
 INSERT INTO users (username, email, passwd)
 VALUES
-    ('Juan Perez', 'juan.perez@example.com', 'password123'),
-    ('Maria Garcia', 'maria.garcia@example.com', 'password123'),
-    ('Pedro Martinez', 'pedro.martinez@example.com', 'password123'),
-    ('Laura Lopez', 'laura.lopez@example.com', 'password123');
+    ('JuanPerez', 'juanperez@example.com', 'password123'),
+    ('MariaGarcia', 'mariagarcia@example.com', 'password123'),
+    ('PedroMartinez', 'pedromartinez@example.com', 'password123'),
+    ('LauraLopez', 'lauralopez@example.com', 'password123');
 
 INSERT INTO communities (community_name, community_description, admin)
 VALUES
-    ('Friends Community', 'Community for sharing leisure expenses', 'Juan Perez'),
-    ('Family', 'Family community for events and shared expenses', 'Maria Garcia'),
-    ('Work Colleagues', 'Shared expenses for work activities', 'Pedro Martinez');
+    ('Friends Community', 'Community for sharing leisure expenses', 'JuanPerez'),
+    ('Family', 'Family community for events and shared expenses', 'MariaGarcia'),
+    ('Work Colleagues', 'Shared expenses for work activities', 'PedroMartinez');
 
 INSERT INTO community_members (member, community)
 VALUES
-    ('Juan Perez', 1),
-    ('Maria Garcia', 1),
-    ('Pedro Martinez', 1),
-    ('Maria Garcia', 2),
-    ('Juan Perez', 3),
-    ('Pedro Martinez', 3),
-    ('Laura Lopez', 3);
+    ('JuanPerez', 1),
+    ('MariaGarcia', 1),
+    ('PedroMartinez', 1),
+    ('MariaGarcia', 2),
+    ('JuanPerez', 3),
+    ('PedroMartinez', 3),
+    ('LauraLopez', 3);
 
 INSERT INTO expenses (community, expense_description, total_amount, payer)
 VALUES
-    (1, 'Group Dinner', 50.00, 'Juan Perez'),
-    (1, 'Beer', 20.00, 'Maria Garcia'),
-    (2, 'Birthday Gift', 100.00, 'Pedro Martinez'),
-    (3, 'Work Lunch', 30.00, 'Juan Perez');
+    (1, 'Group Dinner', 50.00, 'JuanPerez'),
+    (1, 'Beer', 20.00, 'MariaGarcia'),
+    (2, 'Birthday Gift', 100.00, 'PedroMartinez'),
+    (3, 'Work Lunch', 30.00, 'JuanPerez');
 
 INSERT INTO expense_participants (expense, member, amount, ratio_percentage)
 VALUES
-    (1, 'Juan Perez', 25.00, 0.5),
-    (1, 'Maria Garcia', 25.00, 0.5),
-    (2, 'Juan Perez', 20.00, 1.0),
-    (3, 'Pedro Martinez', 100.00, 1.0),
-    (4, 'Juan Perez', 30.00, 1.0);
+    (1, 'JuanPerez', 25.00, 0.5),
+    (1, 'MariaGarcia', 25.00, 0.5),
+    (2, 'JuanPerez', 20.00, 1.0),
+    (3, 'PedroMartinez', 100.00, 1.0),
+    (4, 'JuanPerez', 30.00, 1.0);
 
 INSERT INTO debts (debtor, creditor, community, amount, status)
 VALUES
-    ('Maria Garcia', 'Juan Perez', 1, 25.00, 'pending'),
-    ('Pedro Martinez', 'Juan Perez', 1, 25.00, 'pending'),
-    ('Maria Garcia', 'Pedro Martinez', 2, 100.00, 'pending');
+    ('MariaGarcia', 'JuanPerez', 1, 25.00, 'pending'),
+    ('PedroMartinez', 'JuanPerez', 1, 25.00, 'pending'),
+    ('MariaGarcia', 'PedroMartinez', 2, 100.00, 'pending');
 
 -- Create a new user
 CREATE USER 'eazypay'@'localhost' IDENTIFIED BY 'eazypaypebb';

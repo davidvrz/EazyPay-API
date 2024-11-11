@@ -45,6 +45,10 @@ class User {
 			$errors["username"] = "Username must be at least 5 characters length";
 		}
 
+		if(strpos($this->username, ' ') !== false){
+			$errors["username"] = "Username must have no spaces";
+		}
+
 		if (strlen($this->passwd) < 5) {
 			$errors["passwd"] = "Password must be at least 5 characters length";
 		}
