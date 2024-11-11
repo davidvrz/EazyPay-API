@@ -1,0 +1,124 @@
+.main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.top-icon {
+    margin-bottom: 20px;
+}
+
+.top-icon img {
+    width: 50px;
+    height: 50px;
+}
+
+#group-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f0ff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#group-form label,
+#group-form input[type="text"],
+#group-form textarea,
+#group-form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#group-form input[type="text"],
+#group-form textarea {
+    padding: 10px;
+    border: 1px solid #005747;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+#group-form input[type="text"]:focus,
+#group-form textarea:focus {
+    border-color: #003b32;
+    outline: none;
+}
+
+#members-container {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.member-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.member-input input[type="text"] {
+    flex-grow: 1;
+}
+
+.remove-participant {
+    background-color: #7a51a1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-participant:hover {
+    background-color: #694292;
+}
+
+#add-participant {
+    background-color: #9EC7C4;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+#add-participant:hover {
+    background-color: #86b4b2;
+}
+
+#group-form input[type="submit"] {
+    background-color: #005747;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#group-form input[type="submit"]:hover {
+    background-color: #003b32;
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 10px;
+}
