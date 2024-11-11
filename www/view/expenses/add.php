@@ -10,69 +10,80 @@ $errors = $view->getVariable("errors");
 $view->setVariable("title", "Add Expense");
 
 ?>
-<h1><?= i18n("Add Expense to Group:") . " " . htmlentities($group->getName()) ?></h1>
 
-<?php if (isset($errors) && !empty($errors)): ?>
-    <div class="errors">
-        <ul>
-            <?php foreach ($errors as $error): ?>
-                <li><?= htmlentities($error) ?></li>
-            <?php endforeach; ?>
-        </ul>
+<link rel="stylesheet" href="../../assets/styles/expenses/edit.css" type="text/css">
+
+<div class="main">
+    <div class="top-icon">
+        <img src="../../assets/images/isotype.png" alt="Groups Icon">
     </div>
-<?php endif; ?>
 
-<form method="POST" action="index.php?controller=expenses&amp;action=add" onsubmit="return validateAmounts()">
-    <input type="hidden" name="group_id" value="<?= $group->getId() ?>" />
+    <h1 class="main-title"><?= i18n("Add Expense to Group:") . " " . htmlentities($group->getName()) ?></h1>
 
-    <!-- Descripción del gasto -->
-    <label for="description"><?= i18n("Description:") ?></label><br>
-    <textarea name="description" id="description" required></textarea><br>
-    <span><?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?></span><br>
-
-    <!-- Monto total del gasto -->
-    <label for="totalAmount"><?= i18n("Total Amount:") ?></label><br>
-    <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required oninput="updateParticipantAmounts()" /><br>
-    <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span><br>
-    
-    <!-- Selección del pagador -->
-    <label for="payer"><?= i18n("Payer:") ?></label><br>
-    <select name="payer" id="payer" required>
-        <option value=""><?= i18n("Select Payer") ?></option>
-        <?php if ($group->getMembers()): ?>
-            <?php foreach ($group->getMembers() as $user): ?>
-                <option value="<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?></option>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </select><br>
-    <span><?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?></span><br>
-
-    <!-- Modo de reparto -->
-    <label for="splitMode"><?= i18n("Split Mode:") ?></label><br>
-    <select id="splitMode" onchange="toggleSplitMode()">
-        <option value="equal"><?= i18n("Divide Equally") ?></option>
-        <option value="manual"><?= i18n("Enter Manually") ?></option>
-    </select><br>
-
-    <h3><?= i18n("Participants") ?></h3>
-    <!-- Mostrar los miembros del grupo -->
-    <?php if ($group->getMembers()): ?>
-        <?php foreach ($group->getMembers() as $user): ?>
-            <div>
-                <input type="checkbox" name="include[<?= htmlentities($user->getUsername()) ?>]" 
-                       id="include_<?= htmlentities($user->getUsername()) ?>" 
-                       checked onchange="toggleParticipant(<?= htmlentities(json_encode($user->getUsername())) ?>)" />
-                <label for="participant_<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?>:</label>
-                <input type="number" name="participants[<?= htmlentities($user->getUsername()) ?>]" 
-                       id="participant_<?= htmlentities($user->getUsername()) ?>" 
-                       min="0" step="0.01" readonly />
-                <span><?= isset($errors['participants'][$user->getUsername()]) ? htmlentities($errors['participants'][$user->getUsername()]) : "" ?></span><br>
+    <div class="expense-container">
+        <?php if (isset($errors) && !empty($errors)): ?>
+            <div class="errors">
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?= htmlentities($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
+        <?php endif; ?>
 
-    <input type="submit" name="submit" value="<?= i18n("Add Expense") ?>" />
-</form>
+        <form method="POST" action="index.php?controller=expenses&amp;action=add" onsubmit="return validateAmounts()">
+            <input type="hidden" name="group_id" value="<?= $group->getId() ?>" />
+
+            <!-- Descripción del gasto -->
+            <label for="description"><?= i18n("Description:") ?></label>
+            <textarea name="description" id="description" required></textarea>
+            <span><?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?></span>
+
+            <!-- Monto total del gasto -->
+            <label for="totalAmount"><?= i18n("Total Amount:") ?></label>
+            <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required oninput="updateParticipantAmounts()" />
+            <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span>
+            
+            <!-- Selección del pagador -->
+            <label for="payer"><?= i18n("Payer:") ?></label>
+            <select name="payer" id="payer" required>
+                <option value=""><?= i18n("Select Payer") ?></option>
+                <?php if ($group->getMembers()): ?>
+                    <?php foreach ($group->getMembers() as $user): ?>
+                        <option value="<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <span><?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?></span>
+
+            <!-- Modo de reparto -->
+            <label for="splitMode"><?= i18n("Split Mode:") ?></label>
+            <select id="splitMode" onchange="toggleSplitMode()">
+                <option value="equal"><?= i18n("Divide Equally") ?></option>
+                <option value="manual"><?= i18n("Enter Manually") ?></option>
+            </select>
+
+            <h3><?= i18n("Participants") ?></h3>
+            <!-- Mostrar los miembros del grupo -->
+            <?php if ($group->getMembers()): ?>
+                <?php foreach ($group->getMembers() as $user): ?>
+                    <div>
+                        <input type="checkbox" name="include[<?= htmlentities($user->getUsername()) ?>]" 
+                            id="include_<?= htmlentities($user->getUsername()) ?>" 
+                            checked onchange="toggleParticipant(<?= htmlentities(json_encode($user->getUsername())) ?>)" />
+                        <label for="participant_<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?>:</label>
+                        <input type="number" name="participants[<?= htmlentities($user->getUsername()) ?>]" 
+                            id="participant_<?= htmlentities($user->getUsername()) ?>" 
+                            min="0" step="0.01" readonly />
+                        <span><?= isset($errors['participants'][$user->getUsername()]) ? htmlentities($errors['participants'][$user->getUsername()]) : "" ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+
+            <input type="submit" name="submit" value="<?= i18n("Add Expense") ?>" />
+        </form>
+    </div>
+</div>
 
 <script>
     function getSelectedParticipants() {
