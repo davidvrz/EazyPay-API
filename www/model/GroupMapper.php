@@ -95,10 +95,6 @@ class GroupMapper {
 			// Obtener los miembros del grupo utilizando el método getMembersByGroupId
 			$members = $this->getMembersByGroupId($groupid);
 
-			// Asegúrate de que el creador esté en la lista de miembros
-			$creator = new User($group_db["admin"]);
-			array_unshift($members, $creator); // Añadir al creador al principio de la lista	
-
 			$group->setMembers($members);
 	
 			// Devolver el grupo con todos los detalles
@@ -130,7 +126,7 @@ class GroupMapper {
 	}
 
 	private function getMembersByGroupId($groupid) {
-		// Obtener todos los miembros del grupo, excepto el administrador
+		// Obtener todos los miembros del grupo
 		$stmt = $this->db->prepare("SELECT member FROM community_members WHERE community = ?");
 		$stmt->execute(array($groupid));
 		$members_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
