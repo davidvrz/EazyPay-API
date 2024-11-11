@@ -11,7 +11,7 @@ $view->setVariable("title", "Add Group");
 
 ?>
 
-<link rel="stylesheet" href="../../assets/styles/groups/add.css" type="text/css">
+<link rel="stylesheet" href="../../assets/styles/groups/add-edit.css" type="text/css">
 
 <div class="main">
     <div class="top-icon">
