@@ -128,20 +128,25 @@ $view->setVariable("title", "Add Expense");
     }
 
     function validateAmounts() {
-        const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
-        const selectedParticipants = getSelectedParticipants();
-        let sum = 0;
+    const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
+    const selectedParticipants = getSelectedParticipants();
+    let sum = 0;
 
-        selectedParticipants.forEach(participant => {
-            sum += parseFloat(participant.value) || 0;
-        });
+    selectedParticipants.forEach(participant => {
+        sum += parseFloat(participant.value) || 0;
+    });
 
-        if (Math.abs(sum - totalAmount) > 0.01) {  // Permite una pequeña tolerancia de decimales
-            alert("The total amount does not match the sum of participant amounts.");
-            return false;
-        }
-        return true;
+    // Redondear la suma total y la suma de los participantes a 2 decimales
+    const roundedTotalAmount = Math.round(totalAmount * 100) / 100;
+    const roundedSum = Math.round(sum * 100) / 100;
+
+    // Permitir una pequeña tolerancia de decimales (0.01)
+    if (Math.abs(roundedSum - roundedTotalAmount) > 0.01) {
+        alert("The total amount does not match the sum of participant amounts.");
+        return false;
     }
+    return true;
+}
 </script>
 
 

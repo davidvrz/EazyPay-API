@@ -243,15 +243,12 @@ class GroupMapper {
 	* @return void
 	*/
 	public function delete(Group $group) {
-		// Eliminar los miembros del grupo
 		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=?");
 		$stmt->execute(array($group->getId()));
 	
-		// Eliminar los gastos del grupo
 		$stmt = $this->db->prepare("DELETE FROM expenses WHERE community=?");
 		$stmt->execute(array($group->getId()));
 	
-		// Eliminar el grupo
 		$stmt = $this->db->prepare("DELETE FROM communities WHERE community_id=?");
 		$stmt->execute(array($group->getId()));
 	}

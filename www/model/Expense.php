@@ -61,7 +61,7 @@ class Expense {
      * @param float $totalAmount The total amount of the expense
      * @param User $payer The user who paid the expense
      */
-    public function __construct($id = null, Group $group = null, $description = null, $totalAmount = null, User $payer = null, array $participants = []) {
+    public function __construct($id = null, Group $group= null, $description = null, $totalAmount = null, User $payer = null, array $participants = []) {
         $this->id = $id;
         $this->group = $group;
         $this->description = $description;

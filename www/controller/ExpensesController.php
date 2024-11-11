@@ -262,7 +262,7 @@ class ExpensesController extends BaseController {
 				$expense->setParticipants($validParticipants); // Solo participantes válidos
 	
 				// Guardar el gasto actualizado en la base de datos
-				$this->expenseMapper->updateExpense($expense);
+				$this->expenseMapper->update($expense);
 	
 				// Redirigir a la vista del gasto editado
 				header("Location: index.php?controller=expenses&action=view&id=" . $expense->getId());
@@ -280,5 +280,41 @@ class ExpensesController extends BaseController {
 		// Mostrar el formulario de edición
 		$this->view->render("expenses", "edit");
 	}	
+
+	public function delete() {
+		if (!isset($_GET["id"])) {
+			throw new Exception("id is mandatory");
+		}
+		
+		if (!isset($this->currentUser)) {
+			throw new Exception("Not in session. Deleting expenses requires login");
+		}
+	
+		$expenseId = $_REQUEST["id"];
+		$expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+	
+		if ($expense == null) {
+			throw new Exception("No such expense with id: ".$expenseId);
+		}
+	
+		$groupid = $expense->getGroup()->getId();
+		if ($groupid == null) {
+			throw new Exception("Expense does not belong to any group");
+		}
+		$group = $this->groupMapper->findById($groupid);
+		if ($group->getAdmin() != $this->currentUser) {
+			throw new Exception("User is not authorized to delete this expense");
+		}
+	
+		// Eliminamos el gasto de la base de datos
+		$this->expenseMapper->delete($expense);
+	
+		// Enviamos un mensaje flash y redirigimos al usuario a la vista de gastos del grupo
+		$this->view->setFlash(sprintf(i18n("Expense \"%s\" successfully deleted."), $expense->getDescription()));
+		
+		// Realizamos la redirección
+		$this->view->redirect("groups", "view", "id=".$group->getId());
+	}
+	
 	
 }

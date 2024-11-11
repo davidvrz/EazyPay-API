@@ -88,7 +88,7 @@ class ExpenseMapper {
 		return $participants;
 	}
 
-	public function updateExpense(Expense $expense) {
+	public function update(Expense $expense) {
 		// Actualizar la información básica del gasto (descripción y monto total)
 		$stmt = $this->db->prepare("UPDATE expenses SET expense_description=?, total_amount=?, payer=? WHERE expense_id=?");
 		$stmt->execute(array(
@@ -108,6 +108,16 @@ class ExpenseMapper {
 			$stmt->execute(array($expense->getId(), $participant, $amount));
 		}
 	}	
+
+	public function delete(Expense $expense) {
+		$stmt = $this->db->prepare("DELETE FROM expense_participants WHERE expense=?");
+		$stmt->execute(array($expense->getId()));
+
+		$stmt = $this->db->prepare("DELETE FROM expenses WHERE expense_id=?");
+		$stmt->execute(array($expense->getId()));
+	}
+	
+	
 	
 	
 }

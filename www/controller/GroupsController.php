@@ -146,15 +146,12 @@ class GroupsController extends BaseController {
 			// The user of the Group is the currentUser (user in session)
 			$group->setAdmin($this->currentUser);
 
-			// Add the current user as a permanent member of the group
-			$group->addMember($this->currentUser);
-
 			// Añadir los participantes (miembros) al grupo
 			if (isset($_POST["members"])) {
 				foreach ($_POST["members"] as $memberName) {
 					$user = $this->userMapper->getUser($memberName);
 					// Verificar si el usuario existe en la base de datos
-					if ($user && $user != $this->currentUser) {
+					if ($user) {
 						$group->addMember($user);
 					} else {
 						// Manejar el error si no se encuentra el usuario
@@ -267,10 +264,10 @@ class GroupsController extends BaseController {
 				foreach ($_POST["members"] as $memberName) {
 					$user = $this->userMapper->getUser($memberName);
 					if ($user){
-						// Check if the member is not the admin to avoid duplication
-						if ($user != $group->getAdmin()) {
+						
+						//if ($user != $group->getAdmin()) {
 							$group->addMember($user);
-						}
+						//}
 					}
 					else {
 						// Handle the error if the user is not found
