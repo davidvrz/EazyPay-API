@@ -11,32 +11,42 @@ $view->setVariable("title", "View Group");
 
 ?>
 
-<h1><?= i18n("Group") . ": " . htmlentities($group->getName()) ?></h1>
-<em><?= sprintf(i18n("by %s"), $group->getAdmin()->getUsername()) ?></em>
-<p>
-    <?= htmlentities($group->getDescription()) ?>
-</p>
+<link rel="stylesheet" href="../../assets/styles/groups/view.css" type="text/css">
 
-<h2><?= i18n("Expenses") ?></h2>
+<div class="main">
+    <div class="top-icon">
+        <img src="../../assets/images/isotype.png" alt="Groups Icon">
+    </div>
 
-<?php if (!empty($group->getExpenses())): ?>
-    <?php foreach ($group->getExpenses() as $expense): ?>
-        <hr>
-        <p>
-            <strong><?= htmlentities($expense->getDescription()); ?></strong><br>
-            <?= sprintf(i18n("%s paid..."), $expense->getPayer()->getUsername()) ?>
-            <?= htmlentities(number_format($expense->getTotalAmount(), 2)) ?>
-        </p>
-        <p>
-            <a href="index.php?controller=expenses&amp;action=view&amp;id=<?= $expense->getId() ?>">
-                <?= i18n("View Details") ?>
-            </a>
-        </p>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p><?= i18n("No expenses recorded for this group.") ?></p>
-<?php endif; ?>
+    <h1 class="main-title"><?= i18n("Group") . ": " . htmlentities($group->getName()) ?></h1>
 
-<?php if (isset($currentuser)): ?>
-    <h3><a href="index.php?controller=expenses&amp;action=add&amp;group_id=<?= $group->getId() ?>"><?= i18n("Add Expense") ?></a></h3>
-<?php endif; ?>
+    <em><?= sprintf(i18n("by %s"), $group->getAdmin()->getUsername()) ?></em>
+    <p><?= htmlentities($group->getDescription()) ?></p>
+
+    <div class="expense-container">
+        <h2><?= i18n("Expenses") ?></h2>
+
+        <?php if (!empty($group->getExpenses())): ?>
+            <?php foreach ($group->getExpenses() as $expense): ?>
+                <div class="expense">
+                    <strong><?= htmlentities($expense->getDescription()); ?></strong>
+                    <p>
+                        <?= sprintf(i18n("%s paid..."), $expense->getPayer()->getUsername()) ?>
+                        <?= htmlentities(number_format($expense->getTotalAmount(), 2)) ?>
+                    </p>
+                    <a href="index.php?controller=expenses&amp;action=view&amp;id=<?= $expense->getId() ?>">
+                        <?= i18n("View Details") ?>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p><?= i18n("No expenses recorded for this group.") ?></p>
+        <?php endif; ?>
+
+        <?php if (isset($currentuser)): ?>
+            <div class="add-expense">
+                <a href="index.php?controller=expenses&amp;action=add&amp;group_id=<?= $group->getId() ?>"><?= i18n("Add Expense") ?></a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
