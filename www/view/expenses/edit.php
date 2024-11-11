@@ -5,14 +5,14 @@ $view = ViewManager::getInstance();
 
 $currentuser = $view->getVariable("currentusername");
 $group = $view->getVariable("group");
-$expense = $view->getVariable("expense"); // El gasto a editar
+$expense = $view->getVariable("expense");
 $errors = $view->getVariable("errors");
 
 $view->setVariable("title", "Edit Expense");
 
 ?>
 
-<link rel="stylesheet" href="../../assets/styles/expenses/edit.css" type="text/css">
+<link rel="stylesheet" href="../../assets/styles/expenses/add-edit.css" type="text/css">
 
 <div class="main">
     <div class="top-icon">

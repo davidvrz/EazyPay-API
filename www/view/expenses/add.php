@@ -11,7 +11,7 @@ $view->setVariable("title", "Add Expense");
 
 ?>
 
-<link rel="stylesheet" href="../../assets/styles/expenses/edit.css" type="text/css">
+<link rel="stylesheet" href="../../assets/styles/expenses/add-edit.css" type="text/css">
 
 <div class="main">
     <div class="top-icon">
