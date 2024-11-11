@@ -22,17 +22,19 @@ $view->setVariable("title", "Add Group");
 
     <form action="index.php?controller=groups&amp;action=add" method="POST" id="group-form">
         <?= i18n("Name") ?>: <input type="text" name="name" value="<?= $group->getName() ?>">
-        <?= isset($errors["name"]) ? i18n($errors["name"]) : "" ?><br>
+        <div class="error-message">
+            <?= isset($errors["name"]) ? i18n($errors["name"]) : "" ?><br>
+        </div>
 
         <?= i18n("Description") ?>: <br>
         <textarea name="description" rows="4" cols="50"><?= htmlentities($group->getDescription()) ?></textarea>
-        <?= isset($errors["description"]) ? i18n($errors["description"]) : "" ?><br>
+        <div class="error-message">
+            <?= isset($errors["description"]) ? i18n($errors["description"]) : "" ?><br>
+        </div>
 
-        <!-- Section for members -->
-        <label for="members"><?= i18n("Participants") ?>:</label><br>
-
-        <!-- Container for dynamic participant input fields -->
         <div id="members-container">
+            <label for="members"><?= i18n("Participants") ?>:</label>
+            
             <div class="member-input">
                 <input type="text" name="members[]" value="<?= htmlentities($username) ?>" readonly/>
             </div>
@@ -40,7 +42,9 @@ $view->setVariable("title", "Add Group");
         
         <button type="button" id="add-participant"><?= i18n('Add Participant') ?></button><br>
 
-        <?= isset($errors["members"]) ? i18n($errors["members"]) : "" ?><br>
+        <div class="error-message">
+            <?= isset($errors["members"]) ? i18n($errors["members"]) : "" ?><br>
+        </div>
 
         <input type="submit" name="submit" value="<?= i18n("Create Group") ?>">
     </form>
