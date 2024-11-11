@@ -24,6 +24,7 @@ array(
 	"Groups" => "Grupos",
 	"Group" => "Grupo",
 	"Name" => "Título",
+	"Description" => "Descripción",
 	"Contents" => "Contenido",
 	"Admin" => "Administrador",
 	"Actions" => "Acciones",
@@ -38,11 +39,19 @@ array(
 	"Edit" => "Editar",
 	"Delete" => "Eliminar",
 
+	// Create group
+	"Participants" => "Participantes",
+	"Add Participant" => "Añadir participante",
+	"Enter participant" => "Introduzca participante",
+	"Create Group" => "Crear grupo",
+	"Remove" => "Borrar",
+
 	// Expenses
 	"Expenses" => "Gastos",
 	"Expense" => "Gasto",
 	"Write a expense" => "Añade un gasto",
-	"Add a expense" => "Añadir un gasto",
+	"Add Expense" => "Añadir un gasto",
+	"View Details" => "Ver detalles",
 	
 	// Messages
 	"Hello %s" => "Hola %s",
@@ -71,8 +80,7 @@ array(
 	"English" => "Inglés",
 	"About us" => "Sobre nosotros",
 	"Phone" => "Telefono",
-	"We are a leading company in the online payments market. Our goal is to make our customers' lives easier." => 
-	"Somos una empresa líder en el mercado de pagos online. Nuestro objetivo es hacer la vida de nuestros clientes más fácil.",
+	"We are a leading company in the online payments market. Our goal is to make our customers lives easier." => "Somos una empresa lider en el mercado de pagos online. Nuestro objetivo es hacer la vida de nuestros clientes más fácil.",
 	"All rights reserved" => "Todos los derechos reservados"
 
 

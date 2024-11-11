@@ -94,6 +94,11 @@ class GroupMapper {
 	
 			// Obtener los miembros del grupo utilizando el método getMembersByGroupId
 			$members = $this->getMembersByGroupId($groupid);
+
+			// Asegúrate de que el creador esté en la lista de miembros
+			$creator = new User($group_db["admin"]);
+			array_unshift($members, $creator); // Añadir al creador al principio de la lista	
+
 			$group->setMembers($members);
 	
 			// Devolver el grupo con todos los detalles
@@ -154,11 +159,24 @@ class GroupMapper {
 	
 		// Obtener el ID del nuevo grupo insertado
 		$groupId = $this->db->lastInsertId();
+
+		// Guardar al creador como miembro automáticamente
+		$creator = $group->getAdmin(); // El creador es el administrador del grupo
+    	$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+    	$stmt->execute(array($groupId, $creator->getUserName()));
 	
 		// Guardar los miembros del grupo
 		foreach ($group->getMembers() as $member) {
-			$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+			// Verificar si el miembro ya está en la base de datos
+			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
 			$stmt->execute(array($groupId, $member->getUserName()));
+			$exists = $stmt->fetchColumn();
+	
+			// Si el miembro no existe, agregarlo
+			if ($exists == 0) {
+				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+				$stmt->execute(array($groupId, $member->getUserName()));
+			}
 		}
 	
 		// Guardar los gastos del grupo
@@ -188,13 +206,21 @@ class GroupMapper {
 		$stmt = $this->db->prepare("UPDATE communities SET community_name=?, community_description=? WHERE community_id=?");
 		$stmt->execute(array($group->getName(), $group->getDescription(), $group->getId()));
 	
-		// Eliminar los miembros actuales y añadir los nuevos
-		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=?");
-		$stmt->execute(array($group->getId()));
+		// Eliminar los miembros actuales y añadir los nuevos, pero no eliminar al creador
+		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=? AND member != ?");
+		$stmt->execute(array($group->getId(), $group->getAdmin()->getUserName())); // Excluir al creador
 	
 		foreach ($group->getMembers() as $member) {
-			$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+			// Verificar si el miembro ya está en la base de datos
+			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
 			$stmt->execute(array($group->getId(), $member->getUserName()));
+			$exists = $stmt->fetchColumn();
+	
+			// Si el miembro no existe, agregarlo
+			if ($exists == 0) {
+				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
+				$stmt->execute(array($group->getId(), $member->getUserName()));
+			}
 		}
 	
 		// Eliminar los gastos actuales y añadir los nuevos

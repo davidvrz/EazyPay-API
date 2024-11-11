@@ -164,6 +164,10 @@ class Group {
 		$this->members[] = $member;
 	}
 
+	public function clearMembers() {
+		$this->members = []; // Clears the member list
+	}
+
 
 	/**
 	* Checks if the current instance is valid
@@ -218,9 +222,9 @@ class Group {
 	public function checkIsValidForUpdate() {
 		$errors = array();
 	
-		/*if (!isset($this->id)) {
+		if (!isset($this->id)) {
 			$errors["id"] = "id is mandatory";
-		}*/
+		}
 	
 		try {
 			$this->checkIsValidForCreate();

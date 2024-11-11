@@ -8,7 +8,7 @@
     <div class="footer-content">
         <section class="footer-section about">
             <h2 class="footer-title"><?= i18n("About us") ?></h2>
-            <p><?= i18n("We are a leading company in the online payments market. Our goal is to make our customers' lives easier.") ?></p>
+            <p><?= i18n("We are a leading company in the online payments market. Our goal is to make our customers lives easier.") ?></p>
         </section>
 
         <section class="footer-section language">

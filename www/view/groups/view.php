@@ -38,8 +38,5 @@ $view->setVariable("title", "View Group");
 <?php endif; ?>
 
 <?php if (isset($currentuser)): ?>
-    <h3><?= i18n("Add an expense") ?></h3>
-    <p>
-        <a href="index.php?controller=expenses&amp;action=add&amp;group_id=<?= $group->getId() ?>"><?= i18n("Add Expense") ?></a>
-    </p>
+    <h3><a href="index.php?controller=expenses&amp;action=add&amp;group_id=<?= $group->getId() ?>"><?= i18n("Add Expense") ?></a></h3>
 <?php endif; ?>

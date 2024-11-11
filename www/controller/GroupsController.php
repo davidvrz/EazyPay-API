@@ -146,12 +146,15 @@ class GroupsController extends BaseController {
 			// The user of the Group is the currentUser (user in session)
 			$group->setAdmin($this->currentUser);
 
+			// Add the current user as a permanent member of the group
+			$group->addMember($this->currentUser);
+
 			// Añadir los participantes (miembros) al grupo
 			if (isset($_POST["members"])) {
 				foreach ($_POST["members"] as $memberName) {
 					$user = $this->userMapper->getUser($memberName);
 					// Verificar si el usuario existe en la base de datos
-					if ($user) {
+					if ($user && $user != $this->currentUser) {
 						$group->addMember($user);
 					} else {
 						// Manejar el error si no se encuentra el usuario
@@ -256,14 +259,31 @@ class GroupsController extends BaseController {
 			$group->setName($_POST["name"]);
 			$group->setDescription($_POST["description"]);
 
+			// Update the members
+			if (isset($_POST["members"])) {
+				// Clear existing members
+				$group->clearMembers();
+
+				foreach ($_POST["members"] as $memberName) {
+					$user = $this->userMapper->getUser($memberName);
+					if ($user){
+						// Check if the member is not the admin to avoid duplication
+						if ($user != $group->getAdmin()) {
+							$group->addMember($user);
+						}
+					}
+					else {
+						// Handle the error if the user is not found
+						$errors[] = "User $memberName not found";
+					}
+				}
+			}
+
 			try {
-				print_r("0");
 				// validate Group object
 				$group->checkIsValidForUpdate(); // if it fails, ValidationException
-				print_r("1");
 				// update the Group object in the database
 				$this->groupMapper->update($group);
-				print_r("2");
 
 				// POST-REDIRECT-GET
 				// Everything OK, we will redirect the user to the list of groups
@@ -351,3 +371,4 @@ class GroupsController extends BaseController {
 
 	}
 }
+
