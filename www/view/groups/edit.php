@@ -12,54 +12,69 @@ $view->setVariable("name", "Edit Group");
 
 ?>
 
-<h1><?= i18n("Modify group") ?></h1>
-<form action="index.php?controller=groups&amp;action=edit" method="POST" id="group-form">
-    <!-- Group Name -->
-    <?= i18n("Name") ?>: 
-    <input type="text" name="name" value="<?= isset($_POST["name"]) ? $_POST["name"] : $group->getName() ?>">
-    <?= isset($errors["name"]) ? i18n($errors["name"]) : "" ?><br>
+<link rel="stylesheet" href="../../assets/styles/groups/add.css" type="text/css">
 
-    <!-- Group Description -->
-    <?= i18n("Description") ?>: <br>
-    <textarea name="description" rows="4" cols="50"><?= isset($_POST["description"]) ? htmlentities($_POST["description"]) : htmlentities($group->getDescription()) ?></textarea>
-    <?= isset($errors["description"]) ? i18n($errors["description"]) : "" ?><br>
-
-    <!-- Participants Section -->
-    <label for="members"><?= i18n("Participants") ?>:</label><br>
-    <div id="members-container">
-		<?php
-        $members = $group->getMembers();
-        $adminAdded = false; // Flag to check if admin is already added
-
-        foreach ($members as $index => $member):
-            // Add the admin only once
-            if (!$adminAdded && $member->getUsername() === $currentusername):
-                ?>
-                <div class="member-input" id="creator-participant">
-                    <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" readonly />
-                </div>
-                <?php
-                $adminAdded = true; // Mark that the admin has been added
-            elseif ($member->getUsername() !== $currentusername):
-                // Display other members (excluding the admin)
-                ?>
-                <div class="member-input">
-                    <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" />
-                    <button type="button" class="remove-participant" onclick="removeParticipant(this)"><?= i18n("Remove") ?></button>
-                </div>
-                <?php
-            endif;
-        endforeach;
-        ?>
+<div class="main">
+    <div class="top-icon">
+        <img src="../../assets/images/isotype.png" alt="Groups Icon">
     </div>
+    
+    <h1 class="main-title"><?= i18n("Modify group") ?></h1>
+    
+    <form action="index.php?controller=groups&amp;action=edit" method="POST" id="group-form">
+        <!-- Group Name -->
+        <?= i18n("Name") ?>: <input type="text" name="name" value="<?= isset($_POST["name"]) ? $_POST["name"] : $group->getName() ?>">
+        <div class="error-message">
+            <?= isset($errors["name"]) ? i18n($errors["name"]) : "" ?><br>
+        </div>
 
-    <button type="button" id="add-participant"><?= i18n('Add Participant') ?></button><br>
-    <?= isset($errors["members"]) ? i18n($errors["members"]) : "" ?><br>
+        <!-- Group Description -->
+        <?= i18n("Description") ?>: <br>
+        <textarea name="description" rows="4" cols="50"><?= isset($_POST["description"]) ? htmlentities($_POST["description"]) : htmlentities($group->getDescription()) ?></textarea>
+        <div class="error-message">
+            <?= isset($errors["description"]) ? i18n($errors["description"]) : "" ?><br>
+        </div>
 
-    <input type="hidden" name="id" value="<?= $group->getId() ?>">
-    <input type="submit" name="submit" value="<?= i18n("Modify group") ?>">
-</form>
+        <!-- Participants Section -->
+        <div id="members-container">
+            <label for="members"><?= i18n("Participants") ?>:</label>
 
+            <?php
+            $members = $group->getMembers();
+            $adminAdded = false; // Flag to check if admin is already added
+
+            foreach ($members as $index => $member):
+                // Add the admin only once
+                if (!$adminAdded && $member->getUsername() === $currentusername):
+                    ?>
+                    <div class="member-input" id="creator-participant">
+                        <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" readonly />
+                    </div>
+                    <?php
+                    $adminAdded = true; // Mark that the admin has been added
+                elseif ($member->getUsername() !== $currentusername):
+                    // Display other members (excluding the admin)
+                    ?>
+                    <div class="member-input">
+                        <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" />
+                        <button type="button" class="remove-participant" onclick="removeParticipant(this)"><?= i18n("Remove") ?></button>
+                    </div>
+                    <?php
+                endif;
+            endforeach;
+            ?>
+        </div>
+
+        <button type="button" id="add-participant"><?= i18n('Add Participant') ?></button><br>
+        
+        <div class="error-message">
+            <?= isset($errors["members"]) ? i18n($errors["members"]) : "" ?><br>
+        </div>
+
+        <input type="hidden" name="id" value="<?= $group->getId() ?>">
+        <input type="submit" name="submit" value="<?= i18n("Modify group") ?>">
+    </form>
+</div>
 
 <!-- JavaScript to add and remove participants -->
 <script>
