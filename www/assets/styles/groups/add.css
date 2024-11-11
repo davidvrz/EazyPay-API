@@ -16,6 +16,12 @@
     height: 50px;
 }
 
+.main-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
 #group-form {
     max-width: 500px;
     margin: 0 auto;
@@ -23,12 +29,6 @@
     background-color: #f8f0ff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.main-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
 }
 
 #group-form label,
