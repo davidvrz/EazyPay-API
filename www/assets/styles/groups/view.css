@@ -1,13 +1,3 @@
-.main {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
 .top-icon {
     margin-bottom: 20px;
 }

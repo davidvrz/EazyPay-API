@@ -26,7 +26,6 @@ $currentuser = $view->getVariable("currentusername");
 			<?= $view->popFlash() ?>
 		</div>
 
-		<!--  -->
 		<?php if (isset($currentuser)): ?> 
 			<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
 		<?php else: ?>
