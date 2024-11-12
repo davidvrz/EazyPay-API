@@ -122,6 +122,27 @@ em {
     background-color: var(--color-accent-dark);
 }
 
+.suggested-movements {
+    text-align: center;  
+    margin-top: 20px;    
+}
+
+.suggested-movements-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: var(--color-accent);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.suggested-movements-button:hover {
+    background-color: var(--color-accent-dark);
+}
+
 #balances ul {
     list-style: none;
     padding: 0;
@@ -140,3 +161,4 @@ em {
 #balances li:last-child {
     border-bottom: none;
 }
+

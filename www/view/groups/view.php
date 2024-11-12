@@ -70,7 +70,7 @@ $view->setVariable("title", "View Group");
                 <?php endforeach; ?>
             </ul>
 
-            <div class="suggested-movements">
+            <div class="add-">
                 <a href="index.php?controller=groups&amp;action=movements&amp;id=<?= $group->getId() ?>" class="suggested-movements-button">
                     <?= i18n("View Suggested Movements") ?>
                 </a>
