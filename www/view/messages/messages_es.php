@@ -25,6 +25,7 @@ array(
 	"Group" => "Grupo",
 	"Name" => "Título",
 	"Description" => "Descripción",
+	"Description:" => "Descripción:",
 	"Contents" => "Contenido",
 	"Admin" => "Administrador",
 	"Actions" => "Acciones",
@@ -52,7 +53,18 @@ array(
 	"Write a expense" => "Añade un gasto",
 	"Add Expense" => "Añadir un gasto",
 	"View Details" => "Ver detalles",
-	
+
+	// Expenses details
+	"Expense Details" => "Detalles del gasto",
+	"Total Amount:" => "Coste total:",
+	"Payer:" => "Pagador:",
+	"Edit Expense" => "Editar gasto",
+	"Delete Expense" => "Borrar gasto",
+	"Add Expense to Group:" => "Añadir gasto al grupo:",
+	"Split Mode:" => "Forma de división:",
+	"Divide Equally" => "Equitativa",
+	"Enter Manually" => "Introducir manualmente",
+
 	// Messages
 	"Hello %s" => "Hola %s",
 
