@@ -1,5 +1,5 @@
 <?php
-// file: view/expenses/add.php
+//file: view/groups/add.php
 require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
@@ -53,8 +53,10 @@ $view->setVariable("title", "Add Expense");
             <label for="payer"><?= i18n("Payer:") ?></label>
             <select name="payer" id="payer" required>
                 <?php if ($group->getMembers()): ?>
-                    <?php foreach ($group->getMembers() as $user): ?>
-                        <option value="<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?></option>
+                    <?php foreach ($group->getMembers() as $member): ?>
+                        <?php $user = $member['member'] ?>
+                        <option value="<?= htmlentities($user->getUsername()) ?>">
+                            <?= htmlentities($user->getUsername()) ?></option>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </select>
@@ -70,19 +72,22 @@ $view->setVariable("title", "Add Expense");
             </select>
 
             <h3><?= i18n("Participants") ?></h3>
-            <!-- Mostrar los miembros del grupo -->
             <?php if ($group->getMembers()): ?>
                 <?php foreach ($group->getMembers() as $user): ?>
+                    <?php 
+                    $user = $member['member'];
+                    $username = htmlentities($user->getUsername());
+                    ?>
                     <div>
-                        <input type="checkbox" name="include[<?= htmlentities($user['member']->getUsername()) ?>]" 
-                            id="include_<?= htmlentities($user['member']->getUsername()) ?>" 
+                        <input type="checkbox" name="include[<?= $username ?>]" 
+                            id="include_<?= $username ?>" 
                             checked />
-                        <label for="participant_<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?>:</label>
-                        <input type="number" name="participants[<?= htmlentities($user['member']->getUsername()) ?>]" 
-                            id="participant_<?= htmlentities($user['member']->getUsername()) ?>" 
+                        <label for="participant_<?= $username ?>"><?= $username ?>:</label>
+                        <input type="number" name="participants[<?= $username ?>]" 
+                            id="participant_<?= $username ?>" 
                             min="0" step="0.01" readonly />
                         <div class="error-message">
-                            <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$user['member']->getUsername()]) : "" ?></span>
+                            <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$username]) : "" ?></span>
                         </div>
                     </div>
                 <?php endforeach; ?>

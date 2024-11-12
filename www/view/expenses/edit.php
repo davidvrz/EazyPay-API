@@ -1,5 +1,5 @@
 <?php
-// file: view/expenses/edit.php
+//file: view/groups/edit.php
 require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
@@ -25,15 +25,12 @@ $view->setVariable("title", "Edit Expense");
             <div class="errors">
             <ul>
                 <?php 
-                // Si $errors es un array multidimensional
                 foreach ($errors as $key => $error) {
                     if (is_array($error)) {
-                        // Si $error es un array (por ejemplo, errores de participantes)
                         foreach ($error as $subkey => $message) {
                             echo "<li>" . htmlentities($message) . "</li>";
                         }
                     } else {
-                        // Si es un mensaje de error simple
                         echo "<li>" . htmlentities($error) . "</li>";
                     }
                 }
@@ -80,7 +77,6 @@ $view->setVariable("title", "Edit Expense");
 
             <h3><?= i18n("Participants") ?></h3>
             <?php 
-            // Crear un array con los participantes actuales y sus importes para fácil acceso
             $participantsAmounts = [];
             foreach ($expense->getParticipants() as $participant) {
                 $participantsAmounts[$participant['user']->getUsername()] = $participant['amount'];
@@ -91,7 +87,6 @@ $view->setVariable("title", "Edit Expense");
                 <?php 
                 $user = $member['member'];
                 $username = htmlentities($user->getUsername());
-                // Obtener el importe actual del participante si está en el array
                 $amount = isset($participantsAmounts[$username]) ? htmlentities($participantsAmounts[$username]) : '0.00';
                 ?>
                 <div>

@@ -1,5 +1,5 @@
 <?php
-// file: model/escriptionMapper.php
+// file: model/ExpenseMapper.php
 
 require_once(__DIR__."/../config/PDOConnection.php");
 

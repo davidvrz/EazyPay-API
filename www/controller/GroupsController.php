@@ -1,5 +1,5 @@
 <?php
-//file: controller/GroupController.php
+//file: controller/GroupsController.php
 
 require_once(__DIR__."/../model/Expense.php");
 require_once(__DIR__."/../model/Group.php");
