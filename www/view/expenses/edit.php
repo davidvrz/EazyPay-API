@@ -9,11 +9,9 @@ $expense = $view->getVariable("expense");
 $errors = $view->getVariable("errors");
 
 $view->setVariable("title", "Edit Expense");
-
 ?>
 
 <link rel="stylesheet" href="../../assets/styles/expenses/add-edit.css" type="text/css">
-<script src="../../assets/js/expenses/edit-expense.js"></script>
 
 <div class="main">
     <div class="top-icon">
@@ -24,7 +22,7 @@ $view->setVariable("title", "Edit Expense");
 
     <div class="expense-container">
         <?php if (isset($errors) && !empty($errors)): ?>
-            <div class="error-modal">
+            <div class="errors">
                 <ul>
                     <?php foreach ($errors as $error): ?>
                         <li><?= htmlentities($error) ?></li>
@@ -37,60 +35,140 @@ $view->setVariable("title", "Edit Expense");
             <input type="hidden" name="group_id" value="<?= $group->getId() ?>" />
             <input type="hidden" name="id" value="<?= $expense->getId() ?>" />
 
-            <!-- Descripción del gasto -->
             <label for="description"><?= i18n("Description:") ?></label>
             <textarea name="description" id="description" required><?= htmlentities($expense->getDescription()) ?></textarea>
             <div class="error-message">
-                <?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?>
+                <span><?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?></span>
             </div>
 
-            <!-- Monto total del gasto -->
             <label for="totalAmount"><?= i18n("Total Amount:") ?></label>
             <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" value="<?= htmlentities($expense->getTotalAmount()) ?>" required oninput="updateParticipantAmounts()" />
             <div class="error-message">
-                <?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?>
+                <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span>
             </div>
 
-            <!-- Selección del pagador -->
             <label for="payer"><?= i18n("Payer:") ?></label>
             <select name="payer" id="payer" required>
-                <?php if ($group->getMembers()): ?>
-                    <?php foreach ($group->getMembers() as $member): ?>
-                        <?php $user = $member['member']?>
-                        <option value="<?= htmlentities($user->getUsername()) ?>" <?= ($user->getUsername() === $expense->getPayer()->getUsername()) ? "selected" : "" ?>>
-                            <?= htmlentities($user->getUsername()) ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <?php foreach ($group->getMembers() as $member): ?>
+                    <?php $user = $member['member'] ?>
+                    <option value="<?= htmlentities($user->getUsername()) ?>" <?= ($user->getUsername() === $expense->getPayer()->getUsername()) ? "selected" : "" ?>>
+                        <?= htmlentities($user->getUsername()) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
             <div class="error-message">
-                <?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?>
+                <span><?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?></span>
             </div>
 
+            <label for="splitMode"><?= i18n("Split Mode:") ?></label>
+            <select id="splitMode" onchange="toggleSplitMode()">
+                <option value="equal"><?= i18n("Divide Equally") ?></option>
+                <option value="manual" selected><?= i18n("Enter Manually") ?></option>
+            </select>
+
             <h3><?= i18n("Participants") ?></h3>
-            <!-- Mostrar los miembros del grupo -->
-            <?php if ($group->getMembers()): ?>
-                <?php foreach ($group->getMembers() as $member): ?>
-                    <?php $user = $member['member']?>
-                    <div>
-                        <input type="checkbox" name="include[<?= htmlentities($user->getUsername()) ?>]" 
-                            id="include_<?= htmlentities($user->getUsername()) ?>" 
-                            <?= isset($expense->getParticipants()[$user->getUsername()]) ? 'checked' : '' ?>
-                            onchange="toggleParticipant(<?= htmlentities(json_encode($user->getUsername())) ?>)" />
-                        <label for="participant_<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?>:</label>
-                        <input type="number" name="participants[<?= htmlentities($user->getUsername()) ?>]" 
-                            id="participant_<?= htmlentities($user->getUsername()) ?>" 
-                            min="0" step="0.01" 
-                            value="<?= isset($expense->getParticipants()[$user->getUsername()]) ? htmlentities($expense->getParticipants()[$user->getUsername()]) : '0.00' ?>"
-                            <?= isset($expense->getParticipants()[$user->getUsername()]) ? '' : 'readonly' ?> />
-                        <div class="error-message">
-                            <?= isset($errors['participants'][$user->getUsername()]) ? htmlentities($errors['participants'][$user->getUsername()]) : "" ?>
-                        </div>
+            <?php 
+            // Crear un array con los participantes actuales y sus importes para fácil acceso
+            $participantsAmounts = [];
+            foreach ($expense->getParticipants() as $participant) {
+                $participantsAmounts[$participant['user']->getUsername()] = $participant['amount'];
+            }
+            ?>
+
+            <?php foreach ($group->getMembers() as $member): ?>
+                <?php 
+                $user = $member['member'];
+                $username = htmlentities($user->getUsername());
+                // Obtener el importe actual del participante si está en el array
+                $amount = isset($participantsAmounts[$username]) ? htmlentities($participantsAmounts[$username]) : '0.00';
+                ?>
+                <div>
+                    <input type="checkbox" name="include[<?= $username ?>]" 
+                           id="include_<?= $username ?>" 
+                           <?= isset($participantsAmounts[$username]) ? 'checked' : '' ?>
+                           onchange="toggleParticipant('<?= $username ?>')" />
+                    <label for="participant_<?= $username ?>"><?= $username ?>:</label>
+                    <input type="number" name="participants[<?= $username ?>]" 
+                           id="participant_<?= $username ?>" 
+                           min="0" step="0.01" 
+                           value="<?= $amount ?>"
+                           <?= isset($participantsAmounts[$username]) ? '' : 'readonly' ?> />
+                    <div class="error-message">
+                        <span><?= isset($errors['participants'][$username]) ? htmlentities($errors['participants'][$username]) : "" ?></span>
                     </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
 
             <input type="submit" name="submit" value="<?= i18n("Save Changes") ?>" />
         </form>
     </div>
 </div>
+
+<script>
+    function getSelectedParticipants() {
+        return Array.from(document.querySelectorAll("input[name^='participants']")).filter(participant => 
+            document.getElementById("include_" + participant.name.split("[")[1].split("]")[0]).checked
+        );
+    }
+
+    function updateParticipantAmounts() {
+        const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
+        const splitMode = document.getElementById("splitMode").value;
+        const selectedParticipants = getSelectedParticipants();
+        
+        if (splitMode === "equal") {
+            const splitAmount = totalAmount / selectedParticipants.length;
+            selectedParticipants.forEach(participant => {
+                participant.value = splitAmount.toFixed(2);
+                participant.setAttribute("readonly", "readonly");
+            });
+        } else {
+            selectedParticipants.forEach(participant => participant.removeAttribute("readonly"));
+        }
+    }
+
+    function toggleSplitMode() {
+        const splitMode = document.getElementById("splitMode").value;
+        
+        if (splitMode === "manual") {
+            document.querySelectorAll("input[name^='participants']").forEach(participant => {
+                participant.removeAttribute("readonly");
+            });
+        } else {
+            updateParticipantAmounts();
+        }
+    }
+
+    function toggleParticipant(username) {
+        const participantInput = document.getElementById("participant_" + username);
+        const isChecked = document.getElementById("include_" + username).checked;
+        const splitMode = document.getElementById("splitMode").value;
+
+        if (!isChecked) {
+            participantInput.value = "0.00";
+            participantInput.setAttribute("readonly", "readonly");
+        } else if (splitMode === "manual") {
+            participantInput.removeAttribute("readonly");
+        }
+        updateParticipantAmounts();
+    }
+
+    function validateAmounts() {
+        const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
+        const selectedParticipants = getSelectedParticipants();
+        let sum = 0;
+
+        selectedParticipants.forEach(participant => {
+            sum += parseFloat(participant.value) || 0;
+        });
+
+        const roundedTotalAmount = Math.round(totalAmount * 100) / 100;
+        const roundedSum = Math.round(sum * 100) / 100;
+
+        if (Math.abs(roundedSum - roundedTotalAmount) > 0.01) {
+            alert("The total amount does not match the sum of participant amounts.");
+            return false;
+        }
+        return true;
+    }
+</script>
