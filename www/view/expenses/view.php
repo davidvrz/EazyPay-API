@@ -3,7 +3,6 @@
 require_once(__DIR__."/../../config/ViewManager.php");
 $view = ViewManager::getInstance();
 
-$group = $view->getVariable("group");
 $currentuser = $view->getVariable("currentusername");
 $expense = $view->getVariable("expense");
 $errors = $view->getVariable("errors");
@@ -38,13 +37,14 @@ $view->setVariable("title", "View Group");
 
             <h3><?= i18n("Participants") ?></h3>
             <ul>
-                <?php foreach ($expense->getParticipants() as $participant => $amount): ?>
+                <?php foreach ($expense->getParticipants() as $participant): ?>
                     <li>
-                        <?= htmlentities($participant) ?>: 
-                        <?= htmlentities(number_format($amount, 2)) ?>
+                        <?= htmlentities($participant['user']->getUsername()) ?>: 
+                        <?= htmlentities($participant['amount']) ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
+            
 
             <?php if ($currentuser === $expense->getPayer()->getUsername()): ?>
                 <!-- Mostrar solo si el usuario es el que creó el gasto o tiene permisos -->
@@ -57,5 +57,9 @@ $view->setVariable("title", "View Group");
         <?php else: ?>
             <p><?= i18n("Expense not found.") ?></p>
         <?php endif; ?>
+
+        <div class="back-button-container">
+            <a href="index.php?controller=groups&action=view&id=<?= htmlentities($expense->getGroup()->getId()) ?>" class="btn"><?= i18n("Back to Group") ?></a>
+        </div>
     </div>
 </div>

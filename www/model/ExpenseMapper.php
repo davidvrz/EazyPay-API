@@ -84,7 +84,11 @@ class ExpenseMapper {
 		$participants = array();
 		foreach ($participants_db as $participant) {
 			$user = new User($participant["member"]);
-			$participants[$user->getUsername()] = $participant["amount"];
+			// Cambia esta parte para que coincida con el formato esperado
+			$participants[] = [
+				'user' => $user,
+				'amount' => $participant["amount"]
+			];
 		}
 	
 		return $participants;
@@ -106,7 +110,7 @@ class ExpenseMapper {
 		// Eliminar los participantes actuales del gasto (con sus importes)
 		$stmt = $this->db->prepare("DELETE FROM expense_participants WHERE expense=?");
 		$stmt->execute(array($expense->getId()));
-	
+		var_dump($expense->getParticipants());
 		// Añadir los nuevos participantes y sus importes
 		foreach ($expense->getParticipants() as $participant) {
 			$user = $participant['user'];
@@ -139,7 +143,6 @@ class ExpenseMapper {
 
     private function revertBalanceChanges(Expense $expense) {
         $this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), -$expense->getTotalAmount());
-        
         foreach ($expense->getParticipants() as $participant) {
             $user = $participant['user'];
             $amount = $participant['amount'];

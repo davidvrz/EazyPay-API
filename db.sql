@@ -40,7 +40,7 @@ CREATE TABLE expenses (
     community INT NOT NULL,
     expense_description TEXT NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date TIMESTAMP DEFAULTS CURRENT_TIMESTAMP,
     payer VARCHAR(100) NOT NULL,
     FOREIGN KEY (community) REFERENCES communities(community_id) ON DELETE CASCADE,
     FOREIGN KEY (payer) REFERENCES users(username) ON DELETE CASCADE

@@ -222,14 +222,12 @@ class ExpensesController extends BaseController {
 			$totalAmount = trim($_POST["totalAmount"]);
 			$participants = $_POST["participants"]; // Un array de usuarios y montos
 	
-			$participants = $_POST["participants"]; // Esta variable debería contener una lista de los participantes
-
+			$errors = [];
+	
+			// Comprobamos que los participantes estén correctamente definidos
 			foreach ($participants as $username => $amount) {
 				$user = $this->userMapper->getUser($username);
-				if ($user && floatval($amount) > 0) { // Solo agregar si el monto es mayor a 0
-					// Agregar el participante con la cantidad específica
-					$expense->addParticipant($user, floatval($amount));
-				} elseif (!$user) {
+				if (!$user) {
 					// Manejar el error si no se encuentra el usuario
 					$errors[] = "User $username not found";
 				} elseif (floatval($amount) <= 0) {
@@ -237,8 +235,8 @@ class ExpensesController extends BaseController {
 					$errors['participants'][$username] = "Amount for $username must be greater than 0";
 				}
 			}
-			// AQUI HAY QUE USAR EL checkIsValidForUpdate()
-			$errors = [];
+	
+			// Asegurarnos de que los datos del gasto sean válidos
 			if (empty($description)) {
 				$errors[] = "Description cannot be empty";
 			}
@@ -246,31 +244,36 @@ class ExpensesController extends BaseController {
 				$errors[] = "Total amount must be a positive number";
 			}
 	
-			if (empty($errors)) {
-				// Filtrar los participantes para incluir solo aquellos que tienen un valor mayor a 0
-				$validParticipants = [];
-				foreach ($participants as $username => $amount) {
-					// Solo agregar participantes con importe mayor a 0
-					if ($amount > 0) {
-						$validParticipants[$username] = $amount;
-					}
+			// Validar los participantes
+			$validParticipants = [];
+			foreach ($participants as $username => $amount) {
+				if (floatval($amount) > 0) {
+					$validParticipants[] = [
+						'user' => $this->userMapper->getUser($username), 
+						'amount' => floatval($amount)
+					];
 				}
-				
-				// Actualizar el gasto con los nuevos valores
+			}
+	
+			if (empty($errors)) {
+				// Actualizar los valores del gasto
 				$expense->setDescription($description);
 				$expense->setTotalAmount($totalAmount);
-				$expense->setParticipants($validParticipants); // Solo participantes válidos
-	
+
+				// Actualizar la lista de participantes correctamente
+				$expense->setParticipants($validParticipants); 
+
 				// Guardar el gasto actualizado en la base de datos
 				$this->expenseMapper->update($expense);
-	
+
 				// Redirigir a la vista del gasto editado
 				header("Location: index.php?controller=expenses&action=view&id=" . $expense->getId());
 				exit();
-			} else {
-				// Si hay errores, asignarlos a la vista
-				$this->view->setVariable("errors", $errors);
 			}
+			
+	
+			// Si hay errores, asignarlos a la vista
+			$this->view->setVariable("errors", $errors);
 		}
 	
 		// Pasar el gasto y el grupo a la vista
@@ -279,7 +282,8 @@ class ExpensesController extends BaseController {
 	
 		// Mostrar el formulario de edición
 		$this->view->render("expenses", "edit");
-	}	
+	}
+	
 
 	public function delete() {
 		if (!isset($_GET["id"])) {
