@@ -14,10 +14,6 @@
   --color-text-light: #555;
   --color-text-medium: #666;
   --color-text-muted: #777;
-
-  --color-error: #d9534f;
-  --color-error-bg: #ffefef;
-  --color-border: #ddd;
 }
 
 * {
