@@ -160,8 +160,8 @@ class Group {
 		$this->members = $members;
 	}
 
-	public function addMember(User $member) {
-		$this->members[] = $member;
+	public function addMember(User $member, $balance) {
+		$this->members[] = ['member' => $member, 'balance' => $balance];
 	}
 
 	public function clearMembers() {
@@ -199,7 +199,7 @@ class Group {
 	
 		// Validación de objetos miembro
 		foreach ($this->members as $member) {
-			if (!$member instanceof User) {
+			if (!$member['member'] instanceof User) {
 				$errors["members"] = "all members must be instances of User";
 				break;
 			}

@@ -43,20 +43,20 @@ $view->setVariable("name", "Edit Group");
             $members = $group->getMembers();
             $adminAdded = false; // Flag to check if admin is already added
 
-            foreach ($members as $index => $member):
+            foreach ($members as $member):
                 // Add the admin only once
-                if (!$adminAdded && $member->getUsername() === $currentusername):
+                if (!$adminAdded && $member['member']->getUsername() === $currentusername):
                     ?>
                     <div class="member-input" id="creator-participant">
-                        <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" readonly />
+                        <input type="text" name="members[]" value="<?= htmlentities($member['member']->getUsername()) ?>" readonly />
                     </div>
                     <?php
                     $adminAdded = true; // Mark that the admin has been added
-                elseif ($member->getUsername() !== $currentusername):
+                elseif ($member['member']->getUsername() !== $currentusername):
                     // Display other members (excluding the admin)
                     ?>
                     <div class="member-input">
-                        <input type="text" name="members[]" value="<?= htmlentities($member->getUsername()) ?>" />
+                        <input type="text" name="members[]" value="<?= htmlentities($member['member']->getUsername()) ?>" />
                         <button type="button" class="remove-participant" onclick="removeParticipant(this)"><?= i18n("Remove") ?></button>
                     </div>
                     <?php

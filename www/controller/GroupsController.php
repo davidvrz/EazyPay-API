@@ -93,7 +93,7 @@ class GroupsController extends BaseController {
 
 		if ($group == NULL) {
 			throw new Exception("no such group with id: ".$groupid);
-		}
+		}	
 
 		// put the Group object to the view
 		$this->view->setVariable("group", $group);
@@ -145,14 +145,13 @@ class GroupsController extends BaseController {
 
 			// The user of the Group is the currentUser (user in session)
 			$group->setAdmin($this->currentUser);
-
 			// Añadir los participantes (miembros) al grupo
 			if (isset($_POST["members"])) {
 				foreach ($_POST["members"] as $memberName) {
 					$user = $this->userMapper->getUser($memberName);
 					// Verificar si el usuario existe en la base de datos
 					if ($user) {
-						$group->addMember($user);
+						$group->addMember($user, 0);
 					} else {
 						// Manejar el error si no se encuentra el usuario
 						$errors[] = "User $memberName not found";
@@ -230,84 +229,94 @@ class GroupsController extends BaseController {
 		if (!isset($_REQUEST["id"])) {
 			throw new Exception("A group id is mandatory");
 		}
-
+	
 		if (!isset($this->currentUser)) {
 			throw new Exception("Not in session. Editing groups requires login");
 		}
-
-
-		// Get the Group object from the database
+	
+		// Obtener el objeto Group de la base de datos
 		$groupid = $_REQUEST["id"];
 		$group = $this->groupMapper->getGroupDetailsById($groupid);
-
-		// Does the group exist?
+	
+		// Verificar si el grupo existe
 		if ($group == NULL) {
 			throw new Exception("no such group with id: ".$groupid);
 		}
-
-		// Check if the Group admin is the currentUser (in Session)
+	
+		// Verificar si el usuario actual es el administrador del grupo
 		if ($group->getAdmin() != $this->currentUser) {
 			throw new Exception("logged user is not the admin of the group id ".$groupid);
 		}
-
-		if (isset($_POST["submit"])) { // reaching via HTTP Group...
-
-			// populate the Group object with data form the form
+	
+		if (isset($_POST["submit"])) { // alcanzando via HTTP Group...
+	
+			// Poblar el objeto Group con los datos del formulario
 			$group->setName($_POST["name"]);
 			$group->setDescription($_POST["description"]);
-
-			// Update the members
+	
+			// Actualizar los miembros
 			if (isset($_POST["members"])) {
-				// Clear existing members
-				$group->clearMembers();
-
+				// Obtener los miembros actuales del grupo
+				$existingMembers = $group->getMembers();
+	
+				// Crear un array para los nuevos miembros
+				$newMembers = [];
+	
 				foreach ($_POST["members"] as $memberName) {
 					$user = $this->userMapper->getUser($memberName);
-					if ($user){
-						
-						//if ($user != $group->getAdmin()) {
-							$group->addMember($user);
-						//}
-					}
-					else {
-						// Handle the error if the user is not found
+					if ($user) {
+						// Si el miembro ya existe, mantener su balance
+						if (isset($existingMembers[$user->getUsername()])) {
+							// Mantenemos el balance actual del miembro
+							$newMembers[$user->getUsername()] = $existingMembers[$user->getUsername()];
+						} else {
+							// Si el miembro es nuevo, asignar un balance de 0
+							$newMembers[$user->getUsername()] = 0;
+						}
+					} else {
+						// Manejar el error si el usuario no se encuentra
 						$errors[] = "User $memberName not found";
 					}
 				}
+	
+				// Limpiar los miembros actuales del grupo y agregar los nuevos con sus balances
+				$group->clearMembers();	
+				foreach ($newMembers as $username => $balance) {
+					$user = $this->userMapper->getUser($username);
+					if ($user) {
+						$group->addMember($user, $balance);
+					}
+				}
 			}
-
+	
 			try {
-				// validate Group object
-				$group->checkIsValidForUpdate(); // if it fails, ValidationException
-				// update the Group object in the database
+				// Validar el objeto Group
+				$group->checkIsValidForUpdate(); // si falla, ValidationException
+				// Actualizar el objeto Group en la base de datos
 				$this->groupMapper->update($group);
-
+	
 				// POST-REDIRECT-GET
-				// Everything OK, we will redirect the user to the list of groups
-				// We want to see a message after redirection, so we establish
-				// a "flash" message (which is simply a Session variable) to be
-				// get in the view after redirection.
-				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully updated."),$group ->getName()));
-
-				// perform the redirection. More or less:
-				// header("Location: index.php?controller=groups&action=index")
-				// die();
+				// Todo ha salido bien, redirigimos al usuario a la lista de grupos
+				$this->view->setFlash(sprintf(i18n("Group \"%s\" successfully updated."), $group->getName()));
+	
+				// Realizar la redirección
 				$this->view->redirect("groups", "index");
-
-			}catch(ValidationException $ex) {
-				// Get the errors array inside the exepction...
+	
+			} catch (ValidationException $ex) {
+				// Obtener el array de errores dentro de la excepción...
 				$errors = $ex->getErrors();
-				// And put it to the view as "errors" variable
+				// Y pasar los errores a la vista
 				$this->view->setVariable("errors", $errors);
 			}
 		}
-
-		// Put the Group object visible to the view
+	
+		// Poner el objeto Group visible a la vista
 		$this->view->setVariable("group", $group);
-
-		// render the view (/view/groups/add.php)
+	
+		// Renderizar la vista (/view/groups/edit.php)
 		$this->view->render("groups", "edit");
 	}
+	
 
 	/**
 	* Action to delete a group

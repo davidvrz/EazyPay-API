@@ -53,9 +53,9 @@ $view->setVariable("title", "Edit Expense");
             <!-- Selección del pagador -->
             <label for="payer"><?= i18n("Payer:") ?></label>
             <select name="payer" id="payer" required>
-                <option value=""><?= i18n("Select Payer") ?></option>
                 <?php if ($group->getMembers()): ?>
-                    <?php foreach ($group->getMembers() as $user): ?>
+                    <?php foreach ($group->getMembers() as $member): ?>
+                        <?php $user = $member['member']?>
                         <option value="<?= htmlentities($user->getUsername()) ?>" <?= ($user->getUsername() === $expense->getPayer()->getUsername()) ? "selected" : "" ?>>
                             <?= htmlentities($user->getUsername()) ?>
                         </option>
@@ -69,7 +69,8 @@ $view->setVariable("title", "Edit Expense");
             <h3><?= i18n("Participants") ?></h3>
             <!-- Mostrar los miembros del grupo -->
             <?php if ($group->getMembers()): ?>
-                <?php foreach ($group->getMembers() as $user): ?>
+                <?php foreach ($group->getMembers() as $member): ?>
+                    <?php $user = $member['member']?>
                     <div>
                         <input type="checkbox" name="include[<?= htmlentities($user->getUsername()) ?>]" 
                             id="include_<?= htmlentities($user->getUsername()) ?>" 

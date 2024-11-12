@@ -41,9 +41,11 @@ class ExpenseMapper {
             $amount = $participant['amount'];
             $stmt = $this->db->prepare("INSERT INTO expense_participants(expense, member, amount) VALUES (?,?,?)");
             $stmt->execute([$expenseId, $user->getUserName(), $amount]);
+			$this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), -$amount);
         }
 
-		return $expenseId;
+        $this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), $expense->getTotalAmount());
+        return $expenseId;	
 	}
 
 	public function getExpenseDetailsById($expenseid) {
@@ -82,14 +84,21 @@ class ExpenseMapper {
 		$participants = array();
 		foreach ($participants_db as $participant) {
 			$user = new User($participant["member"]);
-			$participants[$user->getUsername()] = $participant["amount"];
+			// Cambia esta parte para que coincida con el formato esperado
+			$participants[] = [
+				'user' => $user,
+				'amount' => $participant["amount"]
+			];
 		}
 	
 		return $participants;
 	}
 
 	public function update(Expense $expense) {
-		// Actualizar la información básica del gasto (descripción y monto total)
+		$oldExpense = $this->getExpenseDetailsById($expense->getId());
+        if ($oldExpense) {
+            $this->revertBalanceChanges($oldExpense);
+        }
 		$stmt = $this->db->prepare("UPDATE expenses SET expense_description=?, total_amount=?, payer=? WHERE expense_id=?");
 		$stmt->execute(array(
 			$expense->getDescription(),
@@ -101,15 +110,25 @@ class ExpenseMapper {
 		// Eliminar los participantes actuales del gasto (con sus importes)
 		$stmt = $this->db->prepare("DELETE FROM expense_participants WHERE expense=?");
 		$stmt->execute(array($expense->getId()));
-	
+		var_dump($expense->getParticipants());
 		// Añadir los nuevos participantes y sus importes
-		foreach ($expense->getParticipants() as $participant => $amount) {
-			$stmt = $this->db->prepare("INSERT INTO expense_participants(expense, member, amount) VALUES (?, ?, ?)");
-			$stmt->execute(array($expense->getId(), $participant, $amount));
+		foreach ($expense->getParticipants() as $participant) {
+			$user = $participant['user'];
+            $amount = $participant['amount'];
+            $stmt = $this->db->prepare("INSERT INTO expense_participants(expense, member, amount) VALUES (?, ?, ?)");
+            $stmt->execute([$expense->getId(), $user->getUserName(), $amount]);
+            $this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), -$amount);
 		}
+
+		$this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), $expense->getTotalAmount());
 	}	
 
 	public function delete(Expense $expense) {
+		$oldExpense = $this->getExpenseDetailsById($expense->getId());
+        if ($oldExpense) {
+            $this->revertBalanceChanges($oldExpense);
+        }
+
 		$stmt = $this->db->prepare("DELETE FROM expense_participants WHERE expense=?");
 		$stmt->execute(array($expense->getId()));
 
@@ -117,7 +136,20 @@ class ExpenseMapper {
 		$stmt->execute(array($expense->getId()));
 	}
 	
-	
+	private function updateAccumulatedBalance($username, $communityId, $amount) {
+        $stmt = $this->db->prepare("UPDATE community_members SET accumulated_balance = accumulated_balance + ? WHERE member = ? AND community = ?");
+        $stmt->execute([$amount, $username, $communityId]);
+    }
+
+    private function revertBalanceChanges(Expense $expense) {
+        $this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), -$expense->getTotalAmount());
+        foreach ($expense->getParticipants() as $participant) {
+            $user = $participant['user'];
+            $amount = $participant['amount'];
+            $this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), $amount);
+        }
+    }
+
 	
 	
 }
