@@ -6,7 +6,7 @@
     - [x] (F5) Ver proyecto en detalle. En este panel deberá verse un listado de pagos ya realizados. Además, desde este panel se podrá:
         - [ ] (F6) Añadir un usuario al proyecto. Se deberá indicar un email del usuario que se quiere añadir.
         - [x] (F7) Crear nuevo pago indicando: (i) usuario que paga (por defecto, el usuario autenticado), (ii) nombre de pago, (iii) cantidad y (iv) otros usuarios del proyecto para los que se hace el pago (por defecto todos, incluido el pagador).
-        - [ ] (F8) Editar un pago existente, pudiendo cambiar cualquier campo.
+        - [x] (F8) Editar un pago existente, pudiendo cambiar cualquier campo.
         - [x] (F9) Eliminar un pago.
         - [ ] (F10) Listado de deudas pendientes entre usuarios. Esta parte muestra qué pagos se deberían realizar entre usuarios para saldar todas las deudas.
 
@@ -16,7 +16,8 @@
 - [ ] Refactorizar código
 - [ ] Internacionalizar todo lo necesario
 - [ ] Mostrar solos los grupos a los que pertenece el currentUser
-- [ ] Añadir apartado de dividir porcentajes o no en edit expenses
+- [ ] Añadir apartado de splitMode en edit expenses (más complejo de lo esperado, es necesario añadir un atributo nuevo en la db para guardar la instancia y poder mostrarla en el edit)
+- [ ] Cambiar como se introducen los participantes (por username como está ahora o cambiar a correo electronico como dicen los requisitos)
 
 
 # Usar extensión Markdown Checkbox (crear checkbox con - [ ], y marcarlas con - [x])
