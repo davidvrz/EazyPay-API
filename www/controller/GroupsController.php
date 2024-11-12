@@ -377,7 +377,7 @@ class GroupsController extends BaseController {
 
 	}
 
-	public function suggestedMovements() {
+	public function movements() {
 		// Verificar si hay sesión de usuario
 		if (!isset($this->currentUser)) {
 			throw new Exception("Not in session. Viewing movements requires login");
@@ -403,7 +403,7 @@ class GroupsController extends BaseController {
 		}*/
 	
 		// Calcular los movimientos sugeridos basados en los balances de los miembros
-		$suggestedMovements = $this->calculateSuggestedMovements($group->getMembers());
+		$suggestedMovements = $this->calculateMovements($group->getMembers());
 	
 		// Pasar los movimientos sugeridos y el grupo a la vista
 		$this->view->setVariable("group", $group);
@@ -413,7 +413,7 @@ class GroupsController extends BaseController {
 		$this->view->render("groups", "movements");
 	}
 	
-	private function calculateSuggestedMovements($members) {
+	private function calculateMovements($members) {
 		$movements = [];
 	
 		// Separar los miembros en dos arrays: deudores y acreedores
