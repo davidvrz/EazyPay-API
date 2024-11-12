@@ -178,6 +178,11 @@ class ExpensesController extends BaseController {
 			throw new Exception("No such expense with ID: " . $expenseId);
 		}
 
+		// Set the group to be accesible in the view
+		$groupId = $expense->getGroup()->getId();
+		$group = $this->groupMapper->getGroupDetailsById($groupId);
+		$this->view->setVariable("group", $group);	
+
 		// Set the expense to be accessible in the view
 		$this->view->setVariable("expense", $expense);
 
@@ -200,12 +205,7 @@ class ExpensesController extends BaseController {
 		if ($expense == NULL) {
 			throw new Exception("Expense not found");
 		}
-	
-		// Verificar si el usuario tiene permisos para editar este gasto (puede ser el pagador)
-		if ($expense->getPayer()->getUsername() !== $this->currentUser->getUsername()) {
-			throw new Exception("You do not have permission to edit this expense");
-		}
-	
+
 		// Recuperar el ID del grupo relacionado con el gasto
 		$groupId = $expense->getGroup()->getId();  // Asumiendo que tienes un método getGroupId en la clase Expense
 	
@@ -214,6 +214,11 @@ class ExpensesController extends BaseController {
 	
 		if ($group == NULL) {
 			throw new Exception("Group not found");
+		}
+
+		// Verificar si el usuario tiene permisos para editar este gasto (puede ser el pagador)
+		if (!($expense->getPayer()->getUsername() == $this->currentUser->getUsername() || $group->getAdmin()->getUsername() == $this->currentUser->getUsername())) {
+			throw new Exception("You do not have permission to edit this expense");
 		}
 	
 		// Si se recibe una solicitud POST con datos del formulario, proceder a actualizar

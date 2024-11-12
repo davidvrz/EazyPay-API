@@ -6,6 +6,7 @@ $view = ViewManager::getInstance();
 $currentuser = $view->getVariable("currentusername");
 $expense = $view->getVariable("expense");
 $errors = $view->getVariable("errors");
+$group = $view->getVariable("group");
 
 $view->setVariable("title", "View Group");
 ?>
@@ -45,8 +46,7 @@ $view->setVariable("title", "View Group");
                 <?php endforeach; ?>
             </ul>
             
-
-            <?php if ($currentuser === $expense->getPayer()->getUsername()): ?>
+            <?php if ($currentuser === $expense->getPayer()->getUsername() || $currentuser === $group->getAdmin()->getUsername()): ?>
                 <!-- Mostrar solo si el usuario es el que creó el gasto o tiene permisos -->
                 <a href="index.php?controller=expenses&amp;action=edit&amp;id=<?= htmlentities($expense->getId()) ?>" class="btn"><?= i18n("Edit Expense") ?></a>
 
