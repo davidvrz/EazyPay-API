@@ -37,13 +37,17 @@ $view->setVariable("title", "Add Expense");
             <!-- Descripción del gasto -->
             <label for="description"><?= i18n("Description:") ?></label>
             <textarea name="description" id="description" required></textarea>
-            <span><?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?></span>
+            <div class="error-message">
+                <span><?= isset($errors['description']) ? htmlentities($errors['description']) : "" ?></span>
+            </div>
 
             <!-- Monto total del gasto -->
             <label for="totalAmount"><?= i18n("Total Amount:") ?></label>
             <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required oninput="updateParticipantAmounts()" />
-            <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span>
-            
+            <div class="error-message">
+                <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span>
+            </divA>
+
             <!-- Selección del pagador -->
             <label for="payer"><?= i18n("Payer:") ?></label>
             <select name="payer" id="payer" required>
@@ -53,7 +57,9 @@ $view->setVariable("title", "Add Expense");
                     <?php endforeach; ?>
                 <?php endif; ?>
             </select>
-            <span><?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?></span>
+            <div class="error-message">
+                <span><?= isset($errors['payer']) ? htmlentities($errors['payer']) : "" ?></span>
+            </div>
 
             <!-- Modo de reparto -->
             <label for="splitMode"><?= i18n("Split Mode:") ?></label>
@@ -74,7 +80,9 @@ $view->setVariable("title", "Add Expense");
                         <input type="number" name="participants[<?= htmlentities($user['member']->getUsername()) ?>]" 
                             id="participant_<?= htmlentities($user['member']->getUsername()) ?>" 
                             min="0" step="0.01" readonly />
-                        <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$user['member']->getUsername()]) : "" ?></span>
+                        <div class="error-message">
+                            <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$user['member']->getUsername()]) : "" ?></span>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
