@@ -1,0 +1,79 @@
+/* file: assets/styles/groups/movements.css */
+.main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.movements-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.movements-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.movement-item {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f9f9f9;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.movement-item span {
+    font-size: 18px;
+}
+
+.payer {
+    font-weight: bold;
+    color: #ff6b6b;
+}
+
+.movement-action {
+    color: #666;
+}
+
+.receiver {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.amount {
+    font-weight: bold;
+    color: #333;
+}
+
+.no-movements {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.back-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-button a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.back-button a:hover {
+    background-color: #007bff;
+    color: #fff;
+}

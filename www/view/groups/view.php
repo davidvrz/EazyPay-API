@@ -69,6 +69,13 @@ $view->setVariable("title", "View Group");
                     </li>
                 <?php endforeach; ?>
             </ul>
+
+            <div class="suggested-movements">
+                <a href="index.php?controller=groups&amp;action=suggestedMovements&amp;id=<?= $group->getId() ?>" class="suggested-movements-button">
+                    <?= i18n("View Suggested Movements") ?>
+                </a>
+            </div>
+
         <?php else: ?>
             <p><?= i18n("No balance information available.") ?></p>
         <?php endif; ?>

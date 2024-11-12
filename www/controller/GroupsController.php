@@ -376,5 +376,83 @@ class GroupsController extends BaseController {
 		$this->view->redirect("groups", "index");
 
 	}
+
+	public function suggestedMovements() {
+		// Verificar si hay sesión de usuario
+		if (!isset($this->currentUser)) {
+			throw new Exception("Not in session. Viewing movements requires login");
+		}
+	
+		// Verificar si se ha pasado un ID de grupo
+		if (!isset($_REQUEST["id"])) {
+			throw new Exception("A group id is mandatory");
+		}
+	
+		// Obtener el ID del grupo de la solicitud
+		$groupid = $_REQUEST["id"];
+		$group = $this->groupMapper->getGroupDetailsById($groupid);
+	
+		// Verificar si el grupo existe
+		if ($group == NULL) {
+			throw new Exception("No such group with id: ".$groupid);
+		}
+	/*
+		// Verificar que el usuario es miembro del grupo o administrador
+		if (!$group->isMember($this->currentUser) && $group->getAdmin()->getUsername() !== $this->currentUser) {
+			throw new Exception("Logged user is neither a member nor the admin of the group");
+		}*/
+	
+		// Calcular los movimientos sugeridos basados en los balances de los miembros
+		$suggestedMovements = $this->calculateSuggestedMovements($group->getMembers());
+	
+		// Pasar los movimientos sugeridos y el grupo a la vista
+		$this->view->setVariable("group", $group);
+		$this->view->setVariable("suggestedMovements", $suggestedMovements);
+	
+		// Renderizar la vista de movimientos
+		$this->view->render("groups", "movements");
+	}
+	
+	private function calculateSuggestedMovements($members) {
+		$movements = [];
+	
+		// Separar los miembros en dos arrays: deudores y acreedores
+		$debtors = [];
+		$creditors = [];
+	
+		foreach ($members as $member) {
+			$balance = $member['balance'];
+			$user = $member['member'];
+	
+			if ($balance < 0) {
+				$debtors[] = ["user" => $user, "amount" => abs($balance)];
+			} elseif ($balance > 0) {
+				$creditors[] = ["user" => $user, "amount" => $balance];
+			}
+		}
+	
+		// Generar movimientos entre deudores y acreedores
+		foreach ($debtors as &$debtor) {
+			foreach ($creditors as &$creditor) {
+				if ($debtor["amount"] == 0) break;
+	
+				$amountToTransfer = min($debtor["amount"], $creditor["amount"]);
+	
+				// Crear el movimiento
+				$movements[] = [
+					"from" => $debtor["user"],
+					"to" => $creditor["user"],
+					"amount" => $amountToTransfer
+				];
+	
+				// Actualizar los balances después del movimiento
+				$debtor["amount"] -= $amountToTransfer;
+				$creditor["amount"] -= $amountToTransfer;
+			}
+		}
+	
+		return $movements;
+	}
+	
 }
 
