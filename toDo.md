@@ -12,10 +12,9 @@
 
 
 # TAREAS
-- [ ] Aplicar CSS a todas las vistas
-- [ ] Refactorizar código
-- [ ] Internacionalizar todo lo necesario
-- [ ] Mostrar solos los grupos a los que pertenece el currentUser
+- [x] Refactorizar código
+- [x] Internacionalizar todo lo necesario
+- [x] Mostrar solos los grupos a los que pertenece el currentUser
 - [ ] Añadir apartado de dividir porcentajes o no en edit expenses
 - [ ] Corregir suma de importes de cada participante (50/3 salta el error de que la suma no da)
 - [ ] Al editar un gasto que aparezcan las casillas de los participantes marcadas y con los valores previos

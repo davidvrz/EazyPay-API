@@ -33,19 +33,23 @@ class GroupMapper {
 	* @throws PDOException if a database error occurs
 	* @return mixed Array of Group instances (without expenses)
 	*/
-	public function findAll() {
-		$stmt = $this->db->query("SELECT community_id, community_name, community_description, admin FROM communities");
-		$groups_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+	public function findAll($username) {
+		$stmt = $this->db->prepare("SELECT community FROM community_members WHERE member = ?");
+		$stmt->execute(array($username));
+		$groups_db = $stmt->fetchAll(PDO::FETCH_COLUMN);
+	
 		$groups = array();
-
-		foreach ($groups_db as $group) {
-			$admin = new User($group["admin"]);
-			array_push($groups, new Group($group["community_id"], $group["community_name"], $group["community_description"], $admin));
+	
+		foreach ($groups_db as $group_id) {
+			$group = $this->findById($group_id);
+			if ($group !== null) {
+				$groups[] = $group;
+			}
 		}
-
+	
 		return $groups;
 	}
+	
 
 	/**
 	* Loads a Group from the database given its id
@@ -57,7 +61,7 @@ class GroupMapper {
 	* if the Group is not found
 	*/
 	public function findById($groupid){
-		$stmt = $this->db->prepare("SELECT * FROM communities WHERE community_id=?");
+		$stmt = $this->db->prepare("SELECT * FROM communities WHERE community_id = ?");
 		$stmt->execute(array($groupid));
 		$group = $stmt->fetch(PDO::FETCH_ASSOC);
 
