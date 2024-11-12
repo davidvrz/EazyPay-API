@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #005747;
+    background-color: var(--color-primary);
     padding: 10px 20px;
 }
 
@@ -31,7 +31,6 @@
     text-decoration: underline;
 }
 
-/* Toggle button (for mobile view) */
 .navbar-toggle {
     display: none;
     flex-direction: column;
@@ -58,7 +57,7 @@
         position: absolute;
         top: 50px;
         left: 0;
-        background-color: #9EC7C4;
+        background-color: var(--color-accent);
     }
 
     .navbar-toggle {

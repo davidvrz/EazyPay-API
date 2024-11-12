@@ -2,25 +2,25 @@
     width: 100%;
     max-width: 500px;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .expense-container p {
     font-size: 16px;
-    color: #555;
+    color: var(--color-text-light);
     line-height: 1.5;
     margin-bottom: 10px;
 }
 
 .expense-container strong {
-    color: #333;
+    color: var(--color-text);
 }
 
 .expense-container h3 {
     font-size: 20px;
-    color: #7a51a1;
+    color: var(--color-secondary);
     margin-top: 20px;
     margin-bottom: 10px;
     border-bottom: 2px solid #ddd;
@@ -36,7 +36,7 @@
 .expense-container ul li {
     padding: 8px;
     font-size: 16px;
-    color: #555;
+    color: var(--color-text-light);
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #eee;
@@ -48,7 +48,7 @@
     font-size: 16px;
     font-weight: bold;
     color: #fff;
-    background-color: #7a51a1;
+    background-color: var(--color-secondary);
     border-radius: 5px;
     text-align: center;
     text-decoration: none;
@@ -58,7 +58,7 @@
 }
 
 .btn:hover {
-    background-color: #5e3b82;
+    background-color: var(--color-secondary-dark);
 }
 
 .btn.delete {

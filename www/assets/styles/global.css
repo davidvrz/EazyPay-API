@@ -1,3 +1,21 @@
+:root {
+  --color-primary: #005747;
+  --color-primary-light: #e0f2f1;
+  --color-primary-dark: #003b32;
+
+  --color-secondary: #7A51A1;
+  --color-secondary-light: #f8f0ff;
+  --color-secondary-dark: #5e3b82;
+
+  --color-accent: #9EC7C4;
+  --color-accent-dark: #86b4b2;
+ 
+  --color-text: #333;
+  --color-text-light: #555;
+  --color-text-medium: #666;
+  --color-text-muted: #777;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -32,7 +50,7 @@ body {
 .main-title {
   font-size: 28px;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text);
   text-align: center;
   margin-bottom: 20px;
 }

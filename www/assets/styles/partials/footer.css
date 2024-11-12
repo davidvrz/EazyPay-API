@@ -1,5 +1,5 @@
 .footer {
-    background-color: #005747;
+    background-color: var(--color-primary);
     color: #fff;
     padding: 20px 0;
     font-family: 'Montserrat', sans-serif;
@@ -58,7 +58,7 @@
 .footer-bottom {
     text-align: center;
     padding-top: 10px;
-    border-top: 1px solid #9EC7C4;
+    border-top: 1px solid var(--color-accent);
     font-size: 14px;
     font-weight: 400;
 }
