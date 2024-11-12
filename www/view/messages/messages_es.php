@@ -92,6 +92,7 @@ array(
 	"View Suggested Movements" => "Ver movimientos sugeridos",
 	"Suggested Movements for Group" => "Movimientos sugeridos para el grupo",
 	"should pay" => "debería pagarle a",
+	"All balances are settled, no movements needed." => "No hay movimientos necesarios",
 
 
 	// Navbar
