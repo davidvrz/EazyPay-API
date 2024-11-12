@@ -29,7 +29,7 @@ $currentuser = $view->getVariable("currentusername");
 		<?php if (isset($currentuser)): ?> 
 			<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
 		<?php else: ?>
-			<li><a href="index.php?controller=users&amp;action=login"><?= i18n("Login") ?></a></li>
+			<?php include __DIR__ . '/../users/login.php'; ?>
 		<?php endif ?>
 		
 	</main>
