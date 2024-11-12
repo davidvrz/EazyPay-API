@@ -213,13 +213,13 @@ class GroupMapper {
 		foreach ($group->getMembers() as $member) {
 			// Verificar si el miembro ya está en la base de datos
 			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
-			$stmt->execute(array($group->getId(), $member->getUsername()));
+			$stmt->execute(array($group->getId(), $member['member']->getUsername()));
 			$exists = $stmt->fetchColumn();
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($group->getId(), $member->getUsername()));
+				$stmt->execute(array($group->getId(), $member['member']->getUsername()));
 			}
 		}
 	
@@ -228,12 +228,12 @@ class GroupMapper {
 		$stmt->execute(array($group->getId()));
 	
 		foreach ($group->getExpenses() as $expense) {
-			$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, date, payer) VALUES (?, ?, ?, ?, ?)");
+			$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, payer) VALUES (?, ?, ?, ?, ?)");
 			$stmt->execute(array(
 				$group->getId(),
 				$expense->getDescription(),
 				$expense->getTotalAmount(),
-				$expense->getDate(),
+				//$expense->getDate(),
 				$expense->getPayer()->getUsername()
 			));
 		}
