@@ -67,18 +67,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
         const selectedParticipants = getSelectedParticipants();
         let sum = 0;
-
+    
         selectedParticipants.forEach(participant => {
             sum += parseFloat(participant.value) || 0;
         });
-
+    
+        // Redondear los valores a dos decimales antes de compararlos
         const roundedTotalAmount = Math.round(totalAmount * 100) / 100;
         const roundedSum = Math.round(sum * 100) / 100;
-
-        if (Math.abs(roundedSum - roundedTotalAmount) > 0.01) {
+        console.log("ROUNDED TOTAL: "+roundedTotalAmount);
+        console.log("ROUNDED SUM: "+roundedSum);
+    
+        // Comprobamos si la diferencia es mayor que 0.01
+        if (Math.abs(roundedSum - roundedTotalAmount).toFixed(2) > 0.01) {
             alert("The total amount does not match the sum of participant amounts.");
-            return false;
+            return false; // Detener el envío si la validación falla
         }
-        return true;
+        return true; // Permitir el envío si la validación es correcta
     };
 });

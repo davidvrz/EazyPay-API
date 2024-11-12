@@ -108,8 +108,10 @@ class ExpensesController extends BaseController {
 			foreach ($participants as $username => $amount) {
 				$user = $this->userMapper->getUser($username);
 				if ($user && floatval($amount) > 0) { // Solo agregar si el monto es mayor a 0
-					// Agregar el participante con la cantidad específica
-					$expense->addParticipant($user, floatval($amount));
+					// Redondear el monto a dos decimales antes de agregarlo
+					$roundedAmount = round(floatval($amount), 2);
+					// Agregar el participante con la cantidad redondeada
+					$expense->addParticipant($user, $roundedAmount);
 				} elseif (!$user) {
 					// Manejar el error si no se encuentra el usuario
 					$errors[] = "User $username not found";
@@ -118,7 +120,7 @@ class ExpensesController extends BaseController {
 					$errors['participants'][$username] = "Amount for $username must be greater than 0";
 				}
 			}
-
+			
 			try {
 
 				// validate Expense object
@@ -255,7 +257,7 @@ class ExpensesController extends BaseController {
 				if (floatval($amount) > 0) {
 					$validParticipants[] = [
 						'user' => $this->userMapper->getUser($username), 
-						'amount' => floatval($amount)
+						'amount' => round(floatval($amount), 2)
 					];
 				}
 			}
