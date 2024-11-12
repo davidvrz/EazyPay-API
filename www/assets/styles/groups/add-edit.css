@@ -91,10 +91,3 @@
 #group-form input[type="submit"]:hover {
     background-color: var(--color-primary-dark);
 }
-
-.error-message {
-    color: #ff4d4d;
-    font-size: 14px;
-    margin-top: -8px;
-    margin-bottom: 10px;
-}

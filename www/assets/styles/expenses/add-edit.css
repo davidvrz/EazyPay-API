@@ -106,11 +106,3 @@
     font-size: 14px;
     margin: 5px 0;
 }
-
-.error-message span {
-    font-size: 14px;
-    color: #d9534f;
-    display: block;
-    margin-top: -10px;
-    margin-bottom: 10px;
-}
