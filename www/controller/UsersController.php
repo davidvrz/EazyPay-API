@@ -64,10 +64,14 @@ class UsersController extends BaseController {
 	*/
 	public function login() {
 		if (isset($_POST["username"])){ // reaching via HTTP Group...
+
+			$user = $_REQUEST["username"];
 			//process login form
 			if ($this->userMapper->isValidUser($_POST["username"], $_POST["passwd"])) {
 
 				$_SESSION["currentuser"]=$_POST["username"];
+
+				$this->view->setFlash(sprintf(i18n("Username \"%s\" successfully login."),$user));
 
 				// send user to the restricted area (HTTP 302 code)
 				$this->view->redirect("groups", "index");
@@ -134,7 +138,7 @@ class UsersController extends BaseController {
 					// We want to see a message after redirection, so we establish
 					// a "flash" message (which is simply a Session variable) to be
 					// get in the view after redirection.
-					$this->view->setFlash("Username ".$user->getUsername()." successfully added. Please login now");
+					$this->view->setFlash(sprintf(i18n("Username \"%s\" successfully added. Please login now"),$user->getUsername()));
 
 					// perform the redirection. More or less:
 					// header("Location: index.php?controller=users&action=login")

@@ -19,6 +19,8 @@ array(
 	"Password" => "Contraseña",
 	"Show password" => "Mostrar contraseña",
 
+	"Username \"%s\" successfully added. Please login now" => "Usuario \"%s\" añadido correctamente. Por favor, inicia sesión ahora",
+	"Username \"%s\" successfully login." => "Usuario \"%s\" ingresado correctamente.",
 
 	// Groups
 	"Groups" => "Grupos",
@@ -90,7 +92,7 @@ array(
 
 	// Movements
 	"View Suggested Movements" => "Ver movimientos sugeridos",
-	"Suggested Movements for Group" => "Movimientos sugeridos para el grupo",
+	"Suggested Movements for" => "Movimientos sugeridos para",
 	"should pay" => "debería pagarle a",
 	"All balances are settled, no movements needed." => "No hay movimientos necesarios",
 

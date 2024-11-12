@@ -16,8 +16,8 @@ $view->setVariable("title", "Suggested Movements");
         <img src="../../assets/images/isotype.png" alt="Groups Icon">
     </div>
 
-    <h1 class="main-title"><?= i18n("Suggested Movements for Group") . ": " . htmlentities($group->getName()) ?></h1>
-    <em><?= sprintf(i18n("Created by %s"), htmlentities($group->getAdmin()->getUsername())) ?></em>
+    <h1 class="main-title"><?= i18n("Suggested Movements for") . ": " . htmlentities($group->getName()) ?></h1>
+    <em><?= sprintf(i18n("created by %s"), htmlentities($group->getAdmin()->getUsername())) ?></em>
 
     <div class="movements-container">
         <?php if (!empty($suggestedMovements)): ?>
