@@ -73,7 +73,7 @@ $view->setVariable("title", "Add Expense");
 
             <h3><?= i18n("Participants") ?></h3>
             <?php if ($group->getMembers()): ?>
-                <?php foreach ($group->getMembers() as $user): ?>
+                <?php foreach ($group->getMembers() as $member): ?>
                     <?php 
                     $user = $member['member'];
                     $username = htmlentities($user->getUsername());
@@ -87,7 +87,7 @@ $view->setVariable("title", "Add Expense");
                             id="participant_<?= $username ?>" 
                             min="0" step="0.01" readonly />
                         <div class="error-message">
-                            <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$username]) : "" ?></span>
+                            <span><?= isset($errors['participants'][$username]) ? htmlentities($errors['participants'][$username]) : "" ?></span>
                         </div>
                     </div>
                 <?php endforeach; ?>

@@ -5,7 +5,6 @@ $view = ViewManager::getInstance();
 
 $currentuser = $view->getVariable("currentusername");
 $expense = $view->getVariable("expense");
-$errors = $view->getVariable("errors");
 $group = $view->getVariable("group");
 
 $view->setVariable("title", "View Group");
@@ -21,16 +20,7 @@ $view->setVariable("title", "View Group");
     <h1 class="main-title"><?= i18n("Expense Details") ?></h1>
 
     <div class="expense-container">
-        <?php if (isset($errors) && !empty($errors)): ?>
-            <div class="error-modal">
-                <ul>
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= htmlentities($error) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
+        
         <?php if (isset($expense)): ?>
             <p><strong><?= i18n("Description:") ?></strong> <?= htmlentities($expense->getDescription()) ?></p>
             <p><strong><?= i18n("Total Amount:") ?></strong> <?= htmlentities(number_format($expense->getTotalAmount(), 2)) ?></p>
