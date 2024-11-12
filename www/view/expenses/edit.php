@@ -54,7 +54,7 @@ $view->setVariable("title", "Edit Expense");
             </div>
 
             <label for="totalAmount"><?= i18n("Total Amount:") ?></label>
-            <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" value="<?= htmlentities($expense->getTotalAmount()) ?>" required oninput="updateParticipantAmounts()" />
+            <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" value="<?= htmlentities($expense->getTotalAmount()) ?>" required />
             <div class="error-message">
                 <span><?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?></span>
             </div>
@@ -73,7 +73,7 @@ $view->setVariable("title", "Edit Expense");
             </div>
 
             <label for="splitMode"><?= i18n("Split Mode:") ?></label>
-            <select id="splitMode" onchange="toggleSplitMode()">
+            <select id="splitMode">
                 <option value="equal"><?= i18n("Divide Equally") ?></option>
                 <option value="manual" selected><?= i18n("Enter Manually") ?></option>
             </select>
@@ -98,7 +98,7 @@ $view->setVariable("title", "Edit Expense");
                     <input type="checkbox" name="include[<?= $username ?>]" 
                            id="include_<?= $username ?>" 
                            <?= isset($participantsAmounts[$username]) ? 'checked' : '' ?>
-                           onchange="toggleParticipant('<?= $username ?>')" />
+                    />
                     <label for="participant_<?= $username ?>"><?= $username ?>:</label>
                     <input type="number" name="participants[<?= $username ?>]" 
                            id="participant_<?= $username ?>" 
