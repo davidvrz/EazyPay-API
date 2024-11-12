@@ -16,7 +16,6 @@
 - [ ] Refactorizar código
 - [ ] Internacionalizar todo lo necesario
 - [ ] Mostrar solos los grupos a los que pertenece el currentUser
-<<<<<<< HEAD
 - [ ] Añadir apartado de dividir porcentajes o no en edit expenses
 - [ ] Corregir suma de importes de cada participante (50/3 salta el error de que la suma no da)
 - [ ] Al editar un gasto que aparezcan las casillas de los participantes marcadas y con los valores previos
@@ -31,7 +30,6 @@
 - [ ] REVISAR CODIGO Y PASARLO A LIMPIO, usar mismo procesamiento, logica y estructura de datos en funciones y clases similares, usar la variable errors, manejar bien excepciones y OPTIMIZAR codigo, mucho se puede simplificar.
 - [ ] Añadir apartado de splitMode en edit expenses (más complejo de lo esperado, es necesario añadir un atributo nuevo en la db para guardar la instancia y poder mostrarla en el edit)
 - [ ] Cambiar como se introducen los participantes (por username como está ahora o cambiar a correo electronico como dicen los requisitos)
->>>>>>> 359835b6ab92aa030b9b4ce4b1d8782dbe15bd3b
 
 
 # Usar extensión Markdown Checkbox (crear checkbox con - [ ], y marcarlas con - [x])
