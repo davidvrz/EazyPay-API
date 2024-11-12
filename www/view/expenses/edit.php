@@ -13,6 +13,7 @@ $view->setVariable("title", "Edit Expense");
 ?>
 
 <link rel="stylesheet" href="../../assets/styles/expenses/add-edit.css" type="text/css">
+<script src="../../assets/js/expenses/edit-expense.js"></script>
 
 <div class="main">
     <div class="top-icon">
@@ -93,50 +94,3 @@ $view->setVariable("title", "Edit Expense");
         </form>
     </div>
 </div>
-
-<script>
-    function getSelectedParticipants() {
-        return Array.from(document.querySelectorAll("input[name^='participants']")).filter(participant => 
-            document.getElementById("include_" + participant.name.split("[")[1].split("]")[0]).checked
-        );
-    }
-
-    function updateParticipantAmounts() {
-        const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
-        const selectedParticipants = getSelectedParticipants();
-        
-        // Dividir el monto total equitativamente entre los participantes seleccionados
-        selectedParticipants.forEach(participant => {
-            participant.value = (totalAmount / selectedParticipants.length).toFixed(2);
-            participant.setAttribute("readonly", "readonly");
-        });
-    }
-
-    function toggleParticipant(username) {
-        const participantInput = document.getElementById("participant_" + username);
-        const isChecked = document.getElementById("include_" + username).checked;
-
-        if (!isChecked) {
-            participantInput.value = "0.00";
-            participantInput.setAttribute("readonly", "readonly");
-        } else {
-            participantInput.removeAttribute("readonly");
-        }
-    }
-
-    function validateAmounts() {
-        const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
-        const selectedParticipants = getSelectedParticipants();
-        let sum = 0;
-
-        selectedParticipants.forEach(participant => {
-            sum += parseFloat(participant.value) || 0;
-        });
-
-        if (Math.abs(sum - totalAmount) > 0.01) {  // Permite una pequeña tolerancia de decimales
-            alert("The total amount does not match the sum of participant amounts.");
-            return false;
-        }
-        return true;
-    }
-</script>

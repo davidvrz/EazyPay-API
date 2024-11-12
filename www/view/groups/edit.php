@@ -13,6 +13,7 @@ $view->setVariable("name", "Edit Group");
 ?>
 
 <link rel="stylesheet" href="../../assets/styles/groups/add-edit.css" type="text/css">
+<script src="../../assets/js/groups/edit-group.js"></script>
 
 <div class="main">
     <div class="top-icon">
@@ -75,36 +76,3 @@ $view->setVariable("name", "Edit Group");
         <input type="submit" name="submit" value="<?= i18n("Modify group") ?>">
     </form>
 </div>
-
-<!-- JavaScript to add and remove participants -->
-<script>
-    document.getElementById('add-participant').addEventListener('click', function() {
-        // Create a new container for the participant input and remove button
-        var memberDiv = document.createElement('div');
-        memberDiv.className = 'member-input';
-        
-        var newInput = document.createElement('input');
-        newInput.type = 'text';
-        newInput.name = 'members[]';
-        newInput.placeholder = '<?= i18n('Enter participant') ?>';
-
-        var removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.className = 'remove-participant';
-        removeButton.textContent = "<?= i18n("Remove") ?>";
-        removeButton.onclick = function() { removeParticipant(removeButton); };
-
-        memberDiv.appendChild(newInput);
-        memberDiv.appendChild(removeButton);
-
-        document.getElementById('members-container').appendChild(memberDiv);
-    });
-
-    function removeParticipant(button) {
-        // Remove the input container and the remove button
-        button.parentNode.remove();
-    }
-</script>
-
-
-

@@ -11,6 +11,7 @@ $view->setVariable("title", "View Group");
 ?>
 
 <link rel="stylesheet" href="../../assets/styles/groups/view.css" type="text/css">
+<script src="../../assets/js/groups/tabs.js"></script>
 
 <div class="main">
     <div class="top-icon">
@@ -23,9 +24,10 @@ $view->setVariable("title", "View Group");
 
     <!-- Pestañas para Expenses y Balances -->
     <div class="tab-container">
-        <button class="tab-button active" onclick="showTab('expenses')"><?= i18n("Expenses") ?></button>
-        <button class="tab-button" onclick="showTab('balances')"><?= i18n("Balances") ?></button>
+        <button class="tab-button active" data-tab="expenses"><?= i18n("Expenses") ?></button>
+        <button class="tab-button" data-tab="balances"><?= i18n("Balances") ?></button>
     </div>
+
 
     <!-- Contenido de la pestaña de Expenses -->
     <div id="expenses" class="tab-content active">
@@ -72,25 +74,4 @@ $view->setVariable("title", "View Group");
             <p><?= i18n("No balance information available.") ?></p>
         <?php endif; ?>
     </div>
-
-
-<!-- JavaScript para controlar las pestañas -->
-<script>
-    function showTab(tabName) {
-        // Ocultar todas las secciones de pestañas
-        var contents = document.querySelectorAll('.tab-content');
-        contents.forEach(function(content) {
-            content.classList.remove('active');
-        });
-
-        // Remover la clase activa de todos los botones
-        var buttons = document.querySelectorAll('.tab-button');
-        buttons.forEach(function(button) {
-            button.classList.remove('active');
-        });
-
-        // Mostrar la pestaña seleccionada y activar su botón
-        document.getElementById(tabName).classList.add('active');
-        document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
-    }
-</script>
+</div>
