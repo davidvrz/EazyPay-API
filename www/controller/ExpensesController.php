@@ -217,8 +217,8 @@ class ExpensesController extends BaseController {
 		}
 	
 		// Verificar si el usuario actual es el pagador o un participante
-		if ($expense->getPayer() != $this->currentUser && !in_array($this->currentUser, $expense->getParticipants())) {
-			throw new Exception("Logged user is neither the payer nor a participant of the expense");
+		if (!($expense->getPayer() == $this->currentUser || $group->getAdmin() == $this->currentUser)) {
+			throw new Exception("Logged user is neither the payer nor the admin");
 		}
 	
 		if (isset($_POST["submit"])) { // Alcanza via HTTP POST
