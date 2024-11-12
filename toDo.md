@@ -17,6 +17,25 @@
 - [ ] Internacionalizar todo lo necesario
 - [ ] Mostrar solos los grupos a los que pertenece el currentUser
 - [ ] Añadir apartado de dividir porcentajes o no en edit expenses
+- [ ] Corregir suma de importes de cada participante (50/3 salta el error de que la suma no da)
+- [ ] Al editar un gasto que aparezcan las casillas de los participantes marcadas y con los valores previos
+- [ ] Boton de back en group
+- [ ] Mejorar vista de Group para los balances
+- [ ] FUNCIONALIDAD MOVIENTOS SUGERIDOS Y REEMBOLSOS
+- [ ] Al editar un gasto que aparezcan las casillas de los participantes marcadas y con los valores previos
+- [ ] Al editar un grupo y añadir un participante vacio salta error
+- [ ] notificar errores de añadir usuarios repetidos o invalidos en el grupo
+- [ ] Notificar todos los errores!!! Por ejemplo al crear un gasto completamente vacio no se crea pero no sale ningun mensaje, y mas casos
+- [ ] Si se añade un pago con solo 1 participante que salte error, no tiene sentido, nadie le debe nada
+- [ ] REVISAR CODIGO Y PASARLO A LIMPIO, usar mismo procesamiento, logica y estructura de datos en funciones y clases similares, usar la variable errors, manejar bien excepciones y OPTIMIZAR codigo, mucho se puede simplificar.
+
+
+
+
+
+
+
+
 
 
 # Usar extensión Markdown Checkbox (crear checkbox con - [ ], y marcarlas con - [x])
