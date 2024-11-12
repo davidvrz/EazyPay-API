@@ -226,6 +226,8 @@ class ExpensesController extends BaseController {
 			// Poblar el objeto Expense con los datos del formulario
 			$expense->setDescription($_POST["description"]);
 			$expense->setTotalAmount($_POST["totalAmount"]);
+			$payer = $this->userMapper->getUser($_POST["payer"]);
+			$expense->setPayer($payer);
 	
 			// Obtener los participantes del formulario
 			$participants = $_POST["participants"];  // Listado de participantes con sus montos
