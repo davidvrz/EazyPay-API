@@ -194,100 +194,83 @@ class ExpensesController extends BaseController {
 
 
 	public function edit() {
-		// Verificar que se haya enviado el id del gasto
-		if (!isset($_GET["id"])) {
-			throw new Exception("Expense ID is mandatory");
+		if (!isset($_REQUEST["id"])) {
+			throw new Exception("An expense id is mandatory");
 		}
 	
-		$expenseId = $_GET["id"];
-		
-		// Recuperar el gasto de la base de datos
+		if (!isset($this->currentUser)) {
+			throw new Exception("Not in session. Editing expenses requires login");
+		}
+	
+		$expenseId = $_REQUEST["id"];
 		$expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
 	
 		if ($expense == NULL) {
-			throw new Exception("Expense not found");
+			throw new Exception("No such expense with id: ".$expenseId);
 		}
 
-		// Recuperar el ID del grupo relacionado con el gasto
-		$groupId = $expense->getGroup()->getId();  // Asumiendo que tienes un método getGroupId en la clase Expense
-	
-		// Recuperar el grupo de la base de datos si es necesario (por ejemplo, si lo necesitas completo)
+		$groupId = $expense->getGroup()->getId();  
 		$group = $this->groupMapper->getGroupDetailsById($groupId);
 	
 		if ($group == NULL) {
 			throw new Exception("Group not found");
 		}
-
-		// Verificar si el usuario tiene permisos para editar este gasto (puede ser el pagador)
-		if (!($expense->getPayer()->getUsername() == $this->currentUser->getUsername() || $group->getAdmin()->getUsername() == $this->currentUser->getUsername())) {
-			throw new Exception("You do not have permission to edit this expense");
+	
+		// Verificar si el usuario actual es el pagador o un participante
+		if ($expense->getPayer() != $this->currentUser && !in_array($this->currentUser, $expense->getParticipants())) {
+			throw new Exception("Logged user is neither the payer nor a participant of the expense");
 		}
 	
-		// Si se recibe una solicitud POST con datos del formulario, proceder a actualizar
-		if ($_SERVER["REQUEST_METHOD"] === "POST") {
-			$description = trim($_POST["description"]);
-			$totalAmount = trim($_POST["totalAmount"]);
-			$participants = $_POST["participants"]; // Un array de usuarios y montos
+		if (isset($_POST["submit"])) { // Alcanza via HTTP POST
 	
-			$errors = [];
+			// Poblar el objeto Expense con los datos del formulario
+			$expense->setDescription($_POST["description"]);
+			$expense->setTotalAmount($_POST["totalAmount"]);
 	
-			// Comprobamos que los participantes estén correctamente definidos
+			// Obtener los participantes del formulario
+			$participants = $_POST["participants"];  // Listado de participantes con sus montos
+		
+			// Crear un array para los nuevos participantes
+			$newParticipants = [];
+	
 			foreach ($participants as $username => $amount) {
 				$user = $this->userMapper->getUser($username);
-				if (!$user) {
-					// Manejar el error si no se encuentra el usuario
+				if ($user && floatval($amount) > 0) {  // Solo agregar si el monto es válido
+					$newParticipants[$username] = round(floatval($amount), 2); // Agregar al nuevo array
+				} elseif (!$user) {
 					$errors[] = "User $username not found";
 				} elseif (floatval($amount) <= 0) {
-					// Error si el monto es menor o igual a 0
 					$errors['participants'][$username] = "Amount for $username must be greater than 0";
 				}
 			}
 	
-			// Asegurarnos de que los datos del gasto sean válidos
-			if (empty($description)) {
-				$errors[] = "Description cannot be empty";
-			}
-			if (empty($totalAmount) || !is_numeric($totalAmount) || $totalAmount <= 0) {
-				$errors[] = "Total amount must be a positive number";
-			}
-	
-			// Validar los participantes
-			$validParticipants = [];
-			foreach ($participants as $username => $amount) {
-				if (floatval($amount) > 0) {
-					$validParticipants[] = [
-						'user' => $this->userMapper->getUser($username), 
-						'amount' => round(floatval($amount), 2)
-					];
+			$expense->clearParticipants(); 
+			foreach ($newParticipants as $username => $amount) {
+				$user = $this->userMapper->getUser($username);
+				if ($user) {
+					$expense->addParticipant($user, $amount);
 				}
 			}
 	
-			if (empty($errors)) {
-				// Actualizar los valores del gasto
-				$expense->setDescription($description);
-				$expense->setTotalAmount($totalAmount);
-
-				// Actualizar la lista de participantes correctamente
-				$expense->setParticipants($validParticipants); 
-
-				// Guardar el gasto actualizado en la base de datos
+			try {
+				// Validar el objeto Expense
+				$expense->checkIsValidForUpdate();  // Validación antes de guardar
+				// Actualizar el objeto Expense en la base de datos
 				$this->expenseMapper->update($expense);
-
-				// Redirigir a la vista del gasto editado
-				header("Location: index.php?controller=expenses&action=view&id=" . $expense->getId());
-				exit();
-			}
-			
 	
-			// Si hay errores, asignarlos a la vista
-			$this->view->setVariable("errors", $errors);
+				// POST-REDIRECT-GET
+				$this->view->setFlash(sprintf(i18n("Expense \"%s\" successfully updated."), $expense->getDescription()));
+				$this->view->redirect("expenses", "view", "id=".$expense->getId());
+	
+			} catch (ValidationException $ex) {
+				$errors = $ex->getErrors();
+				$this->view->setVariable("errors", $errors);
+			}
 		}
 	
-		// Pasar el gasto y el grupo a la vista
+		// Poner el objeto Expense visible a la vista
+		$this->view->setVariable("group", $group);
 		$this->view->setVariable("expense", $expense);
-		$this->view->setVariable("group", $group);  // Pasa el grupo a la vista
-	
-		// Mostrar el formulario de edición
 		$this->view->render("expenses", "edit");
 	}
 	

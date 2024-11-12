@@ -179,6 +179,10 @@ class Expense {
             'amount' => $amount
         ];
     }
+    
+    public function clearParticipants() {
+		$this->participants = []; // Clears the member list
+	}
 
     /**
      * Checks if the current instance is valid for being created in the database.

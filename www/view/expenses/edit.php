@@ -23,11 +23,23 @@ $view->setVariable("title", "Edit Expense");
     <div class="expense-container">
         <?php if (isset($errors) && !empty($errors)): ?>
             <div class="errors">
-                <ul>
-                    <?php foreach ($errors as $error): ?>
-                        <li><?= htmlentities($error) ?></li>
-                    <?php endforeach; ?>
-                </ul>
+            <ul>
+                <?php 
+                // Si $errors es un array multidimensional
+                foreach ($errors as $key => $error) {
+                    if (is_array($error)) {
+                        // Si $error es un array (por ejemplo, errores de participantes)
+                        foreach ($error as $subkey => $message) {
+                            echo "<li>" . htmlentities($message) . "</li>";
+                        }
+                    } else {
+                        // Si es un mensaje de error simple
+                        echo "<li>" . htmlentities($error) . "</li>";
+                    }
+                }
+                ?>
+            </ul>
+
             </div>
         <?php endif; ?>
 
