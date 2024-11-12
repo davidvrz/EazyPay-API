@@ -46,7 +46,7 @@ $view->setVariable("title", "Add Expense");
             <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required oninput="updateParticipantAmounts()" />
             <div class="error-message">
                 <?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?>
-            </divA>
+            </div>
 
             <!-- Selección del pagador -->
             <label for="payer"><?= i18n("Payer:") ?></label>
