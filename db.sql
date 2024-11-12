@@ -57,19 +57,6 @@ CREATE TABLE expense_participants (
     FOREIGN KEY (member) REFERENCES users(username) ON DELETE CASCADE
 );
 
--- Debts Table (debt relationships between users)
-CREATE TABLE debts (
-    debt_id INT AUTO_INCREMENT PRIMARY KEY,
-    debtor VARCHAR(100) NOT NULL,
-    creditor VARCHAR(100) NOT NULL,
-    community INT,
-    amount DECIMAL(10, 2) NOT NULL,
-    status ENUM('pending', 'paid') DEFAULT 'pending',
-    FOREIGN KEY (debtor) REFERENCES users(username) ON DELETE CASCADE,
-    FOREIGN KEY (creditor) REFERENCES users(username) ON DELETE CASCADE,
-    FOREIGN KEY (community) REFERENCES communities(community_id) ON DELETE CASCADE
-);
-
 -- Sample Data
 
 INSERT INTO users (username, email, passwd)
@@ -109,12 +96,6 @@ VALUES
     (2, 'JuanPerez', 20.00, 1.0),
     (3, 'PedroMartinez', 100.00, 1.0),
     (4, 'JuanPerez', 30.00, 1.0);
-
-INSERT INTO debts (debtor, creditor, community, amount, status)
-VALUES
-    ('MariaGarcia', 'JuanPerez', 1, 25.00, 'pending'),
-    ('PedroMartinez', 'JuanPerez', 1, 25.00, 'pending'),
-    ('MariaGarcia', 'PedroMartinez', 2, 100.00, 'pending');
 
 -- Create a new user
 CREATE USER 'eazypay'@'localhost' IDENTIFIED BY 'eazypaypebb';
