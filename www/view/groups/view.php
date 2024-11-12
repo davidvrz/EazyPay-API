@@ -30,7 +30,7 @@ $view->setVariable("title", "View Group");
 
     <!-- Contenido de la pestaña de Expenses -->
     <div id="expenses" class="tab-content active">
-        <h2><?= i18n("Expenses") ?></h2>
+        <h2 class="tab-content-title"><?= i18n("Expenses") ?></h2>
 
         <?php if (!empty($group->getExpenses())): ?>
             <?php foreach ($group->getExpenses() as $expense): ?>
@@ -58,7 +58,7 @@ $view->setVariable("title", "View Group");
 
     <!-- Contenido de la pestaña de Balances -->
     <div id="balances" class="tab-content">
-        <h2><?= i18n("Members' Balances") ?></h2>
+        <h2 class="tab-content-title"><?= i18n("Members' Balances") ?></h2>
         
         <?php if (!empty($group->getMembers())): ?>
             <ul>
@@ -95,27 +95,3 @@ $view->setVariable("title", "View Group");
         document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
     }
 </script>
-
-<style>
-    .tab-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .tab-button {
-        padding: 10px 20px;
-        cursor: pointer;
-        border: none;
-        background-color: #f1f1f1;
-        transition: background-color 0.3s ease;
-    }
-    .tab-button.active {
-        background-color: #ddd;
-    }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
-</style>
