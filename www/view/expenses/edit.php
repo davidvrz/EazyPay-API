@@ -12,7 +12,7 @@ $view->setVariable("title", "Edit Expense");
 ?>
 
 <link rel="stylesheet" href="../../assets/styles/expenses/add-edit.css" type="text/css">
-
+<script src="../../assets/js/expenses/edit-expense.js"></script>
 <div class="main">
     <div class="top-icon">
         <img src="../../assets/images/isotype.png" alt="Groups Icon">

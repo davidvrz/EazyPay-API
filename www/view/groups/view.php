@@ -5,7 +5,6 @@ $view = ViewManager::getInstance();
 
 $group = $view->getVariable("group");
 $currentuser = $view->getVariable("currentusername");
-$membersWithBalance = $view->getVariable("membersWithBalance");
 
 $view->setVariable("title", "View Group");
 ?>
