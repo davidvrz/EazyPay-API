@@ -15,24 +15,44 @@ function getSelectedParticipants() {
 
 function updateParticipantAmounts() {
     const totalAmount = parseFloat(document.getElementById("totalAmount").value) || 0;
+    const splitMode = document.getElementById("splitMode").value;
     const selectedParticipants = getSelectedParticipants();
     
-    selectedParticipants.forEach(participant => {
-        participant.value = (totalAmount / selectedParticipants.length).toFixed(2);
-        participant.setAttribute("readonly", "readonly");
-    });
+    if (splitMode === "equal") {
+        const splitAmount = totalAmount / selectedParticipants.length;
+        selectedParticipants.forEach(participant => {
+            participant.value = splitAmount.toFixed(2);
+            participant.setAttribute("readonly", "readonly");
+        });
+    } else {
+        selectedParticipants.forEach(participant => participant.removeAttribute("readonly"));
+    }
+}
+
+function toggleSplitMode() {
+    const splitMode = document.getElementById("splitMode").value;
+    
+    if (splitMode === "manual") {
+        document.querySelectorAll("input[name^='participants']").forEach(participant => {
+            participant.removeAttribute("readonly");
+        });
+    } else {
+        updateParticipantAmounts();
+    }
 }
 
 function toggleParticipant(username) {
     const participantInput = document.getElementById("participant_" + username);
     const isChecked = document.getElementById("include_" + username).checked;
+    const splitMode = document.getElementById("splitMode").value;
 
     if (!isChecked) {
         participantInput.value = "0.00";
         participantInput.setAttribute("readonly", "readonly");
-    } else {
+    } else if (splitMode === "manual") {
         participantInput.removeAttribute("readonly");
     }
+    updateParticipantAmounts();
 }
 
 function validateAmounts() {
@@ -44,7 +64,10 @@ function validateAmounts() {
         sum += parseFloat(participant.value) || 0;
     });
 
-    if (Math.abs(sum - totalAmount) > 0.01) {
+    const roundedTotalAmount = Math.round(totalAmount * 100) / 100;
+    const roundedSum = Math.round(sum * 100) / 100;
+
+    if (Math.abs(roundedSum - roundedTotalAmount) > 0.01) {
         alert("The total amount does not match the sum of participant amounts.");
         return false;
     }
