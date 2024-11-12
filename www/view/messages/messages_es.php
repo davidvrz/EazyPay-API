@@ -19,6 +19,8 @@ array(
 	"Password" => "Contraseña",
 	"Show password" => "Mostrar contraseña",
 
+	"Username \"%s\" successfully added. Please login now" => "Usuario \"%s\" añadido correctamente. Por favor, inicia sesión ahora",
+	"Username \"%s\" successfully login." => "Usuario \"%s\" ingresado correctamente.",
 
 	// Groups
 	"Groups" => "Grupos",
