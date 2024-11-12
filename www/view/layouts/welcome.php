@@ -21,10 +21,11 @@ $view = ViewManager::getInstance();
 		<?php include __DIR__ . '/../partials/navbar.php'; ?>
 	</header>
 	<main>
-		<!-- flash message -->
-		<div id="flash">
-			<?= $view->popFlash() ?>
-		</div>
+		<?php if ($message = trim($view->popFlash())): ?>
+			<div id="flash" class="show">
+				<?= $message ?>
+			</div>
+		<?php endif; ?>
 		<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
 	</main>
 

@@ -22,10 +22,11 @@ $currentuser = $view->getVariable("currentusername");
 	</header>
 
 	<main>
-		<div id="flash">
-			<?= $view->popFlash() ?>
-		</div>
-
+		<?php if ($message = trim($view->popFlash())): ?>
+			<div id="flash" class="show">
+				<?= $message ?>
+			</div>
+		<?php endif; ?>
 		<?php if (isset($currentuser)): ?> 
 			<?= $view->getFragment(ViewManager::DEFAULT_FRAGMENT) ?>
 		<?php else: ?>
