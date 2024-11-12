@@ -8,7 +8,7 @@ $user = $view->getVariable("user");
 $view->setVariable("title", "Register");
 ?>
 
-<link rel="stylesheet" type="text/css" href="../../assets/styles/register.css">
+<link rel="stylesheet" type="text/css" href="../../assets/styles/users/auth.css">
 
 <div class="register-section">
     <div class="register-form-container">
