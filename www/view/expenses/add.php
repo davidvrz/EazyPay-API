@@ -44,7 +44,7 @@ $view->setVariable("title", "Add Expense");
 
             <!-- Monto total del gasto -->
             <label for="totalAmount"><?= i18n("Total Amount:") ?></label>
-            <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required oninput="updateParticipantAmounts()" />
+            <input type="number" name="totalAmount" id="totalAmount" min="0" step="0.01" required />
             <div class="error-message">
                 <?= isset($errors['totalAmount']) ? htmlentities($errors['totalAmount']) : "" ?>
             </div>
@@ -64,7 +64,7 @@ $view->setVariable("title", "Add Expense");
 
             <!-- Modo de reparto -->
             <label for="splitMode"><?= i18n("Split Mode:") ?></label>
-            <select id="splitMode" onchange="toggleSplitMode()">
+            <select id="splitMode">
                 <option value="equal"><?= i18n("Divide Equally") ?></option>
                 <option value="manual"><?= i18n("Enter Manually") ?></option>
             </select>
@@ -76,7 +76,7 @@ $view->setVariable("title", "Add Expense");
                     <div>
                         <input type="checkbox" name="include[<?= htmlentities($user['member']->getUsername()) ?>]" 
                             id="include_<?= htmlentities($user['member']->getUsername()) ?>" 
-                            checked onchange="toggleParticipant(<?= htmlentities(json_encode($user['member']->getUsername())) ?>)" />
+                            checked />
                         <label for="participant_<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?>:</label>
                         <input type="number" name="participants[<?= htmlentities($user['member']->getUsername()) ?>]" 
                             id="participant_<?= htmlentities($user['member']->getUsername()) ?>" 
