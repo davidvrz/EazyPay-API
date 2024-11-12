@@ -1,3 +1,4 @@
 # Treat all text files without a CR (as we have Docker)
 * text eol=lf
 
+*.png binary
