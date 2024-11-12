@@ -30,6 +30,8 @@
 - [ ] REVISAR CODIGO Y PASARLO A LIMPIO, usar mismo procesamiento, logica y estructura de datos en funciones y clases similares, usar la variable errors, manejar bien excepciones y OPTIMIZAR codigo, mucho se puede simplificar.
 - [ ] Añadir apartado de splitMode en edit expenses (más complejo de lo esperado, es necesario añadir un atributo nuevo en la db para guardar la instancia y poder mostrarla en el edit)
 - [ ] Cambiar como se introducen los participantes (por username como está ahora o cambiar a correo electronico como dicen los requisitos)
+- [ ] Diferenciar cada saldo por cada gasto por grupo (En un grupo sin gastos hay un saldo de -40)
+- [ ] No funciona el boton de despliegue de las operaciones de usuario (inicio, cerrar sesión ...) al reducir la pantalla.
 
 
 # Usar extensión Markdown Checkbox (crear checkbox con - [ ], y marcarlas con - [x])

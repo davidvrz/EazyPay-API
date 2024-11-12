@@ -18,7 +18,7 @@ $view->setVariable("title", "View Group");
     </div>
 
     <h1 class="main-title"><?= i18n("Group") . ": " . htmlentities($group->getName()) ?></h1>
-    <em><?= sprintf(i18n("by %s"), $group->getAdmin()->getUsername()) ?></em>
+    <em><?= sprintf(i18n("created by %s"), $group->getAdmin()->getUsername()) ?></em>
     <p><?= htmlentities($group->getDescription()) ?></p>
 
     <!-- Pestañas para Expenses y Balances -->
@@ -58,7 +58,7 @@ $view->setVariable("title", "View Group");
 
     <!-- Contenido de la pestaña de Balances -->
     <div id="balances" class="tab-content">
-        <h2 class="tab-content-title"><?= i18n("Members' Balances") ?></h2>
+        <h2 class="tab-content-title"><?= i18n("Members Balances") ?></h2>
         
         <?php if (!empty($group->getMembers())): ?>
             <ul>

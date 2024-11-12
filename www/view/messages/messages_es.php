@@ -35,7 +35,15 @@ array(
 	"Group \"%s\" successfully added." => "Grupo \"%s\" añadido.",
 	"Group \"%s\" successfully updated." => "Grupo \"%s\" modificado.",
 	"Group \"%s\" successfully deleted." => "Grupo \"%s\" eliminado.",
-	
+
+	// Group View
+	"created by %s" => "creado por %s",
+	"%s paid..."=>"%s ha pagado...",
+
+	"No expenses recorded for this group." => "No hay gastos guardados en este grupo.",
+
+	"Balances" => "Saldos",
+	"Members Balances" => "Saldo de los miembros",
 
 	"Edit" => "Editar",
 	"Delete" => "Eliminar",
@@ -67,9 +75,6 @@ array(
 
 	// Messages
 	"Hello %s" => "Hola %s",
-
-	"by %s" => "por %s",
-	"%s paid..."=>"%s ha pagado...",
 	"are you sure?" => "¿Estás seguro?",
 
 	"content is mandatory" => "El contenido es obligatorio",
