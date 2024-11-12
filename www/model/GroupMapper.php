@@ -88,13 +88,10 @@ class GroupMapper {
 				new User($group_db["admin"]) // Administrador del grupo
 			);
 	
-			// Obtener los gastos del grupo utilizando el método getExpensesByGroupId
 			$expenses = $this->getExpensesByGroupId($groupid);
 			$group->setExpenses($expenses);
 	
-			// Obtener los miembros del grupo utilizando el método getMembersByGroupId
-			$members = $this->getMembersByGroupId($groupid);
-
+			$members = $this->getMembersWithBalanceByGroupId($groupid);
 			$group->setMembers($members);
 	
 			// Devolver el grupo con todos los detalles
@@ -112,29 +109,36 @@ class GroupMapper {
 	
 		$expenses = array();
 		foreach ($expenses_db as $expense) {
-			// Crear y agregar los gastos a la lista (suponiendo que la clase Expense existe)
 			$expenses[] = new Expense(
 				$expense["expense_id"],
-				new Group($expense["community"]), // Asignamos el grupo correspondiente
+				new Group($expense["community"]), 
 				$expense["expense_description"],
 				$expense["total_amount"],
-				new User($expense["payer"]) // Payer es un usuario
+				new User($expense["payer"]) 
         );		
 	}
 	
 		return $expenses;
 	}
 
-	private function getMembersByGroupId($groupid) {
-		// Obtener todos los miembros del grupo
-		$stmt = $this->db->prepare("SELECT member FROM community_members WHERE community = ?");
+
+	private function getMembersWithBalanceByGroupId($groupid) {
+		// Obtener todos los miembros del grupo con sus balances
+		$stmt = $this->db->prepare("
+			SELECT u.username, u.email, gm.accumulated_balance 
+			FROM users u 
+			JOIN community_members gm ON u.username = gm.member 
+			WHERE gm.community = ?
+		");
 		$stmt->execute(array($groupid));
-		$members_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	
 		$members = array();
-		foreach ($members_db as $member) {
-			// Suponiendo que 'user_id' hace referencia a los usuarios
-			$members[] = new User($member["member"]);
+	
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$user = new User($row['username'], $row['email']); // Crear el objeto User
+			$members[] = [
+				'member' => $user,
+				'balance' => $row['accumulated_balance']
+			];
 		}
 	
 		return $members;
@@ -151,7 +155,7 @@ class GroupMapper {
 		
 		// Insertar el grupo en la base de datos
 		$stmt = $this->db->prepare("INSERT INTO communities(community_name, community_description, admin) VALUES (?,?,?)");
-		$stmt->execute(array($group->getName(), $group->getDescription(), $group->getAdmin()->getUserName()));
+		$stmt->execute(array($group->getName(), $group->getDescription(), $group->getAdmin()->getUsername()));
 	
 		// Obtener el ID del nuevo grupo insertado
 		$groupId = $this->db->lastInsertId();
@@ -159,19 +163,19 @@ class GroupMapper {
 		// Guardar al creador como miembro automáticamente
 		$creator = $group->getAdmin(); // El creador es el administrador del grupo
     	$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-    	$stmt->execute(array($groupId, $creator->getUserName()));
+    	$stmt->execute(array($groupId, $creator->getUsername()));
 	
 		// Guardar los miembros del grupo
 		foreach ($group->getMembers() as $member) {
-			// Verificar si el miembro ya está en la base de datos
+			$user = $member['member'];
 			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
-			$stmt->execute(array($groupId, $member->getUserName()));
+			$stmt->execute(array($groupId, $user->getUsername()));
 			$exists = $stmt->fetchColumn();
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($groupId, $member->getUserName()));
+				$stmt->execute(array($groupId, $user->getUsername()));
 			}
 		}
 	
@@ -183,7 +187,7 @@ class GroupMapper {
 				$expense->getDescription(),
 				$expense->getTotalAmount(),
 				$expense->getDate(),
-				$expense->getPayer()->getUserName()
+				$expense->getPayer()->getUsername()
 			));
 		}
 		
@@ -204,18 +208,18 @@ class GroupMapper {
 	
 		// Eliminar los miembros actuales y añadir los nuevos, pero no eliminar al creador
 		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=? AND member != ?");
-		$stmt->execute(array($group->getId(), $group->getAdmin()->getUserName())); // Excluir al creador
+		$stmt->execute(array($group->getId(), $group->getAdmin()->getUsername())); // Excluir al creador
 	
 		foreach ($group->getMembers() as $member) {
 			// Verificar si el miembro ya está en la base de datos
 			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
-			$stmt->execute(array($group->getId(), $member->getUserName()));
+			$stmt->execute(array($group->getId(), $member->getUsername()));
 			$exists = $stmt->fetchColumn();
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($group->getId(), $member->getUserName()));
+				$stmt->execute(array($group->getId(), $member->getUsername()));
 			}
 		}
 	
@@ -230,7 +234,7 @@ class GroupMapper {
 				$expense->getDescription(),
 				$expense->getTotalAmount(),
 				$expense->getDate(),
-				$expense->getPayer()->getUserName()
+				$expense->getPayer()->getUsername()
 			));
 		}
 	}

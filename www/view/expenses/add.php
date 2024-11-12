@@ -50,7 +50,7 @@ $view->setVariable("title", "Add Expense");
                 <option value=""><?= i18n("Select Payer") ?></option>
                 <?php if ($group->getMembers()): ?>
                     <?php foreach ($group->getMembers() as $user): ?>
-                        <option value="<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?></option>
+                        <option value="<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?></option>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </select>
@@ -68,14 +68,14 @@ $view->setVariable("title", "Add Expense");
             <?php if ($group->getMembers()): ?>
                 <?php foreach ($group->getMembers() as $user): ?>
                     <div>
-                        <input type="checkbox" name="include[<?= htmlentities($user->getUsername()) ?>]" 
-                            id="include_<?= htmlentities($user->getUsername()) ?>" 
-                            checked onchange="toggleParticipant(<?= htmlentities(json_encode($user->getUsername())) ?>)" />
-                        <label for="participant_<?= htmlentities($user->getUsername()) ?>"><?= htmlentities($user->getUsername()) ?>:</label>
-                        <input type="number" name="participants[<?= htmlentities($user->getUsername()) ?>]" 
-                            id="participant_<?= htmlentities($user->getUsername()) ?>" 
+                        <input type="checkbox" name="include[<?= htmlentities($user['member']->getUsername()) ?>]" 
+                            id="include_<?= htmlentities($user['member']->getUsername()) ?>" 
+                            checked onchange="toggleParticipant(<?= htmlentities(json_encode($user['member']->getUsername())) ?>)" />
+                        <label for="participant_<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?>:</label>
+                        <input type="number" name="participants[<?= htmlentities($user['member']->getUsername()) ?>]" 
+                            id="participant_<?= htmlentities($user['member']->getUsername()) ?>" 
                             min="0" step="0.01" readonly />
-                        <span><?= isset($errors['participants'][$user->getUsername()]) ? htmlentities($errors['participants'][$user->getUsername()]) : "" ?></span>
+                        <span><?= isset($errors['participants'][$user['member']->getUsername()]) ? htmlentities($errors['participants'][$user['member']->getUsername()]) : "" ?></span>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
