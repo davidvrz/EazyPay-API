@@ -68,21 +68,3 @@
 .btn.delete:hover {
     background-color: #c9302c;
 }
-
-.errors {
-    background-color: #ffefef;
-    color: #d9534f;
-    border: 1px solid #d9534f;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
-
-.errors ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.errors li {
-    font-size: 14px;
-}

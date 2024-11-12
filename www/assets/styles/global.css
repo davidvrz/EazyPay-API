@@ -65,3 +65,21 @@ body {
   margin-top: -8px;
   margin-bottom: 10px;
 }
+
+.error-modal {
+  background-color: #ffefef;
+  color: #d9534f;
+  border: 1px solid #d9534f;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.error-modal ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.error-modal li {
+  font-size: 14px;
+}

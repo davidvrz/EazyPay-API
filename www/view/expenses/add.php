@@ -22,7 +22,7 @@ $view->setVariable("title", "Add Expense");
 
     <div class="expense-container">
         <?php if (isset($errors) && !empty($errors)): ?>
-            <div class="errors">
+            <div class="error-modal">
                 <ul>
                     <?php foreach ($errors as $error): ?>
                         <li><?= htmlentities($error) ?></li>
