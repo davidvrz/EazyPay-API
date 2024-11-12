@@ -47,7 +47,6 @@ $view->setVariable("title", "Add Expense");
             <!-- Selección del pagador -->
             <label for="payer"><?= i18n("Payer:") ?></label>
             <select name="payer" id="payer" required>
-                <option value=""><?= i18n("Select Payer") ?></option>
                 <?php if ($group->getMembers()): ?>
                     <?php foreach ($group->getMembers() as $user): ?>
                         <option value="<?= htmlentities($user['member']->getUsername()) ?>"><?= htmlentities($user['member']->getUsername()) ?></option>
