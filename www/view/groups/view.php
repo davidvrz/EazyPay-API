@@ -14,7 +14,7 @@ $view->setVariable("title", "View Group");
 
 <div class="main">
     <div class="top-icon">
-        <img src="../../assets/images/isotype.png" alt="Groups Icon">
+        <img src="../../assets/images/isotype.png" alt=<?= i18n("Groups Icon") ?>>
     </div>
 
     <h1 class="main-title"><?= i18n("Group") . ": " . htmlentities($group->getName()) ?></h1>

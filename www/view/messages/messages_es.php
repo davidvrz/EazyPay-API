@@ -32,6 +32,7 @@ array(
 
 	"Create group" => "Crear grupo",
 	"Modify group" => "Modificar grupo",
+	"Back to Group" => "Volver al grupo",
 	"Group \"%s\" successfully added." => "Grupo \"%s\" añadido.",
 	"Group \"%s\" successfully updated." => "Grupo \"%s\" modificado.",
 	"Group \"%s\" successfully deleted." => "Grupo \"%s\" eliminado.",
@@ -62,6 +63,10 @@ array(
 	"Add Expense" => "Añadir un gasto",
 	"View Details" => "Ver detalles",
 
+	"Expense \"%s\" successfully added." => "Gasto \"%s\" creado.",
+	"Expense \"%s\" successfully updated." => "Gasto \"%s\" actualizado.",
+	"Expense \"%s\" successfully deleted." => "Gasto \"%s\" eliminado.",
+
 	// Expenses details
 	"Expense Details" => "Detalles del gasto",
 	"Total Amount:" => "Coste total:",
@@ -72,6 +77,7 @@ array(
 	"Split Mode:" => "Forma de división:",
 	"Divide Equally" => "Equitativa",
 	"Enter Manually" => "Introducir manualmente",
+	"Are you sure you want to delete this expense?" => "¿Estás seguro de querer eliminar este gasto?",
 
 	// Messages
 	"Hello %s" => "Hola %s",
@@ -81,6 +87,12 @@ array(
 	"name is mandatory" => "El nombre es obligatorio",
 	"admin is mandatory" => "El administrador es obligatorio",
 	"group is not valid" => "El grupo no es válido",
+
+	// Movements
+	"View Suggested Movements" => "Ver movimientos sugeridos",
+	"Suggested Movements for Group" => "Movimientos sugeridos para el grupo",
+	"should pay" => "debería pagarle a",
+	"All balances are settled, no movements needed." => "No hay movimientos necesarios",
 
 
 	// Navbar

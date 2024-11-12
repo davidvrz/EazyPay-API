@@ -48,7 +48,7 @@ class GroupsController extends BaseController {
 	public function index() {
 
 		// obtain the data from the database
-		$groups = $this->groupMapper->findAll();
+		$groups = $this->groupMapper->findAll($this->currentUser->getUsername());
 
 		// put the array containing Group object to the view
 		$this->view->setVariable("groups", $groups);

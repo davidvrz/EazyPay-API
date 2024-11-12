@@ -51,7 +51,7 @@ $view->setVariable("title", "View Group");
                 <a href="index.php?controller=expenses&amp;action=edit&amp;id=<?= htmlentities($expense->getId()) ?>" class="btn"><?= i18n("Edit Expense") ?></a>
 
                 <!-- Botón de eliminar con confirmación -->
-                <a href="index.php?controller=expenses&amp;action=delete&amp;id=<?= htmlentities($expense->getId()) ?>" class="btn" onclick="return confirm('Are you sure you want to delete this expense?');"><?= i18n("Delete Expense") ?></a>
+                <a href="index.php?controller=expenses&amp;action=delete&amp;id=<?= htmlentities($expense->getId()) ?>" class="btn" onclick="return confirm('<?= i18n("Are you sure you want to delete this expense?") ?>');"><?= i18n("Delete Expense") ?></a>
             <?php endif; ?>
 
         <?php else: ?>
