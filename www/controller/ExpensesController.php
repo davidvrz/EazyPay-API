@@ -38,9 +38,8 @@ class ExpensesController extends BaseController {
 		}
 
 		$groupId = $_REQUEST["group_id"];  
-		$group = $this->groupMapper->getGroupDetailsById($groupId);
 
-		if ($group === null) {
+		if (!$this->groupMapper->findById($groupId)) {
 			throw new Exception("No such group with id: " . $groupId);
 		}
 
@@ -50,10 +49,9 @@ class ExpensesController extends BaseController {
 
 			// Create and populate the Expense object
 			$expense->setDescription($_POST["description"]);
-			$expense->setGroup($group);
+			$expense->setGroup($groupId);
 			$expense->setTotalAmount($_POST["totalAmount"]);
-			$payer = $this->userMapper->getUser($_POST["payer"]);
-			$expense->setPayer($payer);
+			$expense->setPayer($_POST["payer"]);
 			
 			$participants = $_POST["participants"];
 
@@ -70,23 +68,11 @@ class ExpensesController extends BaseController {
 			}
 			
 			try {
-
-				// validate Expense object
 				$expense->checkIsValidForCreate();
-
-				// save the Expense object into the database
 				$this->expenseMapper->save($expense);
 
-				// POST-REDIRECT-GET
-				$this->view->setFlash(sprintf(i18n("Expense \"%s\" successfully added."),$group->getName()));
-
-				$this->view->redirect("groups", "view", "id=".$group->getId());
 			}catch(ValidationException $ex) {
-				$errors = $ex->getErrors();
-				
-				$this->view->setVariable("errors", $errors, true);
-
-				$this->view->redirect("groups", "view", "id=".$group->getId());
+				$errors = $ex->getErrors();	
 			}
 		} 
 
@@ -146,10 +132,9 @@ class ExpensesController extends BaseController {
 			throw new Exception("No such expense with id: ".$expenseId);
 		}
 
-		$groupId = $expense->getGroup()->getId();  
-		$group = $this->groupMapper->getGroupDetailsById($groupId);
+		$groupId = $expense->getGroup();  
 	
-		if ($group == NULL) {
+		if (!$this->groupMapper->findById($groupId)) {
 			throw new Exception("Group not found");
 		}
 	
@@ -163,8 +148,7 @@ class ExpensesController extends BaseController {
 			// Create and populate the Expense object
 			$expense->setDescription($_POST["description"]);
 			$expense->setTotalAmount($_POST["totalAmount"]);
-			$payer = $this->userMapper->getUser($_POST["payer"]);
-			$expense->setPayer($payer);
+			$expense->setPayer($_POST["payer"]);
 	
 			// Obtain expense pariticipants
 			$participants = $_POST["participants"];

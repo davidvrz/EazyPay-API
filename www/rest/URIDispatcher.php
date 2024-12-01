@@ -22,6 +22,11 @@ class URIDispatcher {
 		return self::$uri_dispatcher_singleton;
 	}
 
+	
+	private $cors = false;
+	private $allowedOrigin;
+	private $allowedRequestHeaders;
+
 	public function __construct() {
 		$this->cors = false;
 	}

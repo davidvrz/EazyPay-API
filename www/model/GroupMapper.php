@@ -170,16 +170,15 @@ class GroupMapper {
     	$stmt->execute(array($groupId, $creator->getUsername()));
 	
 		// Guardar los miembros del grupo
-		foreach ($group->getMembers() as $member) {
-			$user = $member['member'];
+		foreach ($group->getMembers() as $user => $balance) {
 			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
-			$stmt->execute(array($groupId, $user->getUsername()));
+			$stmt->execute(array($groupId, $user));
 			$exists = $stmt->fetchColumn();
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($groupId, $user->getUsername()));
+				$stmt->execute(array($groupId, $user));
 			}
 		}
 	
@@ -214,16 +213,16 @@ class GroupMapper {
 		$stmt = $this->db->prepare("DELETE FROM community_members WHERE community=? AND member != ?");
 		$stmt->execute(array($group->getId(), $group->getAdmin()->getUsername())); // Excluir al creador
 	
-		foreach ($group->getMembers() as $member) {
+		foreach ($group->getMembers() as $user => $balance) {
 			// Verificar si el miembro ya está en la base de datos
 			$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE community = ? AND member = ?");
-			$stmt->execute(array($group->getId(), $member['member']->getUsername()));
+			$stmt->execute(array($group->getId(), $user));
 			$exists = $stmt->fetchColumn();
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($group->getId(), $member['member']->getUsername()));
+				$stmt->execute(array($group->getId(), $user));
 			}
 		}
 	

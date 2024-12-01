@@ -161,8 +161,8 @@ class Group {
 	}
 
 	public function addMember(User $member, $balance) {
-		$this->members[] = ['member' => $member, 'balance' => $balance];
-	}
+        $this->members[$member->getUsername()] = $balance;
+    }
 
 	public function clearMembers() {
 		$this->members = []; // Clears the member list
@@ -198,12 +198,12 @@ class Group {
 		}
 	
 		// Validación de objetos miembro
-		foreach ($this->members as $member) {
+		/*foreach ($this->members as $member) {
 			if (!$member['member'] instanceof User) {
 				$errors["members"] = "all members must be instances of User";
 				break;
 			}
-		}
+		}*/
 	
 		if (sizeof($errors) > 0){
 			throw new ValidationException($errors, "group is not valid");

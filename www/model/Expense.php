@@ -61,7 +61,7 @@ class Expense {
      * @param float $totalAmount The total amount of the expense
      * @param User $payer The user who paid the expense
      */
-    public function __construct($id = null, Group $group= null, $description = null, $totalAmount = null, User $payer = null, array $participants = []) {
+    public function __construct($id = null, $group= null, $description = null, $totalAmount = null, $payer = null, array $participants = []) {
         $this->id = $id;
         $this->group = $group;
         $this->description = $description;
@@ -95,7 +95,7 @@ class Expense {
      * @param Group $group The group associated with this expense
      * @return void
      */
-    public function setGroup(Group $group) {
+    public function setGroup($group) {
         $this->group = $group;
     }
 
@@ -161,7 +161,7 @@ class Expense {
      * @param User $payer The payer of this expense
      * @return void
      */
-    public function setPayer(User $payer) {
+    public function setPayer($payer) {
         $this->payer = $payer;
     }
 
@@ -174,10 +174,7 @@ class Expense {
 	}
     
     public function addParticipant(User $user, $amount) {
-        $this->participants[] = [
-            'user' => $user,
-            'amount' => $amount
-        ];
+        $this->participants[$user->getUsername()] = $amount;
     }
     
     public function clearParticipants() {
@@ -207,7 +204,7 @@ class Expense {
         }
         if (empty($this->participants)) {
             $errors["participants"] = "At least one participant is required.";
-        } else {
+        } /*else {
             foreach ($this->participants as $participant) {
                 $user = $participant['user'];  
                 if (empty($user->getUsername())) {
@@ -217,7 +214,7 @@ class Expense {
                     $errors["participant_amount"] = "Each participant must have a valid amount.";
                 }
             }            
-        }
+        }*/
 
         if (sizeof($errors) > 0) {
             throw new ValidationException($errors, "Expense is not valid");

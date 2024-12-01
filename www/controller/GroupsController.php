@@ -420,10 +420,7 @@ class GroupsController extends BaseController {
 		$debtors = [];
 		$creditors = [];
 	
-		foreach ($members as $member) {
-			$balance = $member['balance'];
-			$user = $member['member'];
-	
+		foreach ($members as $user => $balance) {
 			if ($balance < 0) {
 				$debtors[] = ["user" => $user, "amount" => abs($balance)];
 			} elseif ($balance > 0) {
