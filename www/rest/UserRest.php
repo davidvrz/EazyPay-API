@@ -1,8 +1,8 @@
 <?php
 
-require_once("/../models/User.php");
-require_once("/../models/UserMapper.php");
-require_once("/BaseRest.php");
+require_once(__DIR__."/../model/User.php");
+require_once(__DIR__."/../model/UserMapper.php");
+require_once(__DIR__."/../rest/BaseRest.php");
 
 /**
 * Class UserRest
@@ -21,8 +21,8 @@ class UserRest extends BaseRest {
 		$this->userMapper = new UserMapper();
 	}
 
-	public function groupUser($data) {
-		$user = new User($data->username, $data->password);
+	public function register($data) {
+		$user = new User($data->username, $data->password, $data->email);
 		try {
 			$user->checkIsValidForRegister();
 
@@ -53,4 +53,4 @@ class UserRest extends BaseRest {
 $userRest = new UserRest();
 URIDispatcher::getInstance()
 ->map("GET",	"/user/$1", array($userRest,"login"))
-->map("POST", "/user", array($userRest,"groupUser"));
+->map("POST", "/user", array($userRest,"register"));
