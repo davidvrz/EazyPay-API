@@ -125,7 +125,7 @@ class GroupMapper {
 		return $expenses;
 	}
 
-
+/*
 	private function getMembersWithBalanceByGroupId($groupid) {
 		// Obtener todos los miembros del grupo con sus balances
 		$stmt = $this->db->prepare("
@@ -143,6 +143,19 @@ class GroupMapper {
 				'member' => $user,
 				'balance' => $row['accumulated_balance']
 			];
+		}
+	
+		return $members;
+	}*/
+
+	private function getMembersWithBalanceByGroupId($groupid) {
+		// Obtener todos los miembros del grupo con sus balances
+		$stmt = $this->db->prepare("SELECT * FROM community_members WHERE community = ?");
+		$stmt->execute(array($groupid));
+		$members = array();
+	
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$members[$row['member']] = $row['accumulated_balance'];
 		}
 	
 		return $members;

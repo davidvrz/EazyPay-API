@@ -191,7 +191,7 @@ class Group {
 		if ($this->admin == NULL ) {
 			$errors["admin"] = "admin is mandatory";
 		}
-	
+	/*
 		// Nueva validación para los miembros
 		if (empty($this->members)) {
 			$errors["members"] = "group must have at least one member";

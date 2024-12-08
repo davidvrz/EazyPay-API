@@ -61,7 +61,7 @@ class Expense {
      * @param float $totalAmount The total amount of the expense
      * @param User $payer The user who paid the expense
      */
-    public function __construct($id = null, $group= null, $description = null, $totalAmount = null, $payer = null, array $participants = []) {
+    public function __construct($id = null, Group $group= null, $description = null, $totalAmount = null, User $payer = null, array $participants = []) {
         $this->id = $id;
         $this->group = $group;
         $this->description = $description;
@@ -95,7 +95,7 @@ class Expense {
      * @param Group $group The group associated with this expense
      * @return void
      */
-    public function setGroup($group) {
+    public function setGroup( Group $group) {
         $this->group = $group;
     }
 
@@ -161,7 +161,7 @@ class Expense {
      * @param User $payer The payer of this expense
      * @return void
      */
-    public function setPayer($payer) {
+    public function setPayer(User $payer) {
         $this->payer = $payer;
     }
 

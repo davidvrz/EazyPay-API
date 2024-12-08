@@ -71,6 +71,16 @@ class GroupRest extends BaseRest {
             "admin" => $group->getAdmin()->getUsername()
 		);
 
+		// Add members
+		$group_array["members"] = array();
+		foreach ($group->getMembers() as $username => $balance) {
+			array_push($group_array["members"], array(
+				"username" => $username,
+				"balance" => $balance
+			));
+		}
+		
+
 		//add expenses
 		$group_array["expenses"] = array();
 		foreach ($group->getExpenses() as $expense) {
@@ -79,15 +89,6 @@ class GroupRest extends BaseRest {
 				"description" => $expense->getDescription(),
 				"payer" => $expense->getPayer()->getusername(),
                 "total_amount" => $expense->getTotalAmount()
-			));
-		}
-
-		// Add members
-		$group_array["members"] = array();
-		foreach ($group->getMembers() as $username => $balance) {
-			array_push($group_array["members"], array(
-				"username" => $username,
-				"balance" => $balance
 			));
 		}
 
@@ -101,20 +102,24 @@ class GroupRest extends BaseRest {
 		$group = new Group();
 
 		if (isset($data->name) && isset($data->description)) {
-			$group->setName($data->title);
-			$group->setDescription($data->content);
+			$group->setName($data->name);
+			$group->setDescription($data->description);
 
 			$group->setAdmin($currentUser);
 		}
         
         if (isset($data->members)) {
             foreach ($data->members as $memberData) {
-                if (isset($memberData->username) && isset($memberData->balance)) {
-                    $user = $this->userMapper->getUser($memberData->username);
-                    if ($user) {
-                        $group->addMember($user, $memberData->balance);
-                    } //manejar error
-                }
+                $user = $this->userMapper->getUser($memberData);
+				if ($user) {
+					$group->addMember($user, 0);
+				} else {
+                    // Si un miembro no existe, retornar un error
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+                    header('Content-Type: application/json');
+                    echo(json_encode(["error" => "Member not found: " . $memberData]));
+                    return;
+				}
             } 
         }
 
@@ -155,7 +160,7 @@ class GroupRest extends BaseRest {
 
 		$group = $this->groupMapper->getGroupDetailsById($groupId);
 		if ($group == NULL) {
-			header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not found');
 			echo("Group with id ".$groupId." not found");
 			return;
 		}
@@ -166,15 +171,15 @@ class GroupRest extends BaseRest {
 			echo("you are not the author of this group");
 			return;
 		}
+
 		$group->setName($data->name);
 		$group->setDescription($data->description);
-        
         if (isset($data->members)) {
             $existingMembers = $group->getMembers();
             $newMembers = [];
             foreach ($data->members as $memberData) {
-                if (isset($memberData->username)) {
-                    $user = $this->userMapper->getUser($memberData->username);
+                if (isset($memberData)) {
+                    $user = $this->userMapper->getUser($memberData);
                     if ($user) {
                         if (isset($existingMembers[$user->getUsername()])) {
                             $newMembers[$user->getUsername()] = $existingMembers[$user->getUsername()];
@@ -182,7 +187,13 @@ class GroupRest extends BaseRest {
                 	 	else {
 							$newMembers[$user->getUsername()] = 0;
 						}  
-           			} 
+           			} else {
+						// Si un miembro no existe, retornar un error
+						header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+						header('Content-Type: application/json');
+						echo(json_encode(["error" => "Member not found: " . $memberData]));
+						return;
+					}
 				}
 			}
 
@@ -241,44 +252,13 @@ class GroupRest extends BaseRest {
 
 		header($_SERVER['SERVER_PROTOCOL'].' 204 No Content');
 	}
-	
-    /*
-	public function createExpense($groupId, $data) {
-		$currentUser = parent::authenticateUser();
-
-		$group = $this->groupMapper->findById($groupId);
-		if ($group == NULL) {
-			header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
-			echo("Group with id ".$groupId." not found");
-			return;
-		}
-
-		$expense = new Expense();
-		$expense->setContent($data->content);
-		$expense->setAuthor($currentUser);
-		$expense->setGroup($group);
-
-		try {
-			$expense->checkIsValidForCreate(); // if it fails, ValidationException
-
-			$this->expenseMapper->save($expense);
-
-			header($_SERVER['SERVER_PROTOCOL'].' 201 Created');
-
-		}catch(ValidationException $e) {
-			header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
-			header('Content-Type: application/json');
-			echo(json_encode($e->getErrors()));
-		}
-	}*/
 }
 
 // URI-MAPPING for this Rest endpoint
 $groupRest = new GroupRest();
 URIDispatcher::getInstance()
-->map("GET",	"/group", array($groupRest,"getGroups"))
-->map("GET",	"/group/$1", array($groupRest,"readGroup"))
-->map("POST", "/group", array($groupRest,"createGroup"))
-//->map("POST", "/group/$1/expense", array($groupRest,"createExpense"))
-->map("PUT",	"/group/$1", array($groupRest,"updateGroup"))
-->map("DELETE", "/group/$1", array($groupRest,"deleteGroup"));
+	->map("GET", "/group", array($groupRest,"getGroups"))
+	->map("GET", "/group/$1", array($groupRest,"readGroup"))
+	->map("POST", "/group", array($groupRest,"createGroup"))
+	->map("PUT", "/group/$1", array($groupRest,"updateGroup"))
+	->map("DELETE", "/group/$1", array($groupRest,"deleteGroup"));

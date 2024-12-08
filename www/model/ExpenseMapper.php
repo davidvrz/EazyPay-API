@@ -75,20 +75,15 @@ class ExpenseMapper {
 		}
 	}
 	
+	
 	private function getParticipantsByExpenseId($expenseid) {
 		// Obtener todos los participantes del gasto (esto incluirá las contribuciones)
 		$stmt = $this->db->prepare("SELECT * FROM expense_participants WHERE expense = ?");
 		$stmt->execute(array($expenseid));
-		$participants_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	
 		$participants = array();
-		foreach ($participants_db as $participant) {
-			$user = new User($participant["member"]);
-			// Cambia esta parte para que coincida con el formato esperado
-			$participants[] = [
-				'user' => $user,
-				'amount' => $participant["amount"]
-			];
+
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$participants[$row['member']] = $row['amount'];
 		}
 	
 		return $participants;
