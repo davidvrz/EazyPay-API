@@ -21,20 +21,27 @@ class ExpenseRest extends BaseRest {
         $this->userMapper = new UserMapper();
     }
 
-    // Método para añadir un nuevo gasto
-    public function addExpense($data) {
+    public function addExpense($groupId, $data) {
+        //die('dkdjfk'); 
+        echo(json_encode($data));
+        
         //$currentUser = $this->authenticateUser();
-
-        if (!isset($data->group_id)) {
+        if (!isset($groupId)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
             echo(json_encode(["error" => "Group ID is required"]));
             return;
         }
  
-        $group = $this->groupMapper->findById($data->group_id);
+        $group = $this->groupMapper->findById($groupId);
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Group not found"]));
+            return;
+        }
+        
+        if (!isset($data->description) || !isset($data->totalAmount) || !isset($data->payer)) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+            echo(json_encode(["error" => "Description, total amount, and payer are required"]));
             return;
         }
 
@@ -47,19 +54,13 @@ class ExpenseRest extends BaseRest {
 
         $expense = new Expense();
 
-        if (!isset($data->description) || !isset($data->totalAmount) || !isset($data->payer)) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            echo(json_encode(["error" => "Description, total amount, and payer are required"]));
-            return;
-        }
-
         $expense->setDescription($data->description);
         $expense->setTotalAmount($data->totalAmount);
         $expense->setGroup($group);
         $expense->setPayer($payer);
 
-        // Validar participantes
         if (!isset($data->participants) || !is_object($data->participants)) {
+            echo(json_encode($data->participants));
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
             echo(json_encode(["error" => "Participants must be a valid object with usernames and amounts"]));
             return;
@@ -77,7 +78,7 @@ class ExpenseRest extends BaseRest {
         }
 
         try {
-            $expense->checkIsValidForCreate();
+            //$expense->checkIsValidForCreate();
             $this->expenseMapper->save($expense);
 
             // Respuesta exitosa
@@ -88,11 +89,12 @@ class ExpenseRest extends BaseRest {
                 "id" => $expense->getId(),
                 "description" => $expense->getDescription(),
                 "totalAmount" => $expense->getTotalAmount(),
-                "payer" => $expense->getPayer(),
+                "payer" => $expense->getPayer()->getUsername(),
                 "group" =>  $expense->getGroup()->getId(),
                 "participants" => array_map(function ($user, $amount) {
                     return [
-                        "username" => $user->getUsername(),
+                        $user,
+                        "username" => $user,
                         "amount" => $amount
                     ];
                 }, array_keys($expense->getParticipants()), $expense->getParticipants())
@@ -105,8 +107,47 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para obtener los detalles de un gasto
-    public function getExpense($expenseId) {
+    public function getExpense($groupId, $expenseId) {
         //$currentUser = $this->authenticateUser();
+        try{
+            $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+            if (!$expense) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+                echo(json_encode(["error" => "Expense not found"]));
+                return;
+            }
+
+            if ($expense->getGroup()->getId() != $groupId) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+                echo(json_encode(["error" => "Expense does not belong to this group"]));
+                return;
+            }
+
+            header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
+            header('Content-Type: application/json');
+            echo(json_encode([
+                "id" => $expense->getId(),
+                "description" => $expense->getDescription(),
+                "totalAmount" => $expense->getTotalAmount(),
+                "payer" => $expense->getPayer()->getUsername(),
+                "group" => $expense->getGroup()->getId(),
+                "participants" => array_map(function ($username, $amount) {
+                return array(
+                    "username" => $username,
+                    "amount" => $amount
+                );
+            }, array_keys($expense->getParticipants()), $expense->getParticipants())
+            ]));
+        } catch (ValidationException $e) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+            header('Content-Type: application/json');
+            echo(json_encode(["errors" => $e->getErrors()]));
+        }
+    }
+
+    // Método para actualizar un gasto
+    public function updateExpense($groupId, $expenseId, $data) {
+        $currentUser = $this->authenticateUser();
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
         if (!$expense) {
@@ -115,31 +156,9 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
-        header('Content-Type: application/json');
-        echo(json_encode([
-            "id" => $expense->getId(),
-            "description" => $expense->getDescription(),
-            "totalAmount" => $expense->getTotalAmount(),
-            "payer" => $expense->getPayer()->getUsername(),
-            "participants" => array_map(function ($username, $amount) {
-            return array(
-                "username" => $username,
-                "amount" => $amount
-            );
-        }, array_keys($expense->getParticipants()), $expense->getParticipants()),
-            "group" => $expense->getGroup()->getId()
-        ]));
-    }
-
-    // Método para actualizar un gasto
-    public function updateExpense($expenseId, $data) {
-        $currentUser = $this->authenticateUser();
-
-        $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
-        if (!$expense) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Expense not found"]));
+        if ($expense->getGroup()->getId() !== $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+            echo(json_encode(["error" => "Expense does not belong to this group"]));
             return;
         }
 
@@ -197,7 +216,7 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para eliminar un gasto
-    public function deleteExpense($expenseId) {
+    public function deleteExpense($groupId, $expenseId) {
         $currentUser = $this->authenticateUser();
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
@@ -207,7 +226,13 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        if (!($expense->getPayer() == $currentUser || $expense->getGroup()->getAdmin() == $currentUser)) {
+        if ($expense->getGroup()->getId() != $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+            echo(json_encode(["error" => "Expense does not belong to this group"]));
+            return;
+        }
+
+        if (!($expense->getPayer()->getUsername() == $currentUser || $expense->getGroup()->getAdmin() == $currentUser)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             echo(json_encode(["error" => "You are not authorized to delete this expense"]));
             return;
@@ -223,7 +248,7 @@ class ExpenseRest extends BaseRest {
 // URI-MAPPING for this Rest endpoint
 $expenseRest = new ExpenseRest();
 URIDispatcher::getInstance()       
-    ->map("GET", "/expense/$1", array($expenseRest, "getExpense"))        
-    ->map("POST", "/expense", array($expenseRest, "addExpense"))          
-    ->map("PUT", "/expense/$1", array($expenseRest, "updateExpense"))     
-    ->map("DELETE", "/expense/$1", array($expenseRest, "deleteExpense")); 
+    ->map("GET", "/group/$1/expense/$2", array($expenseRest, "getExpense"))        
+    ->map("POST", "/group/$1/expense", array($expenseRest, "addExpense"))          
+    ->map("PUT", "/group/$1/expense/$2", array($expenseRest, "updateExpense"))     
+    ->map("DELETE", "/group/$1/expense/$2", array($expenseRest, "deleteExpense")); 
