@@ -98,6 +98,8 @@ class GroupRest extends BaseRest {
 	}
 
 	public function createGroup($data) {
+		echo(json_encode($data));
+
 		$currentUser = parent::authenticateUser();
 		$group = new Group();
 
@@ -172,8 +174,11 @@ class GroupRest extends BaseRest {
 			return;
 		}
 
-		$group->setName($data->name);
-		$group->setDescription($data->description);
+		if (isset($data->name) && isset($data->description)) {
+			$group->setName($data->name);
+			$group->setDescription($data->description);
+		}
+
         if (isset($data->members)) {
             $existingMembers = $group->getMembers();
             $newMembers = [];

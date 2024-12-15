@@ -37,6 +37,12 @@ class ExpenseRest extends BaseRest {
             echo(json_encode(["error" => "Group not found"]));
             return;
         }
+        
+        if (!isset($data->description) || !isset($data->totalAmount) || !isset($data->payer)) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+            echo(json_encode(["error" => "Description, total amount, and payer are required"]));
+            return;
+        }
 
         $payer = $this->userMapper->getUser($data->payer);
         if (!$payer) {
@@ -47,19 +53,13 @@ class ExpenseRest extends BaseRest {
 
         $expense = new Expense();
 
-        if (!isset($data->description) || !isset($data->totalAmount) || !isset($data->payer)) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            echo(json_encode(["error" => "Description, total amount, and payer are required"]));
-            return;
-        }
-
         $expense->setDescription($data->description);
         $expense->setTotalAmount($data->totalAmount);
         $expense->setGroup($group);
         $expense->setPayer($payer);
 
-        // Validar participantes
-        if (!isset($data->participants) || !is_object($data->participants)) {
+        if (!isset($data->participants)) {
+            echo(json_encode($data->participants));
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
             echo(json_encode(["error" => "Participants must be a valid object with usernames and amounts"]));
             return;
@@ -88,11 +88,12 @@ class ExpenseRest extends BaseRest {
                 "id" => $expense->getId(),
                 "description" => $expense->getDescription(),
                 "totalAmount" => $expense->getTotalAmount(),
-                "payer" => $expense->getPayer(),
+                "payer" => $expense->getPayer()->getUsername(),
                 "group" =>  $expense->getGroup()->getId(),
                 "participants" => array_map(function ($user, $amount) {
                     return [
-                        "username" => $user->getUsername(),
+                        $user,
+                        "username" => $user,
                         "amount" => $amount
                     ];
                 }, array_keys($expense->getParticipants()), $expense->getParticipants())
@@ -107,6 +108,13 @@ class ExpenseRest extends BaseRest {
     // Método para obtener los detalles de un gasto
     public function getExpense($groupId, $expenseId) {
         //$currentUser = $this->authenticateUser();
+        try{
+            $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+            if (!$expense) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+                echo(json_encode(["error" => "Expense not found"]));
+                return;
+            }
 
         $group = $this->groupMapper->findById($groupId);
         if (!$group) {
@@ -175,14 +183,13 @@ class ExpenseRest extends BaseRest {
             echo(json_encode(["error" => "You are not authorized to edit this expense"]));
             return;
         }
-
         if (isset($data->description)) {
             $expense->setDescription($data->description);
         }
         if (isset($data->totalAmount)) {
             $expense->setTotalAmount($data->totalAmount);
         }
-
+        
         if (isset($data->participants)) {
             $expense->clearParticipants();
             foreach ($data->participants as $username => $amount) {
@@ -207,11 +214,11 @@ class ExpenseRest extends BaseRest {
                 "id" => $expense->getId(),
                 "description" => $expense->getDescription(),
                 "totalAmount" => $expense->getTotalAmount(),
-                "payer" => $expense->getPayer(),
+                "payer" => $expense->getPayer()->getUsername(),
                 "group" =>  $expense->getGroup()->getId(),
                 "participants" => array_map(function ($user, $amount) {
                     return [
-                        "username" => $user->getUsername(),
+                        "username" => $user,
                         "amount" => $amount
                     ];
                 }, array_keys($expense->getParticipants()), $expense->getParticipants())
