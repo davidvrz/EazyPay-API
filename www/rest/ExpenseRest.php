@@ -75,7 +75,7 @@ class ExpenseRest extends BaseRest {
         }
 
         try {
-            //$expense->checkIsValidForCreate();
+            $expense->checkIsValidForCreate();
             $this->expenseMapper->save($expense);
 
             // Respuesta exitosa
@@ -170,7 +170,7 @@ class ExpenseRest extends BaseRest {
         if (isset($data->totalAmount)) {
             $expense->setTotalAmount($data->totalAmount);
         }
-
+        
         if (isset($data->participants)) {
             $expense->clearParticipants();
             foreach ($data->participants as $username => $amount) {
@@ -184,7 +184,7 @@ class ExpenseRest extends BaseRest {
                 }
             }
         }
-     
+
         try {
             $expense->checkIsValidForUpdate();
             $this->expenseMapper->update($expense);
@@ -195,7 +195,7 @@ class ExpenseRest extends BaseRest {
                 "id" => $expense->getId(),
                 "description" => $expense->getDescription(),
                 "totalAmount" => $expense->getTotalAmount(),
-                "payer" => $expense->getPayer(),
+                "payer" => $expense->getPayer()->getUsername(),
                 "group" =>  $expense->getGroup()->getId(),
                 "participants" => array_map(function ($user, $amount) {
                     return [
