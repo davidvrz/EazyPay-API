@@ -22,16 +22,16 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para añadir un nuevo gasto
-    public function addExpense($data) {
+    public function addExpense($groupId, $data) {
         //$currentUser = $this->authenticateUser();
 
-        if (!isset($data->group_id)) {
+        if (!isset($groupId)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
             echo(json_encode(["error" => "Group ID is required"]));
             return;
         }
  
-        $group = $this->groupMapper->findById($data->group_id);
+        $group = $this->groupMapper->getGroupDetailsById($groupId);
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Group not found"]));
@@ -105,13 +105,27 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para obtener los detalles de un gasto
-    public function getExpense($expenseId) {
+    public function getExpense($groupId, $expenseId) {
         //$currentUser = $this->authenticateUser();
+
+        $group = $this->groupMapper->findById($groupId);
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Group not found"]));
+            return;
+        }
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Expense not found"]));
+            return;
+        }
+
+
+        if ($expense->getGroup()->getId() != $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
         }
 
@@ -133,13 +147,26 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para actualizar un gasto
-    public function updateExpense($expenseId, $data) {
+    public function updateExpense($groupId, $expenseId, $data) {
         $currentUser = $this->authenticateUser();
+
+        $group = $this->groupMapper->findById($groupId);
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Group not found"]));
+            return;
+        }
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Expense not found"]));
+            return;
+        }
+
+        if ($expense->getGroup()->getId() !== $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
         }
 
@@ -197,13 +224,26 @@ class ExpenseRest extends BaseRest {
     }
 
     // Método para eliminar un gasto
-    public function deleteExpense($expenseId) {
+    public function deleteExpense($groupId, $expenseId) {
         $currentUser = $this->authenticateUser();
+
+        $group = $this->groupMapper->findById($groupId);
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Group not found"]));
+            return;
+        }
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Expense not found"]));
+            return;
+        }
+
+        if ($expense->getGroup()->getId() !== $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
         }
 
@@ -222,8 +262,8 @@ class ExpenseRest extends BaseRest {
 
 // URI-MAPPING for this Rest endpoint
 $expenseRest = new ExpenseRest();
-URIDispatcher::getInstance()       
-    ->map("GET", "/expense/$1", array($expenseRest, "getExpense"))        
-    ->map("POST", "/expense", array($expenseRest, "addExpense"))          
-    ->map("PUT", "/expense/$1", array($expenseRest, "updateExpense"))     
-    ->map("DELETE", "/expense/$1", array($expenseRest, "deleteExpense")); 
+URIDispatcher::getInstance()
+    ->map("GET", "/group/$1/expense/$2", array($expenseRest, "getExpense"))        
+    ->map("POST", "/group/$1/expense", array($expenseRest, "addExpense"))
+    ->map("PUT", "/group/$1/expense/$2", array($expenseRest, "updateExpense"))     
+    ->map("DELETE", "/group/$1/expense/$2", array($expenseRest, "deleteExpense"));
