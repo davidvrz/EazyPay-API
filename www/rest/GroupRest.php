@@ -179,12 +179,8 @@ class GroupRest extends BaseRest {
 			$group->setDescription($data->description);
 		}
 
-		//echo("0". isset($data->members));
-
         if (isset($data->members)) {
-			echo("1". $data->members);
             $existingMembers = $group->getMembers();
-			echo("2.". $existingMembers);
             $newMembers = [];
             foreach ($data->members as $memberData) {
                 if (isset($memberData)) {

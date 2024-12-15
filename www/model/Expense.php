@@ -204,7 +204,7 @@ class Expense {
         }
         if (empty($this->participants)) {
             $errors["participants"] = "At least one participant is required.";
-        } else {
+        } /*else {
             foreach ($this->participants as $participant) {
                 $user = $participant['user'];  
                 if (empty($user->getUsername())) {
@@ -214,7 +214,7 @@ class Expense {
                     $errors["participant_amount"] = "Each participant must have a valid amount.";
                 }
             }            
-        }
+        }*/
 
         if (sizeof($errors) > 0) {
             throw new ValidationException($errors, "Expense is not valid");

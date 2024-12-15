@@ -190,8 +190,8 @@ class GroupMapper {
 	
 			// Si el miembro no existe, agregarlo
 			if ($exists == 0) {
-				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
-				$stmt->execute(array($groupId, $user));
+				$stmt = $this->db->prepare("INSERT INTO community_members(community, member, balance) VALUES (?, ?)");
+				$stmt->execute(array($groupId, $user, $balance));
 			}
 		}
 	

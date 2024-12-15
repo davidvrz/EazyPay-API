@@ -34,14 +34,13 @@ class ExpenseMapper {
 	public function save(Expense $expense) {
 		$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, payer) values (?,?,?,?)");
 		$stmt->execute(array($expense->getGroup()->getId(), $expense->getDescription(), $expense->getTotalAmount(), $expense->getPayer()->getUserName()));
+
 		$expenseId = $this->db->lastInsertId();
 
-		foreach ($expense->getParticipants() as $participant) {
-            $user = $participant['user'];
-            $amount = $participant['amount'];
+		foreach ($expense->getParticipants() as $participant => $amount) {
             $stmt = $this->db->prepare("INSERT INTO expense_participants(expense, member, amount) VALUES (?,?,?)");
-            $stmt->execute([$expenseId, $user->getUserName(), $amount]);
-			$this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), -$amount);
+            $stmt->execute(array($expenseId, $participant, $amount));
+			$this->updateAccumulatedBalance($participant, $expense->getGroup()->getId(), -$amount);
         }
 
         $this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), $expense->getTotalAmount());
