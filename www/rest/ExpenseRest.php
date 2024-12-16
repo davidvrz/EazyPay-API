@@ -52,7 +52,6 @@ class ExpenseRest extends BaseRest {
         }
 
         $expense = new Expense();
-
         $expense->setDescription($data->description);
         $expense->setTotalAmount($data->totalAmount);
         $expense->setGroup($group);
@@ -152,6 +151,10 @@ class ExpenseRest extends BaseRest {
             }, array_keys($expense->getParticipants()), $expense->getParticipants()),
                 "group" => $expense->getGroup()->getId()
             ]));
+        } catch (ValidationException $e) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+            header('Content-Type: application/json');
+            echo(json_encode(["errors" => $e->getErrors()]));
         }
     }
 
