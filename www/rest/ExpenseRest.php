@@ -116,42 +116,43 @@ class ExpenseRest extends BaseRest {
                 return;
             }
 
-        $group = $this->groupMapper->findById($groupId);
-        if (!$group) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Group not found"]));
-            return;
+            $group = $this->groupMapper->findById($groupId);
+            if (!$group) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+                echo(json_encode(["error" => "Group not found"]));
+                return;
+            }
+
+            $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+            if (!$expense) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+                echo(json_encode(["error" => "Expense not found"]));
+                return;
+            }
+
+            if ($expense->getGroup()->getId() != $groupId) {
+                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+                echo(json_encode(["error" => "Expense does not belong to the specified group"]));
+                return;
+            }
+
+
+            header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
+            header('Content-Type: application/json');
+            echo(json_encode([
+                "id" => $expense->getId(),
+                "description" => $expense->getDescription(),
+                "totalAmount" => $expense->getTotalAmount(),
+                "payer" => $expense->getPayer()->getUsername(),
+                "participants" => array_map(function ($username, $amount) {
+                return array(
+                    "username" => $username,
+                    "amount" => $amount
+                );
+            }, array_keys($expense->getParticipants()), $expense->getParticipants()),
+                "group" => $expense->getGroup()->getId()
+            ]));
         }
-
-        $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
-        if (!$expense) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Expense not found"]));
-            return;
-        }
-
-
-        if ($expense->getGroup()->getId() != $groupId) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Expense does not belong to the specified group"]));
-            return;
-        }
-
-        header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
-        header('Content-Type: application/json');
-        echo(json_encode([
-            "id" => $expense->getId(),
-            "description" => $expense->getDescription(),
-            "totalAmount" => $expense->getTotalAmount(),
-            "payer" => $expense->getPayer()->getUsername(),
-            "participants" => array_map(function ($username, $amount) {
-            return array(
-                "username" => $username,
-                "amount" => $amount
-            );
-        }, array_keys($expense->getParticipants()), $expense->getParticipants()),
-            "group" => $expense->getGroup()->getId()
-        ]));
     }
 
     // Método para actualizar un gasto
@@ -172,7 +173,7 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        if ($expense->getGroup()->getId() !== $groupId) {
+        if ($expense->getGroup()->getId() != $groupId) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
@@ -248,7 +249,7 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        if ($expense->getGroup()->getId() !== $groupId) {
+        if ($expense->getGroup()->getId() != $groupId) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
