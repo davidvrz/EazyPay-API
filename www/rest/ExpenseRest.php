@@ -91,7 +91,6 @@ class ExpenseRest extends BaseRest {
                 "group" =>  $expense->getGroup()->getId(),
                 "participants" => array_map(function ($user, $amount) {
                     return [
-                        $user,
                         "username" => $user,
                         "amount" => $amount
                     ];

@@ -93,6 +93,7 @@ class ExpenseMapper {
         if ($oldExpense) {
             $this->revertBalanceChanges($oldExpense);
         }
+
 		$stmt = $this->db->prepare("UPDATE expenses SET expense_description=?, total_amount=?, payer=? WHERE expense_id=?");
 		$stmt->execute(array(
 			$expense->getDescription(),
@@ -104,14 +105,13 @@ class ExpenseMapper {
 		// Eliminar los participantes actuales del gasto (con sus importes)
 		$stmt = $this->db->prepare("DELETE FROM expense_participants WHERE expense=?");
 		$stmt->execute(array($expense->getId()));
-		var_dump($expense->getParticipants());
 		// Añadir los nuevos participantes y sus importes
-		foreach ($expense->getParticipants() as $participant) {
-			$user = $participant['user'];
-            $amount = $participant['amount'];
+		foreach ($expense->getParticipants() as $participant => $amount) {
+			$user = $participant;
+            $amount = $amount;
             $stmt = $this->db->prepare("INSERT INTO expense_participants(expense, member, amount) VALUES (?, ?, ?)");
-            $stmt->execute([$expense->getId(), $user->getUserName(), $amount]);
-            $this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), -$amount);
+            $stmt->execute([$expense->getId(), $user, $amount]);
+            $this->updateAccumulatedBalance($user, $expense->getGroup()->getId(), -$amount);
 		}
 
 		$this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), $expense->getTotalAmount());
@@ -137,10 +137,10 @@ class ExpenseMapper {
 
     private function revertBalanceChanges(Expense $expense) {
         $this->updateAccumulatedBalance($expense->getPayer()->getUserName(), $expense->getGroup()->getId(), -$expense->getTotalAmount());
-        foreach ($expense->getParticipants() as $participant) {
-            $user = $participant['user'];
-            $amount = $participant['amount'];
-            $this->updateAccumulatedBalance($user->getUserName(), $expense->getGroup()->getId(), $amount);
+        foreach ($expense->getParticipants() as $participant => $amount ) {
+            $user = $participant;
+            $amount = $amount;
+            $this->updateAccumulatedBalance($user, $expense->getGroup()->getId(), $amount);
         }
     }
 

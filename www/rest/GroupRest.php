@@ -202,6 +202,8 @@ class GroupRest extends BaseRest {
 				}
 			}
 
+			echo(json_encode($newMembers));
+
             $group->clearMembers();	
             foreach ($newMembers as $username => $balance) {
                 $user = $this->userMapper->getUser($username);
