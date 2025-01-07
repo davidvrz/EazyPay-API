@@ -181,34 +181,39 @@ class Group {
 	public function checkIsValidForCreate() {
 		$errors = array();
 		
-		// Validaciones existentes
-		if (strlen(trim($this->name)) == 0 ) {
-			$errors["name"] = "group name is mandatory";
+		// Validación de nombre
+		if (strlen(trim($this->name)) == 0) {
+			$errors["name"] = "Group name is mandatory";
 		}
-		if (strlen(trim($this->description)) == 0 ) {
-			$errors["description"] = "group description is mandatory";
+		
+		// Validación de descripción
+		if (strlen(trim($this->description)) == 0) {
+			$errors["description"] = "Group description is mandatory";
 		}
-		if ($this->admin == NULL ) {
-			$errors["admin"] = "admin is mandatory";
+		
+		// Validación de administrador
+		if ($this->admin == NULL) {
+			$errors["admin"] = "Admin is mandatory";
 		}
-	/*
-		// Nueva validación para los miembros
+		
+		// Validación de miembros
 		if (empty($this->members)) {
-			$errors["members"] = "group must have at least one member";
-		}
-	
-		// Validación de objetos miembro
-		/*foreach ($this->members as $member) {
-			if (!$member['member'] instanceof User) {
-				$errors["members"] = "all members must be instances of User";
-				break;
+			$errors["members"] = "Group must have at least one member";
+		} else {
+			foreach ($this->members as $username => $balance) {
+				if (!is_numeric($balance)) {
+					$errors["members"] = "Balance for member '{$username}' must be numeric";
+					break;
+				}
 			}
-		}*/
-	
-		if (sizeof($errors) > 0){
-			throw new ValidationException($errors, "group is not valid");
+		}
+		
+		// Lanza excepción si hay errores
+		if (sizeof($errors) > 0) {
+			throw new ValidationException($errors, "Group is not valid");
 		}
 	}
+	
 
 	/**
 	* Checks if the current instance is valid

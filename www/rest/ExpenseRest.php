@@ -21,57 +21,97 @@ class ExpenseRest extends BaseRest {
         $this->userMapper = new UserMapper();
     }
 
-    // Método para añadir un nuevo gasto
-    public function addExpense($groupId, $data) {
-        //$currentUser = $this->authenticateUser();
+    public function getExpense($groupId, $expenseId) {
+        $currentUser = parent::authenticateUser();
 
-        if (!isset($groupId)) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            echo(json_encode(["error" => "Group ID is required"]));
-            return;
-        }
- 
-        $group = $this->groupMapper->getGroupDetailsById($groupId);
+        $group = $this->groupMapper->findById($groupId);
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Group not found"]));
-            return;
-        }
-        
-        if (!isset($data->description) || !isset($data->totalAmount) || !isset($data->payer)) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            echo(json_encode(["error" => "Description, total amount, and payer are required"]));
+            echo("Group with id ".$groupId." not found");
             return;
         }
 
-        $payer = $this->userMapper->getUser($data->payer);
-        if (!$payer) {
+        if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
+            header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
+            echo("You are not a member of this group");
+            return;
+        }
+
+        $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
+        if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Payer not found"]));
+            echo("Expense with id ".$expenseId." not found");
+            return;
+        }
+    
+        if ($expense->getGroup()->getId() != $groupId) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+            header('Content-Type: application/json');
+            echo(json_encode(["error" => "Expense does not belong to the specified group"]));
             return;
         }
 
+        header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
+        header('Content-Type: application/json');
+        echo(json_encode([
+            "id" => $expense->getId(),
+            "description" => $expense->getDescription(),
+            "totalAmount" => $expense->getTotalAmount(),
+            "payer" => $expense->getPayer()->getUsername(),
+            "participants" => array_map(function ($username, $amount) {
+            return array(
+                "username" => $username,
+                "amount" => $amount
+            );
+        }, array_keys($expense->getParticipants()), $expense->getParticipants()),
+            "group" => $expense->getGroup()->getId()
+        ]));
+    }
+
+
+    // Método para añadir un nuevo gasto
+    public function addExpense($groupId, $data) {
+        $currentUser = parent::authenticateUser();
+
+        $group = $this->groupMapper->findById($groupId);
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            echo("Group with id ".$groupId." not found");
+            return;
+        }
+
+        if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
+            header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
+            echo("You are not a member of this group");
+            return;
+        }
+    
         $expense = new Expense();
-        $expense->setDescription($data->description);
-        $expense->setTotalAmount($data->totalAmount);
-        $expense->setGroup($group);
-        $expense->setPayer($payer);
 
-        if (!isset($data->participants)) {
-            echo(json_encode($data->participants));
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            echo(json_encode(["error" => "Participants must be a valid object with usernames and amounts"]));
-            return;
+        if (isset($data->description)) {
+            $expense->setDescription($data->description);
         }
 
-        foreach ($data->participants as $username => $amount) {
-            $user = $this->userMapper->getUser($username);
-            if ($user && floatval($amount) > 0) {
-                $expense->addParticipant($user, round(floatval($amount), 2));
-            } else {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-                echo(json_encode(["error" => "Invalid participant or amount: $username"]));
-                return;
+        if (isset($data->totalAmount)){
+            $expense->setTotalAmount($data->totalAmount);
+        }
+
+        if (isset($data->payer)){
+            $expense->setPayer($this->userMapper->getUser($data->payer));
+        }
+
+        $expense->setGroup($group);
+
+        if (isset($data->participants)) {
+            foreach ($data->participants as $username => $amount) {
+                $user = $this->userMapper->getUser($username);
+                if ($this->groupMapper->isGroupMember($user->getUsername(), $groupId) && floatval($amount) > 0) {
+                    $expense->addParticipant($user, round(floatval($amount), 2));
+                } else {
+                    header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
+                    echo(json_encode(["error" => "Invalid participant or amount: $username"]));
+                    return;
+                }
             }
         }
 
@@ -103,75 +143,27 @@ class ExpenseRest extends BaseRest {
         }
     }
 
-    // Método para obtener los detalles de un gasto
-    public function getExpense($groupId, $expenseId) {
-        //$currentUser = $this->authenticateUser();
-        try{
-            $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
-            if (!$expense) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                echo(json_encode(["error" => "Expense not found"]));
-                return;
-            }
-
-            $group = $this->groupMapper->findById($groupId);
-            if (!$group) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                echo(json_encode(["error" => "Group not found"]));
-                return;
-            }
-
-            $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
-            if (!$expense) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                echo(json_encode(["error" => "Expense not found"]));
-                return;
-            }
-
-            if ($expense->getGroup()->getId() != $groupId) {
-                header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                echo(json_encode(["error" => "Expense does not belong to the specified group"]));
-                return;
-            }
-
-
-            header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
-            header('Content-Type: application/json');
-            echo(json_encode([
-                "id" => $expense->getId(),
-                "description" => $expense->getDescription(),
-                "totalAmount" => $expense->getTotalAmount(),
-                "payer" => $expense->getPayer()->getUsername(),
-                "participants" => array_map(function ($username, $amount) {
-                return array(
-                    "username" => $username,
-                    "amount" => $amount
-                );
-            }, array_keys($expense->getParticipants()), $expense->getParticipants()),
-                "group" => $expense->getGroup()->getId()
-            ]));
-        } catch (ValidationException $e) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
-            header('Content-Type: application/json');
-            echo(json_encode(["errors" => $e->getErrors()]));
-        }
-    }
-
     // Método para actualizar un gasto
     public function updateExpense($groupId, $expenseId, $data) {
-        $currentUser = $this->authenticateUser();
+        $currentUser = parent::authenticateUser();
 
         $group = $this->groupMapper->findById($groupId);
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Group not found"]));
+            echo("Group with id ".$groupId." not found");
             return;
         }
 
         $expense = $this->expenseMapper->getExpenseDetailsById($expenseId);
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-            echo(json_encode(["error" => "Expense not found"]));
+            echo(json_encode(["error" => "Expense with id ".$expenseId." not found"]));
+            return;
+        }
+
+        if (!($expense->getPayer() == $currentUser || $group->getAdmin() == $currentUser)) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+            echo(json_encode(["error" => "You are not authorized to update this expense"]));
             return;
         }
 
@@ -181,16 +173,14 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        if (!($expense->getPayer() == $currentUser || $expense->getGroup()->getAdmin() == $currentUser)) {
-            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
-            echo(json_encode(["error" => "You are not authorized to edit this expense"]));
-            return;
-        }
         if (isset($data->description)) {
             $expense->setDescription($data->description);
         }
         if (isset($data->totalAmount)) {
             $expense->setTotalAmount($data->totalAmount);
+        }
+        if (isset($data->payer)){
+            $expense->setPayer($this->userMapper->getUser($data->payer));
         }
         
         if (isset($data->participants)) {
@@ -235,7 +225,7 @@ class ExpenseRest extends BaseRest {
 
     // Método para eliminar un gasto
     public function deleteExpense($groupId, $expenseId) {
-        $currentUser = $this->authenticateUser();
+        $currentUser = parent::authenticateUser();
 
         $group = $this->groupMapper->findById($groupId);
         if (!$group) {
@@ -257,7 +247,7 @@ class ExpenseRest extends BaseRest {
             return;
         }
 
-        if (!($expense->getPayer() == $currentUser || $expense->getGroup()->getAdmin() == $currentUser)) {
+        if (!($expense->getPayer() == $currentUser || $group->getAdmin()  == $currentUser)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             echo(json_encode(["error" => "You are not authorized to delete this expense"]));
             return;

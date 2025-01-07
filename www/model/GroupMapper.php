@@ -273,4 +273,11 @@ class GroupMapper {
 		$stmt->execute(array($group->getId()));
 	}
 
+	public function isGroupMember($username, $groupId) {
+		$stmt = $this->db->prepare("SELECT COUNT(*) FROM community_members WHERE member = ? AND community = ?");
+		$stmt->execute([$username, $groupId]);
+		return $stmt->fetchColumn() > 0;
+	}
+	
+
 }

@@ -190,43 +190,61 @@ class Expense {
      */
     public function checkIsValidForCreate() {
         $errors = array();
-        if (empty(trim($this->description))) {
+    
+        // Validación de descripción
+        if (strlen(trim($this->description)) == 0) {
             $errors["description"] = "Expense description is mandatory.";
         }
+    
+        // Validación de monto total
         if ($this->totalAmount <= 0) {
             $errors["totalAmount"] = "Total amount must be greater than zero.";
         }
+    
+        // Validación de grupo
         if ($this->group == null) {
             $errors["group"] = "Group is mandatory.";
         }
+    
+        // Validación de pagador
         if (empty($this->payer)) {
             $errors["payer"] = "Payer is mandatory.";
         }
+    
+        // Validación de participantes
         if (empty($this->participants)) {
             $errors["participants"] = "At least one participant is required.";
-        } /*else {
-            foreach ($this->participants as $participant) {
-                $user = $participant['user'];  
-                if (empty($user->getUsername())) {
-                    $errors["participant_user"] = "Each participant must have a valid user.";
-                }
-                if ($participant['amount'] <= 0) {
+        } else {
+            $participantsTotalAmount = 0; // Variable para sumar los montos de los participantes
+    
+            foreach ($this->participants as $username => $amount) {
+                // Comprobar que el monto del participante sea válido
+                if ($amount <= 0) {
                     $errors["participant_amount"] = "Each participant must have a valid amount.";
                 }
-            }            
-        }*/
-
+    
+                $participantsTotalAmount += $amount;
+            }
+    
+            // Validación de la suma de los montos de los participantes
+            if (abs($participantsTotalAmount - $this->totalAmount) > 0.01) {
+                $errors["participants_total"] = "The sum of participants' amounts must equal the total amount.";
+            }
+        }
+    
+        // Lanza excepción si hay errores
         if (sizeof($errors) > 0) {
             throw new ValidationException($errors, "Expense is not valid");
         }
     }
+    
 
     public function checkIsValidForUpdate() {
 		$errors = array();
 	
-		/*if (!isset($this->id)) {
+		if (!isset($this->id)) {
 			$errors["id"] = "id is mandatory";
-		}*/
+		}
 	
 		try {
 			$this->checkIsValidForCreate();
