@@ -39,8 +39,9 @@ class BaseRest {
 			} else {
 				header($_SERVER['SERVER_PROTOCOL'].' 401 Unauthorized');
 				header('WWW-Authenticate: Basic realm="Rest API of EazyPay"');
-
-				die('The username/password is not valid');
+				header('Content-Type: application/json');
+				echo json_encode(["error" => "This operation requires authentication"]);
+				die;				
 			}
 		}
 	}

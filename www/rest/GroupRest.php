@@ -48,7 +48,7 @@ class GroupRest extends BaseRest {
 
         header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
         header('Content-Type: application/json');
-        echo(json_encode($groups_array));
+        echo json_encode(["data" => $groups_array]);
     }
 
     public function readGroup($groupId) {
@@ -57,19 +57,15 @@ class GroupRest extends BaseRest {
 
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
-            echo("Group with id ".$groupId." not found");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
             return;
         }
 
         if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
-            echo("You are not a member of this group");
-            return;
-        }
-
-        if (!in_array($currentUser->getUsername(), array_keys($group->getMembers()))) {
-            header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
-            echo("You are not a member of this group");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "You are not a member of this group"]);
             return;
         }
 
@@ -100,7 +96,7 @@ class GroupRest extends BaseRest {
 
         header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
         header('Content-Type: application/json');
-        echo(json_encode($group_array));
+        echo json_encode(["data" => $group_array]);
     }
 
     public function createGroup($data) {
@@ -125,7 +121,7 @@ class GroupRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo(json_encode(["error" => "Member not found: " . $memberData]));
+                    echo json_encode(["errors" => "Member not found: " . $memberData]);
                     return;
                 }
             } 
@@ -138,8 +134,8 @@ class GroupRest extends BaseRest {
             header($_SERVER['SERVER_PROTOCOL'].' 201 Created');
             header('Location: '.$_SERVER['REQUEST_URI']."/".$groupId);
             header('Content-Type: application/json');
-            echo(json_encode(array(
-                "id" => $groupId,
+            echo json_encode(["data" => array(
+                "id" => $group->getId(),
                 "name" => $group->getName(),
                 "description" => $group->getDescription(),
                 "admin" => $group->getAdmin()->getUsername(),
@@ -149,11 +145,11 @@ class GroupRest extends BaseRest {
                         "balance" => $balance
                     );
                 }, array_keys($group->getMembers()), $group->getMembers())
-            )));
+            )]);
         } catch (ValidationException $e) {
             header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
             header('Content-Type: application/json');
-            echo(json_encode($e->getErrors()));
+            echo json_encode(["errors" => $e->getErrors()]);
         }
     }
 
@@ -163,13 +159,15 @@ class GroupRest extends BaseRest {
         $group = $this->groupMapper->getGroupDetailsById($groupId);
         if ($group == NULL) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not found');
-            echo("Group with id ".$groupId." not found");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
             return;
         }
 
         if ($group->getAdmin() != $currentUser) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
-            echo("You are not the admin of this group");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "You are not the admin of this group"]);
             return;
         }
 
@@ -196,7 +194,7 @@ class GroupRest extends BaseRest {
                     } else {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                         header('Content-Type: application/json');
-                        echo(json_encode(["error" => "Member not found: " . $memberData]));
+                        echo json_encode(["errors" => "Member not found: " . $memberData]);
                         return;
                     }
                 }
@@ -215,9 +213,9 @@ class GroupRest extends BaseRest {
             $group->checkIsValidForUpdate();
             $this->groupMapper->update($group);
 
-            header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
+            header($_SERVER['SERVER_PROTOCOL'] . ' 200 Ok');
             header('Content-Type: application/json');
-            echo(json_encode(array(
+            echo json_encode(["data" => array(
                 "id" => $group->getId(),
                 "name" => $group->getName(),
                 "description" => $group->getDescription(),
@@ -228,11 +226,11 @@ class GroupRest extends BaseRest {
                         "balance" => $balance
                     );
                 }, array_keys($group->getMembers()), $group->getMembers())
-            )));
+            )]);
         } catch (ValidationException $e) {
             header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
             header('Content-Type: application/json');
-            echo(json_encode($e->getErrors()));
+            echo json_encode(["errors" => $e->getErrors()]);
         }
     }
 
@@ -242,19 +240,23 @@ class GroupRest extends BaseRest {
 
         if ($group == NULL) {
             header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
-            echo("Group with id ".$groupId." not found");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
             return;
         }
 
         if ($group->getAdmin() != $currentUser) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
-            echo("You are not the admin of this group");
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "You are not the admin of this group"]);
             return;
         }
 
         $this->groupMapper->delete($group);
 
         header($_SERVER['SERVER_PROTOCOL'].' 204 No Content');
+        header('Content-Type: application/json');
+        echo json_encode(["message" => "Group deleted succesfully"]);
     }
 }
 

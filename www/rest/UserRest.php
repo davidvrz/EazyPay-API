@@ -25,9 +25,7 @@ class UserRest extends BaseRest {
 		if ($this->userMapper->usernameExists($data->username)) {
 			header($_SERVER['SERVER_PROTOCOL'].' 409 Conflict');
 			header('Content-Type: application/json');
-			echo json_encode([
-				"message" => "Username already exists"
-			]);
+			echo json_encode(["message" => "Username already exists"]);
 			return;
 		}
 
@@ -61,16 +59,12 @@ class UserRest extends BaseRest {
             // Respuesta de error de autorización
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode([
-                "message" => "You are not authorized to login as anyone but you"
-            ]);
+            echo json_encode(["message" => "You are not authorized to login as anyone but you"]);
         } else {
             // Respuesta exitosa de inicio de sesión
             header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
             header('Content-Type: application/json');
-            echo json_encode([
-                "message" => "Hello " . $username
-            ]);
+            echo json_encode(["message" => "Hello " . $username]);
         }
     }
 }
