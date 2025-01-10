@@ -254,7 +254,7 @@ class GroupRest extends BaseRest {
 
         $this->groupMapper->delete($group);
 
-        header($_SERVER['SERVER_PROTOCOL'].' 204 No Content');
+        header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
         header('Content-Type: application/json');
         echo json_encode(["message" => "Group deleted succesfully"]);
     }
