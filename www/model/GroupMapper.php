@@ -98,15 +98,13 @@ class GroupMapper {
 			$members = $this->getMembersWithBalanceByGroupId($groupid);
 			$group->setMembers($members);
 	
-			// Devolver el grupo con todos los detalles
 			return $group;
 		} else {
-			return NULL; // Si no existe el grupo
+			return null; 
 		}
 	}
 
 	private function getExpensesByGroupId($groupid) {
-		// Obtener todos los gastos asociados a este grupo
 		$stmt = $this->db->prepare("SELECT * FROM expenses WHERE community = ?");
 		$stmt->execute(array($groupid));
 		$expenses_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -119,34 +117,11 @@ class GroupMapper {
 				$expense["expense_description"],
 				$expense["total_amount"],
 				new User($expense["payer"]) 
-        );		
-	}
+        	);		
+		}
 	
 		return $expenses;
 	}
-
-/*
-	private function getMembersWithBalanceByGroupId($groupid) {
-		// Obtener todos los miembros del grupo con sus balances
-		$stmt = $this->db->prepare("
-			SELECT u.username, u.email, gm.accumulated_balance 
-			FROM users u 
-			JOIN community_members gm ON u.username = gm.member 
-			WHERE gm.community = ?
-		");
-		$stmt->execute(array($groupid));
-		$members = array();
-	
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$user = new User($row['username'], $row['email']); // Crear el objeto User
-			$members[] = [
-				'member' => $user,
-				'balance' => $row['accumulated_balance']
-			];
-		}
-	
-		return $members;
-	}*/
 
 	private function getMembersWithBalanceByGroupId($groupid) {
 		// Obtener todos los miembros del grupo con sus balances
@@ -237,21 +212,6 @@ class GroupMapper {
 				$stmt = $this->db->prepare("INSERT INTO community_members(community, member) VALUES (?, ?)");
 				$stmt->execute(array($group->getId(), $user));
 			}
-		}
-	
-		// Eliminar los gastos actuales y añadir los nuevos
-		$stmt = $this->db->prepare("DELETE FROM expenses WHERE community=?");
-		$stmt->execute(array($group->getId()));
-	
-		foreach ($group->getExpenses() as $expense) {
-			$stmt = $this->db->prepare("INSERT INTO expenses(community, expense_description, total_amount, payer) VALUES (?, ?, ?, ?, ?)");
-			$stmt->execute(array(
-				$group->getId(),
-				$expense->getDescription(),
-				$expense->getTotalAmount(),
-				//$expense->getDate(),
-				$expense->getPayer()->getUsername()
-			));
 		}
 	}
 
