@@ -258,6 +258,66 @@ class GroupRest extends BaseRest {
         header('Content-Type: application/json');
         echo json_encode(["message" => "Group deleted succesfully"]);
     }
+
+    public function getMovements($groupId) {
+        $currentUser = parent::authenticateUser();
+
+        $group = $this->groupMapper->getGroupDetailsById($groupId);
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "Group with id $groupId not found"]);
+            return;
+        }
+
+        if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
+            header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+            header('Content-Type: application/json');
+            echo json_encode(["errors" => "You are not a member of this group"]);
+            return;
+        }
+
+        $members = $group->getMembers();
+        $suggestedMovements = $this->calculateMovements($members);
+
+        header($_SERVER['SERVER_PROTOCOL'] . ' 200 Ok');
+        header('Content-Type: application/json');
+        echo json_encode(["data" => $suggestedMovements]);
+    }
+
+    private function calculateMovements($members) {
+        $movements = [];
+
+        $debtors = [];
+        $creditors = [];
+
+        foreach ($members as $user => $balance) {
+            if ($balance < 0) {
+                $debtors[] = ["user" => $user, "amount" => abs($balance)];
+            } elseif ($balance > 0) {
+                $creditors[] = ["user" => $user, "amount" => $balance];
+            }
+        }
+
+        foreach ($debtors as &$debtor) {
+            foreach ($creditors as &$creditor) {
+                if ($debtor["amount"] == 0) break;
+
+                $amountToTransfer = min($debtor["amount"], $creditor["amount"]);
+
+                $movements[] = [
+                    "from" => $debtor["user"],
+                    "to" => $creditor["user"],
+                    "amount" => $amountToTransfer
+                ];
+
+                $debtor["amount"] -= $amountToTransfer;
+                $creditor["amount"] -= $amountToTransfer;
+            }
+        }
+
+        return $movements;
+    }
 }
 
 // URI-MAPPING for this Rest endpoint
@@ -265,6 +325,7 @@ $groupRest = new GroupRest();
 URIDispatcher::getInstance()
     ->map("GET", "/group", array($groupRest,"getGroups"))
     ->map("GET", "/group/$1", array($groupRest,"readGroup"))
+    ->map("GET", "/group/$1/movements", array($groupRest, "getMovements"))
     ->map("POST", "/group", array($groupRest,"createGroup"))
     ->map("PUT", "/group/$1", array($groupRest,"updateGroup"))
     ->map("DELETE", "/group/$1", array($groupRest,"deleteGroup"));
