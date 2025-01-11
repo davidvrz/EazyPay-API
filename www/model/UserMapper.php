@@ -60,9 +60,7 @@ class UserMapper {
 		$stmt = $this->db->prepare("SELECT count(username) FROM users where username=?");
 		$stmt->execute(array($username));
 
-		if ($stmt->fetchColumn() > 0) {
-			return true;
-		}
+		return $stmt->fetchColumn() > 0;
 	}
 
 	/**
@@ -76,8 +74,7 @@ class UserMapper {
 		$stmt = $this->db->prepare("SELECT count(username) FROM users where username=? and passwd=?");
 		$stmt->execute(array($username, $passwd));
 
-		if ($stmt->fetchColumn() > 0) {
-			return true;
-		}
+		return $stmt->fetchColumn() > 0;
+
 	}
 }

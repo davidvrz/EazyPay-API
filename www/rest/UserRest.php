@@ -55,13 +55,11 @@ class UserRest extends BaseRest {
 
     public function login($username) {
         $currentLogged = parent::authenticateUser();
-        if ($currentLogged->getUsername() != $username) {
-            // Respuesta de error de autorización
+        if ($currentLogged && $currentLogged->getUsername() != $username) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
             echo json_encode(["message" => "You are not authorized to login as anyone but you"]);
         } else {
-            // Respuesta exitosa de inicio de sesión
             header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
             header('Content-Type: application/json');
             echo json_encode(["message" => "Hello " . $username]);
