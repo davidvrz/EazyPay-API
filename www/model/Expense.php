@@ -216,26 +216,27 @@ class Expense {
             $errors["participants"] = "At least one participant is required.";
         } else {
             $participantsTotalAmount = 0; // Variable para sumar los montos de los participantes
-    
+
             foreach ($this->participants as $username => $amount) {
                 // Comprobar que el monto del participante sea válido
                 if ($amount <= 0) {
                     $errors["participant_amount"] = "Each participant must have a valid amount.";
                 }
-    
+
                 $participantsTotalAmount += $amount;
             }
-    
-            // Validación de la suma de los montos de los participantes
-            if (abs($participantsTotalAmount - $this->totalAmount) > 0.01) {
+            
+            // Validación de la suma de los montos de los participantes, permitiendo una diferencia mínima de 0.01
+            if (round(abs($participantsTotalAmount - $this->totalAmount),2) > 0.01) {
                 $errors["participants_total"] = "The sum of participants' amounts must equal the total amount.";
             }
         }
-    
+
         // Lanza excepción si hay errores
         if (sizeof($errors) > 0) {
             throw new ValidationException($errors, "Expense is not valid");
         }
+
     }
     
 
