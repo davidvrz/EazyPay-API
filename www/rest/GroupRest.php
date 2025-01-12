@@ -157,8 +157,8 @@ class GroupRest extends BaseRest {
         $currentUser = parent::authenticateUser();
 
         $group = $this->groupMapper->getGroupDetailsById($groupId);
-        if ($group == NULL) {
-            header($_SERVER['SERVER_PROTOCOL'].' 404 Not found');
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
             header('Content-Type: application/json');
             echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
             return;
@@ -238,8 +238,8 @@ class GroupRest extends BaseRest {
         $currentUser = parent::authenticateUser();
         $group = $this->groupMapper->findById($groupId);
 
-        if ($group == NULL) {
-            header($_SERVER['SERVER_PROTOCOL'].' 400 Bad request');
+        if (!$group) {
+            header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
             header('Content-Type: application/json');
             echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
             return;

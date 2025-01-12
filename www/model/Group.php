@@ -197,8 +197,8 @@ class Group {
 		}
 		
 		// Validación de miembros
-		if (empty($this->members)) {
-			$errors["members"] = "Group must have at least one member";
+		if (count($this->members) < 2) {
+			$errors["members"] = "Group must have at least two members";
 		} else {
 			foreach ($this->members as $username => $balance) {
 				if (!is_numeric($balance)) {
