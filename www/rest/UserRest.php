@@ -25,7 +25,7 @@ class UserRest extends BaseRest {
 		if ($this->userMapper->usernameExists($data->username)) {
 			header($_SERVER['SERVER_PROTOCOL'].' 409 Conflict');
 			header('Content-Type: application/json');
-			echo json_encode(["message" => "Username already exists"]);
+			echo json_encode(["message" => "error-username-exists"]);
 			return;
 		}
 
@@ -39,7 +39,7 @@ class UserRest extends BaseRest {
             header($_SERVER['SERVER_PROTOCOL'].' 201 Created');
             header('Content-Type: application/json');
             echo json_encode([
-                "message" => "User registered successfully",
+                "message" => "register-successfully",
                 "username" => $data->username
             ]);
         } catch(ValidationException $e) {
@@ -48,7 +48,7 @@ class UserRest extends BaseRest {
             header('Content-Type: application/json');
             echo json_encode([
                 "message" => "Validation errors",
-                "errors" => $e->getErrors()
+                "errors" => "error-validation" . $e->getErrors()
             ]);
         }
     }
@@ -58,11 +58,11 @@ class UserRest extends BaseRest {
         if ($currentLogged && $currentLogged->getUsername() != $username) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["message" => "You are not authorized to login as anyone but you"]);
+            echo json_encode(["errors" => "error-unauthorized-login"]);
         } else {
             header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
             header('Content-Type: application/json');
-            echo json_encode(["message" => "Hello " . $username]);
+            echo json_encode(["message" => "login-successfully" . $username]);
         }
     }
 }

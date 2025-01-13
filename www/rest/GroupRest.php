@@ -58,14 +58,14 @@ class GroupRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
+            echo json_encode(["errors" => "error-group-not-found"]);
             return;
         }
 
         if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not a member of this group"]);
+            echo json_encode(["errors" => "error-not-a-group-member"]);
             return;
         }
 
@@ -121,7 +121,7 @@ class GroupRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo json_encode(["errors" => "Member not found: " . $memberData]);
+                    echo json_encode(["errors" => "error-member-not-found"]);
                     return;
                 }
             } 
@@ -160,14 +160,14 @@ class GroupRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
+            echo json_encode(["errors" => "error-group-not-found"]);
             return;
         }
 
         if ($group->getAdmin() != $currentUser) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not the admin of this group"]);
+            echo json_encode(["errors" => "error-not-a-group-member"]);
             return;
         }
 
@@ -194,7 +194,7 @@ class GroupRest extends BaseRest {
                     } else {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                         header('Content-Type: application/json');
-                        echo json_encode(["errors" => "Member not found: " . $memberData]);
+                        echo json_encode(["errors" => "error-member-not-found"]);
                         return;
                     }
                 }
@@ -241,14 +241,14 @@ class GroupRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);
+            echo json_encode(["errors" => "error-group-not-found"]);
             return;
         }
 
         if ($group->getAdmin() != $currentUser) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not the admin of this group"]);
+            echo json_encode(["errors" => "error-not-group-admin"]);
             return;
         }
 
@@ -256,7 +256,7 @@ class GroupRest extends BaseRest {
 
         header($_SERVER['SERVER_PROTOCOL'].' 200 Ok');
         header('Content-Type: application/json');
-        echo json_encode(["message" => "Group deleted succesfully"]);
+        echo json_encode(["message" => "group-delete-successfully"]);
     }
 
     public function getMovements($groupId) {
@@ -266,14 +266,14 @@ class GroupRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id $groupId not found"]);
+            echo json_encode(["errors" => "error-group-not-found"]);
             return;
         }
 
         if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not a member of this group"]);
+            echo json_encode(["errors" => "error-not-a-group-member"]);
             return;
         }
 

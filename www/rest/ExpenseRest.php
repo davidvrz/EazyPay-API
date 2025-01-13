@@ -28,14 +28,14 @@ class ExpenseRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);            
+            echo json_encode(["errors" => "error-group-not-found"]);            
             return;
         }
 
         if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not a member of this group"]);
+            echo json_encode(["errors" => "error-not-a-group-member"]);
             return;
         }
 
@@ -43,14 +43,14 @@ class ExpenseRest extends BaseRest {
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." not found"]);
+            echo json_encode(["errors" => "error-expense-not-found"]);
             return;
         }
     
         if ($expense->getGroup()->getId() != $groupId) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." does not belong to the specified group"]);
+            echo json_encode(["errors" => "error-expense-not-belong-to-group"]);
             return;
         }
 
@@ -80,14 +80,14 @@ class ExpenseRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);            
+            echo json_encode(["errors" => "error-group-not-found"]);            
             return;
         }
 
         if (!($this->groupMapper->isGroupMember($currentUser->getUsername(), $groupId))) {
             header($_SERVER['SERVER_PROTOCOL'].' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not a member of this group"]);
+            echo json_encode(["errors" => "error-not-a-group-member"]);
             return;
         }
     
@@ -115,7 +115,7 @@ class ExpenseRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo(json_encode(["errors" => "Invalid participant or amount of $username"]));
+                    echo(json_encode(["errors" => "error-expense-invalid-participant-or-amount" . $username]));
                     return;
                 }
             }
@@ -157,7 +157,7 @@ class ExpenseRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);            
+            echo json_encode(["errors" => "error-group-not-found"]);            
             return;
         }
 
@@ -165,21 +165,21 @@ class ExpenseRest extends BaseRest {
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." not found"]);
+            echo json_encode(["errors" => "error-expense-not-found"]);
             return;
         }
 
         if (!($expense->getPayer() == $currentUser || $group->getAdmin() == $currentUser)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not authorized to update this expense"]);
+            echo json_encode(["errors" => "error-unauthorized-update-expense"]);
             return;
         }
 
         if ($expense->getGroup()->getId() != $groupId) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." does not belong to the specified group"]);
+            echo json_encode(["errors" => "error-expense-not-belong-to-group"]);
             return;
         }
 
@@ -202,7 +202,7 @@ class ExpenseRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo(json_encode(["errors" => "Invalid participant or amount of $username"]));
+                    echo(json_encode(["errors" => "error-expense-invalid-participant-or-amount". $username]));
                     return;
                 }
             }
@@ -242,7 +242,7 @@ class ExpenseRest extends BaseRest {
         if (!$group) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Group with id ".$groupId." not found"]);            
+            echo json_encode(["errors" => "error-group-not-found"]);            
             return;
         }
 
@@ -250,21 +250,21 @@ class ExpenseRest extends BaseRest {
         if (!$expense) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." not found"]);            
+            echo json_encode(["errors" => "error-expense-not-found"]);            
             return;
         }
 
         if ($expense->getGroup()->getId() != $groupId) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "Expense with id ".$expenseId." does not belong to the specified group"]);
+            echo json_encode(["errors" => "error-expense-not-belong-to-group"]);
             return;
         }
 
         if (!($expense->getPayer() == $currentUser || $group->getAdmin()  == $currentUser)) {
             header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
             header('Content-Type: application/json');
-            echo json_encode(["errors" => "You are not authorized to delete this expense"]);
+            echo json_encode(["errors" => "error-unauthorized-delete-expense"]);
             return;
         }
 
@@ -272,7 +272,7 @@ class ExpenseRest extends BaseRest {
 
         header($_SERVER['SERVER_PROTOCOL'] . ' 200 Ok');
         header('Content-Type: application/json');
-        echo(json_encode(["message" => "Expense deleted successfully"]));
+        echo(json_encode(["message" => "expense-delete-successfully"]));
     }
 }
 

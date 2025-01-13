@@ -183,26 +183,26 @@ class Group {
 		
 		// Validación de nombre
 		if (strlen(trim($this->name)) == 0) {
-			$errors["name"] = "Group name is mandatory";
+			$errors["name"] = "error-group-name-required";
 		}
 		
 		// Validación de descripción
 		if (strlen(trim($this->description)) == 0) {
-			$errors["description"] = "Group description is mandatory";
+			$errors["description"] = "error-group-description-required";
 		}
 		
 		// Validación de administrador
 		if ($this->admin == NULL) {
-			$errors["admin"] = "Admin is mandatory";
+			$errors["admin"] = "error-group-admin-required";
 		}
 		
 		// Validación de miembros
 		if (count($this->members) < 2) {
-			$errors["members"] = "Group must have at least two members";
+			$errors["members"] = "error-group-min-members";
 		} else {
 			foreach ($this->members as $username => $balance) {
 				if (!is_numeric($balance)) {
-					$errors["members"] = "Balance for member '{$username}' must be numeric";
+					$errors["members"] = "error-group-balance-numeric";
 					break;
 				}
 			}
@@ -210,7 +210,7 @@ class Group {
 		
 		// Lanza excepción si hay errores
 		if (sizeof($errors) > 0) {
-			throw new ValidationException($errors, "Group is not valid");
+			throw new ValidationException($errors, "error-group-invalid");
 		}
 	}
 	
@@ -228,7 +228,7 @@ class Group {
 		$errors = array();
 	
 		if (!isset($this->id)) {
-			$errors["id"] = "id is mandatory";
+			$errors["id"] = "error-group-id-required";
 		}
 	
 		try {
@@ -240,7 +240,7 @@ class Group {
 		}
 	
 		if (sizeof($errors) > 0) {
-			throw new ValidationException($errors, "group is not valid");
+			throw new ValidationException($errors, "error-group-invalid");
 		}
 	}
 }

@@ -42,23 +42,23 @@ class User {
 	public function checkIsValidForRegister() {
 		$errors = array();
 		if (strlen($this->username) < 5) {
-			$errors["username"] = "Username must be at least 5 characters length";
+			$errors["username"] = "error-username-min-length";
 		}
 
 		if(strpos($this->username, ' ') !== false){
-			$errors["username"] = "Username must have no spaces";
+			$errors["username"] = "error-username-no-spaces";
 		}
 
 		if (strlen($this->passwd) < 5) {
-			$errors["passwd"] = "Password must be at least 5 characters length";
+			$errors["passwd"] = "error-password-min-length";
 		}
 
         if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            $errors["email"] = "Email must have a valid format, e.g., user@domain";
+            $errors["email"] = "error-email-format";
         }
 
 		if (sizeof($errors)>0){
-			throw new ValidationException($errors, "user is not valid");
+			throw new ValidationException($errors, "error-user-invalid");
 		}
 	}
 }

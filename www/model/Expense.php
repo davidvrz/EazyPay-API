@@ -193,34 +193,34 @@ class Expense {
     
         // Validación de descripción
         if (strlen(trim($this->description)) == 0) {
-            $errors["description"] = "Expense description is mandatory.";
+            $errors["description"] = "error-expense-description-required";
         }
     
         // Validación de monto total
         if ($this->totalAmount <= 0) {
-            $errors["totalAmount"] = "Total amount must be greater than zero.";
+            $errors["totalAmount"] = "error-expense-amount-greater-than-zero";
         }
     
         // Validación de grupo
         if ($this->group == null) {
-            $errors["group"] = "Group is mandatory.";
+            $errors["group"] = "error-expense-group-required";
         }
     
         // Validación de pagador
         if (empty($this->payer)) {
-            $errors["payer"] = "Payer is mandatory.";
+            $errors["payer"] = "error-expense-payer-required";
         }
     
         // Validación de participantes
         if (empty($this->participants)) {
-            $errors["participants"] = "At least one participant is required.";
+            $errors["participants"] = "error-expense-min-participants";
         } else {
             $participantsTotalAmount = 0; // Variable para sumar los montos de los participantes
 
             foreach ($this->participants as $username => $amount) {
                 // Comprobar que el monto del participante sea válido
                 if ($amount <= 0) {
-                    $errors["participant_amount"] = "Each participant must have a valid amount.";
+                    $errors["participant_amount"] = "error-expense-amount-invalid";
                 }
 
                 $participantsTotalAmount += $amount;
@@ -228,13 +228,13 @@ class Expense {
             
             // Validación de la suma de los montos de los participantes, permitiendo una diferencia mínima de 0.01
             if (round(abs($participantsTotalAmount - $this->totalAmount),2) > 0.01) {
-                $errors["participants_total"] = "The sum of participants' amounts must equal the total amount.";
+                $errors["participants_total"] = "error-expense-total-amount-invalid";
             }
         }
 
         // Lanza excepción si hay errores
         if (sizeof($errors) > 0) {
-            throw new ValidationException($errors, "Expense is not valid");
+            throw new ValidationException($errors, "error-expense-invalid");
         }
 
     }
@@ -244,7 +244,7 @@ class Expense {
 		$errors = array();
 	
 		if (!isset($this->id)) {
-			$errors["id"] = "id is mandatory";
+			$errors["id"] = "error-expense-id-required";
 		}
 	
 		try {
@@ -256,7 +256,7 @@ class Expense {
 		}
 	
 		if (sizeof($errors) > 0) {
-			throw new ValidationException($errors, "expense is not valid");
+			throw new ValidationException($errors, "error-expense-invalid");
 		}
 	}
 }
