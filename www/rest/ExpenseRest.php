@@ -115,7 +115,7 @@ class ExpenseRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo(json_encode(["errors" => "error-expense-invalid-participant-or-amount" . $username]));
+                    echo json_encode(["errors" => ["participants" => "error-expense-invalid-participant-or-amount"]]);
                     return;
                 }
             }
@@ -202,7 +202,7 @@ class ExpenseRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo(json_encode(["errors" => "error-expense-invalid-participant-or-amount". $username]));
+                    echo json_encode(["errors" => ["participants" => "error-expense-invalid-participant-or-amount"]]);
                     return;
                 }
             }
@@ -272,7 +272,7 @@ class ExpenseRest extends BaseRest {
 
         header($_SERVER['SERVER_PROTOCOL'] . ' 200 Ok');
         header('Content-Type: application/json');
-        echo(json_encode(["message" => "expense-delete-successfully"]));
+        echo json_encode(["message" => "expense-delete-successfully"]);
     }
 }
 

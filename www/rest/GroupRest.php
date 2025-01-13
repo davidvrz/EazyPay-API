@@ -121,7 +121,7 @@ class GroupRest extends BaseRest {
                 } else {
                     header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                     header('Content-Type: application/json');
-                    echo json_encode(["errors" => "error-member-not-found"]);
+                    echo json_encode(["errors" => ["members" => "error-member-not-found"]]);
                     return;
                 }
             } 
@@ -194,7 +194,7 @@ class GroupRest extends BaseRest {
                     } else {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
                         header('Content-Type: application/json');
-                        echo json_encode(["errors" => "error-member-not-found"]);
+                        echo json_encode(["errors" => ["members" => "error-member-not-found"]]);
                         return;
                     }
                 }

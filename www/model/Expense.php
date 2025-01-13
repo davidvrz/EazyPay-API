@@ -220,7 +220,7 @@ class Expense {
             foreach ($this->participants as $username => $amount) {
                 // Comprobar que el monto del participante sea válido
                 if ($amount <= 0) {
-                    $errors["participant_amount"] = "error-expense-amount-invalid";
+                    $errors["participants"] = "error-expense-amount-invalid";
                 }
 
                 $participantsTotalAmount += $amount;
@@ -228,7 +228,7 @@ class Expense {
             
             // Validación de la suma de los montos de los participantes, permitiendo una diferencia mínima de 0.01
             if (round(abs($participantsTotalAmount - $this->totalAmount),2) > 0.01) {
-                $errors["participants_total"] = "error-expense-total-amount-invalid";
+                $errors["participants"] = "error-expense-total-amount-invalid";
             }
         }
 

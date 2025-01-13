@@ -47,8 +47,7 @@ class UserRest extends BaseRest {
             header($_SERVER['SERVER_PROTOCOL'].' 400 Bad Request');
             header('Content-Type: application/json');
             echo json_encode([
-                "message" => "Validation errors",
-                "errors" => "error-validation" . $e->getErrors()
+                "errors" => $e->getErrors()
             ]);
         }
     }
