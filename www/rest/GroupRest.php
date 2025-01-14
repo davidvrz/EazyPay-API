@@ -308,7 +308,7 @@ class GroupRest extends BaseRest {
                 $movements[] = [
                     "from" => $debtor["user"],
                     "to" => $creditor["user"],
-                    "amount" => $amountToTransfer
+                    "amount" => round($amountToTransfer, 2)
                 ];
 
                 $debtor["amount"] -= $amountToTransfer;
