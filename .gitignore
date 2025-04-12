@@ -8,6 +8,7 @@ Thumbs.db
 # Ignorar configuraciones de entornos comunes
 .env
 *.log
+backup.sql
 
 # Ignorar archivos de compilación y cache
 node_modules/
